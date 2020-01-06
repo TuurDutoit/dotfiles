@@ -4,4 +4,7 @@
 # yeah, let's do that.
 
 echo "› sudo softwareupdate -i -a"
+
+# Don't install Catalina, it breaks stuff
+sudo /usr/sbin/softwareupdate --ignore "macOS Catalina"
 sudo softwareupdate -i -a
