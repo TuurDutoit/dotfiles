@@ -17,3 +17,8 @@ npm-bin-hook() {
 autoload -Uz add-zsh-hook
 
 add-zsh-hook preexec npm-bin-hook
+
+# Add NPM_TOKEN to environment
+if [ -f ~/.npmrc ]; then
+  export NPM_TOKEN=$(cat ~/.npmrc | sed -e "s/.*_authToken=//")
+fi
