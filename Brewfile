@@ -21,24 +21,19 @@ brew 'n'
 brew 'openssl'
 brew 'readline'
 brew 'rustup-init'
-brew 'unrar'
-brew 'vim'
 brew 'wget'
 brew 'yarn'
-brew 'youtube-dl'
 brew 'pyenv'
 
 cask '1password'
 cask 'aerial'
-cask 'atom'
-cask 'betterzip' # https://macitbetter.com/downloads/
 cask 'docker'
 cask 'firefox'
 cask 'font-hack-nerd-font'
-cask 'google-backup-and-sync'
-cask 'google-chrome-beta'
+cask 'google-chrome'
 cask 'hyper'
 cask 'iterm2'
+cask 'keybase'
 cask 'notion'
 cask 'postico'
 cask 'postman'
@@ -46,16 +41,17 @@ cask 'qlcolorcode' # https://github.com/anthonygelibert/QLColorCode
 cask 'qlmarkdown' # https://github.com/toland/qlmarkdown
 cask 'qlstephen' # https://github.com/whomwah/qlstephen
 cask 'qlvideo' # https://github.com/Marginal/QLVideo
+cask 'graphql-playground'
 cask 'quicklook-json' # http://www.sagtau.com/quicklookjson.html
-cask 'quicklookase' # https://github.com/rsodre/QuickLookASE
+cask 'react-native-debugger'
 cask 'sequel-pro'
 cask 'slack'
 cask 'spotify'
 cask 'suspicious-package' # https://www.mothersruin.com/software/SuspiciousPackage/
 cask 'transmission'
-cask 'tunnelbear'
 cask 'tunnelblick'
 cask 'visual-studio-code'
 cask 'vlc'
 cask 'webpquicklook' # https://github.com/dchest/webp-quicklook
 cask 'zoomus'
+
