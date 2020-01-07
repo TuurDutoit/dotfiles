@@ -75,6 +75,15 @@ setup_gitconfig () {
   fi
 }
 
+setup_git_submodules () {
+  info 'setup git submodules'
+
+  git submodule init
+  git submodule update
+
+  success 'git submodules updated'
+}
+
 set_os_defaults() {
   if [ "$(uname -s)" == "Darwin" ]
   then
@@ -242,6 +251,7 @@ done
 # Full install
 setup_projects_dir
 setup_gitconfig
+setup_git_submodules
 install_link_files
 install_software
 set_os_defaults
