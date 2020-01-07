@@ -27,7 +27,7 @@ brew 'wget'
 brew 'yarn'
 brew 'pyenv'
 
-cask '1password'
+#cask '1password'
 cask 'aerial'
 cask 'docker'
 cask 'firefox'
@@ -48,7 +48,7 @@ cask 'graphql-playground'
 cask 'quicklook-json' # http://www.sagtau.com/quicklookjson.html
 cask 'react-native-debugger'
 cask 'sequel-pro'
-cask 'slack'
+#cask 'slack'
 cask 'spotify'
 cask 'suspicious-package' # https://www.mothersruin.com/software/SuspiciousPackage/
 cask 'transmission'
