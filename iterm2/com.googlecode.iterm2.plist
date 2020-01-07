@@ -1455,11 +1455,11 @@
 			<key>Name</key>
 			<string>Fullscreen</string>
 			<key>Non Ascii Font</key>
-			<string>HackNerdFontComplete-Regular 12</string>
+			<string>FiraCode-Regular 12</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>HackNerdFontComplete-Regular 14</string>
+			<string>FiraCode-Regular 14</string>
 			<key>Only The Default BG Color Uses Transparency</key>
 			<false/>
 			<key>Option Key Sends</key>
@@ -3102,11 +3102,11 @@
 													<key>Name</key>
 													<string>Fullscreen</string>
 													<key>Non Ascii Font</key>
-													<string>Monaco 12</string>
+													<string>FiraCode 12</string>
 													<key>Non-ASCII Anti Aliased</key>
 													<true/>
 													<key>Normal Font</key>
-													<string>Menlo-RegularForPowerline 11</string>
+													<string>FiraCode 11</string>
 													<key>Option Key Sends</key>
 													<integer>0</integer>
 													<key>Prompt Before Closing 2</key>
@@ -4010,11 +4010,11 @@
 													<key>Name</key>
 													<string>Fullscreen</string>
 													<key>Non Ascii Font</key>
-													<string>Monaco 12</string>
+													<string>FiraCode 12</string>
 													<key>Non-ASCII Anti Aliased</key>
 													<true/>
 													<key>Normal Font</key>
-													<string>Menlo-RegularForPowerline 11</string>
+													<string>FiraCode 11</string>
 													<key>Option Key Sends</key>
 													<integer>0</integer>
 													<key>Prompt Before Closing 2</key>
@@ -4935,11 +4935,11 @@
 											<key>Name</key>
 											<string>Fullscreen</string>
 											<key>Non Ascii Font</key>
-											<string>Monaco 12</string>
+											<string>FiraCode 12</string>
 											<key>Non-ASCII Anti Aliased</key>
 											<true/>
 											<key>Normal Font</key>
-											<string>Menlo-RegularForPowerline 11</string>
+											<string>FiraCode 11</string>
 											<key>Option Key Sends</key>
 											<integer>0</integer>
 											<key>Prompt Before Closing 2</key>
@@ -5760,11 +5760,11 @@
 													<key>Name</key>
 													<string>3-Panned Layout</string>
 													<key>Non Ascii Font</key>
-													<string>Monaco 12</string>
+													<string>FiraCode 12</string>
 													<key>Non-ASCII Anti Aliased</key>
 													<true/>
 													<key>Normal Font</key>
-													<string>Monaco 10</string>
+													<string>FiraCode 10</string>
 													<key>Option Key Sends</key>
 													<integer>0</integer>
 													<key>Prompt Before Closing 2</key>
@@ -6504,11 +6504,11 @@
 													<key>Name</key>
 													<string>3-Panned Layout</string>
 													<key>Non Ascii Font</key>
-													<string>Monaco 12</string>
+													<string>FiraCode 12</string>
 													<key>Non-ASCII Anti Aliased</key>
 													<true/>
 													<key>Normal Font</key>
-													<string>Monaco 10</string>
+													<string>FiraCode 10</string>
 													<key>Option Key Sends</key>
 													<integer>0</integer>
 													<key>Prompt Before Closing 2</key>
@@ -7265,11 +7265,11 @@
 											<key>Name</key>
 											<string>3-Panned Layout</string>
 											<key>Non Ascii Font</key>
-											<string>Monaco 12</string>
+											<string>FiraCode 12</string>
 											<key>Non-ASCII Anti Aliased</key>
 											<true/>
 											<key>Normal Font</key>
-											<string>Monaco 10</string>
+											<string>FiraCode 10</string>
 											<key>Option Key Sends</key>
 											<integer>0</integer>
 											<key>Prompt Before Closing 2</key>
@@ -8208,11 +8208,11 @@
 													<key>Name</key>
 													<string>Fullscreen</string>
 													<key>Non Ascii Font</key>
-													<string>Monaco 12</string>
+													<string>FiraCode 12</string>
 													<key>Non-ASCII Anti Aliased</key>
 													<true/>
 													<key>Normal Font</key>
-													<string>Menlo-RegularForPowerline 11</string>
+													<string>FiraCode 11</string>
 													<key>Option Key Sends</key>
 													<integer>0</integer>
 													<key>Prompt Before Closing 2</key>
@@ -9116,11 +9116,11 @@
 													<key>Name</key>
 													<string>Fullscreen</string>
 													<key>Non Ascii Font</key>
-													<string>Monaco 12</string>
+													<string>FiraCode 12</string>
 													<key>Non-ASCII Anti Aliased</key>
 													<true/>
 													<key>Normal Font</key>
-													<string>Menlo-RegularForPowerline 11</string>
+													<string>FiraCode 11</string>
 													<key>Option Key Sends</key>
 													<integer>0</integer>
 													<key>Original Guid</key>
@@ -10030,11 +10030,11 @@
 													<key>Name</key>
 													<string>Fullscreen</string>
 													<key>Non Ascii Font</key>
-													<string>Monaco 12</string>
+													<string>FiraCode 12</string>
 													<key>Non-ASCII Anti Aliased</key>
 													<true/>
 													<key>Normal Font</key>
-													<string>Menlo-RegularForPowerline 11</string>
+													<string>FiraCode 11</string>
 													<key>Option Key Sends</key>
 													<integer>0</integer>
 													<key>Prompt Before Closing 2</key>
@@ -10955,11 +10955,11 @@
 											<key>Name</key>
 											<string>Fullscreen</string>
 											<key>Non Ascii Font</key>
-											<string>Monaco 12</string>
+											<string>FiraCode 12</string>
 											<key>Non-ASCII Anti Aliased</key>
 											<true/>
 											<key>Normal Font</key>
-											<string>Menlo-RegularForPowerline 11</string>
+											<string>FiraCode 11</string>
 											<key>Option Key Sends</key>
 											<integer>0</integer>
 											<key>Prompt Before Closing 2</key>
