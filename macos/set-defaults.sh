@@ -363,6 +363,17 @@ defaults write com.apple.dock wvous-tr-modifier -int 0
 defaults write com.apple.dock wvous-br-corner -int 13
 defaults write com.apple.dock wvous-br-modifier -int 0
 
+# Add apps to dock
+defaults write com.apple.dock persistent-apps -array \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Google Chrome.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Mail.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Slack.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/zoom.us.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Notion.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Visual Studio Code.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Utilities/Terminal.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/System Preferences.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>"
+
 ###############################################################################
 # Safari & WebKit                                                             #
 ###############################################################################
