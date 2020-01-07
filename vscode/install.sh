@@ -1,2 +1,1 @@
-rm -rf ~/Library/Application\ Support/Code/User
-ln -s ~/.dotfiles/vscode/User ~/Library/Application\ Support/Code/User
+code --install-extension 'shan.code-settings-sync'
