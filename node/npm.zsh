@@ -22,3 +22,16 @@ add-zsh-hook preexec npm-bin-hook
 if [ -f ~/.npmrc ]; then
   export NPM_TOKEN=$(cat ~/.npmrc | sed -e "s/.*_authToken=//")
 fi
+
+# Install node version from .nvmrc
+nvmrc-hook() {
+  if [[ -a .nvmrc ]]; then
+    required_version=$(cat .nvmrc)
+    current_version=$(node -v | cut -c2-)
+    if [ "$current_version" != "$required_version" ]; then
+      n `cat .nvmrc`
+    fi
+  fi
+}
+
+add-zsh-hook chpwd nvmrc-hook
