@@ -29,6 +29,7 @@ brew 'pyenv'
 
 #cask '1password'
 cask 'aerial'
+cask 'android-studio'
 cask 'docker'
 cask 'firefox'
 cask 'font-fira-code'
