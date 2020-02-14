@@ -1,6 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH="./bin:/usr/local/bin:/usr/local/sbin:$ZSH/bin:$PATH"
+#export PATH="./bin:/usr/local/bin:/usr/local/sbin:$ZSH/bin:$PATH"
 
 # Dotfiles
 export DOTFILES="$HOME/.dotfiles"
