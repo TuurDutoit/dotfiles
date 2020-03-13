@@ -6,4 +6,4 @@ for VERSION in $(ls "$PREFIX"); do
 done
 
 export PATH="$PYTHON_PATH$PATH"
-export AWS_DEFAULT_PROFILE=dbconnect
+export AWS_DEFAULT_PROFILE=datacamp-prod-developer
