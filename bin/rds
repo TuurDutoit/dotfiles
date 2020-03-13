@@ -1,0 +1,23 @@
+#! /bin/zsh
+
+PSQL=$(command -v psql)
+MYSQL=$(command -v mysql)
+
+function psql {
+  if [ "$1" -eq '' ]; then
+    echo 'Missing argument: dbname'
+    exit 1
+  fi
+
+  RDSHOST="datacamp-services-psql-shared-readreplica.crsd2orwscer.us-east-1.rds.amazonaws.com"
+  PGPASSWORD="$(aws rds generate-db-auth-token --hostname $RDSHOST --port 5432 --region us-east-1 --username iam_replica_user)"
+  $PSQL --host=$RDSHOST -p 5432 "dbname={dbname} user=iam_replica_user sslrootcert=$HOME/.ssh/rds-ca-2019-root.pem sslmode=verify-full"
+}
+
+function mysql {
+  RDSHOST="datacamp-services-shared-readreplica.crsd2orwscer.us-east-1.rds.amazonaws.com"
+  TOKEN="$(aws rds generate-db-auth-token --hostname $RDSHOST --port 3306 --region us-east-1 --username iam_replica_user)"
+  $MYSQL --host=$RDSHOST --port=3306 --ssl-ca=$HOME/.ssh/rds-ca-2019-root.pem --enable-cleartext-plugin --user=iam_replica_user --password=$TOKEN
+}
+
+"$@"
