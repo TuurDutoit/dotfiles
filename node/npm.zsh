@@ -4,13 +4,12 @@ fi
 
 # Adds node_modules/.bin to the PATH
 npm-bin-hook() {
+  PATH=$(echo -n $PATH | tr ":" "\n" | sed "/node_modules/d" | tr "\n" ":")
   if [[ -a package.json ]]; then
     path=(
       $PWD/node_modules/.bin
       $path
     )
-  else
-    PATH=$(echo -n $PATH | tr ":" "\n" | sed "/node_modules/d" | tr "\n" ":")
   fi
 }
 
