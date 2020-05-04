@@ -1,0 +1,94 @@
+#! /bin/zsh
+
+set -e
+
+PSQL=$(command -v psql)
+MYSQL=$(command -v mysql)
+AWS=$(command -v aws)
+
+function _urlencode {
+    setopt localoptions extendedglob
+    input=( ${(s::)1} )
+    print ${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)-])/%${(l:2::0:)$(([##16]#match))}}
+}
+
+function _prepare_psql {
+  if [ -z "$1" ]; then
+    echo 'Missing argument: dbname'
+    exit 1
+  fi
+
+  export RDSHOST="datacamp-services-psql-shared-readreplica.crsd2orwscer.us-east-1.rds.amazonaws.com"
+  export PGPASSWORD="$($AWS rds generate-db-auth-token --hostname $RDSHOST --port 5432 --region us-east-1 --username iam_replica_user)"
+}
+
+function _prepare_mysql {
+  export RDSHOST="datacamp-services-shared-readreplica.crsd2orwscer.us-east-1.rds.amazonaws.com"
+  export RDSTOKEN="$($AWS rds generate-db-auth-token --hostname $RDSHOST --port 3306 --region us-east-1 --username iam_replica_user)"
+}
+
+function rds {
+
+  function psql {
+    _prepare_psql $@
+    $PSQL --host=$RDSHOST -p 5432 "dbname=$1 user=iam_replica_user sslrootcert=$HOME/.ssh/rds-ca-2019-root.pem sslmode=verify-full"
+  }
+
+  function mysql {
+    _prepare_mysql $@
+    $MYSQL --host=$RDSHOST --port=3306 --ssl-ca=$HOME/.ssh/rds-ca-2019-root.pem --enable-cleartext-plugin --user=iam_replica_user --password=$RDSTOKEN
+  }
+
+  function postico {
+    _prepare_psql $@
+    PASS=$(_urlencode $PGPASSWORD)
+    open "postgres://iam_replica_user:$PASS@$RDSHOST/$1"
+  }
+
+  "$@"
+}
+
+function aws {
+
+  function setup {
+    bash <(curl -s https://docs.datacamp.com/engineering-wiki/assets/install-onelogin-aws-cli.sh)
+    curl -o "$HOME/.onelogin-aws.config" 'https://docs.datacamp.com/engineering-wiki/assets/.onelogin-aws.config'
+    
+    echo '' >> "$HOME/.onelogin-aws.config"
+    echo '[prod-developer]' >> "$HOME/.onelogin-aws.config"
+    echo 'profile=datacamp-prod-developer' >> "$HOME/.onelogin-aws.config"
+    echo 'role_arn = arn:aws:iam::301258414863:role/datacamp-prod-developer' >> "$HOME/.onelogin-aws.config"
+
+    curl -o "$HOME/.ssh/rds-ca-2019-root.pem" 'https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem'
+  }
+
+  function login {
+    if [ ! -e "$HOME/.onelogin-aws.config" ]; then
+      echo "No such file or directory: $HOME/.ssh/rds-ca-2019-root.pem"
+      echo 'Make sure your environment is correctly setup:'
+      echo '$ dc aws setup'
+      exit 1
+    fi
+    if [ -z "$1" ]; then
+      echo 'Missing argument: config'
+      echo 'Must be one of:'
+      cat "$HOME/.onelogin-aws.config" | grep '\[[a-z-]*\]' | cut -d] -f 1 | cut -c 2- | grep -v 'default'
+      exit 1
+    fi
+
+    SECTION_START_LINE=$(cat "$HOME/.onelogin-aws.config" | grep -n "\[$1\]" | cut -d: -f 1)
+    PROFILE_NAME=$(tail -n "+$SECTION_START_LINE" "$HOME/.onelogin-aws.config" | grep 'profile=' | cut -d= -f 2)
+    
+    if [ -z "$PROFILE_NAME" ]; then
+      echo "Invalid config: $1"
+      exit 1
+    fi
+
+    onelogin-aws-login --user 'tuur@datacamp.com' -C "$1"
+    echo "Run: export AWS_PROFILE=$PROFILE_NAME"
+  }
+
+  "$@"
+}
+
+"$@"
