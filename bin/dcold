@@ -1,7 +1,5 @@
 #! /bin/zsh
 
-set -e
-
 PSQL=$(command -v psql)
 MYSQL=$(command -v mysql)
 AWS=$(command -v aws)
@@ -19,11 +17,13 @@ function _prepare_psql {
   fi
 
   export RDSHOST="datacamp-services-psql-shared-readreplica.crsd2orwscer.us-east-1.rds.amazonaws.com"
+  # export RDSHOST="datacamp-id-readreplica.crsd2orwscer.us-east-1.rds.amazonaws.com"
   export PGPASSWORD="$($AWS rds generate-db-auth-token --hostname $RDSHOST --port 5432 --region us-east-1 --username iam_replica_user)"
 }
 
 function _prepare_mysql {
   export RDSHOST="datacamp-services-shared-readreplica.crsd2orwscer.us-east-1.rds.amazonaws.com"
+  # export RDSHOST="datacamp-main-app-aurora-prod-rep-0.crsd2orwscer.us-east-1.rds.amazonaws.com"
   export RDSTOKEN="$($AWS rds generate-db-auth-token --hostname $RDSHOST --port 3306 --region us-east-1 --username iam_replica_user)"
 }
 
@@ -42,7 +42,7 @@ function rds {
   function postico {
     _prepare_psql $@
     PASS=$(_urlencode $PGPASSWORD)
-    open "postgres://iam_replica_user:$PASS@$RDSHOST/$1"
+    echo "postgres://iam_replica_user:$PASS@$RDSHOST/$1"
   }
 
   "$@"
