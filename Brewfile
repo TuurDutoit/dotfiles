@@ -40,19 +40,15 @@ cask 'docker'
 cask 'firefox'
 cask 'font-fira-code'
 cask 'google-chrome'
-cask 'keybase'
 cask 'notion'
 cask 'paragon-ntfs'
-cask 'postico'
 cask 'postman'
 cask 'qlcolorcode' # https://github.com/anthonygelibert/QLColorCode
 cask 'qlmarkdown' # https://github.com/toland/qlmarkdown
 cask 'qlstephen' # https://github.com/whomwah/qlstephen
 cask 'qlvideo' # https://github.com/Marginal/QLVideo
-cask 'graphql-playground'
 cask 'quicklook-json' # http://www.sagtau.com/quicklookjson.html
 cask 'react-native-debugger'
-cask 'sequel-pro'
 #cask 'slack'
 cask 'spotify'
 cask 'suspicious-package' # https://www.mothersruin.com/software/SuspiciousPackage/
@@ -62,4 +58,4 @@ cask 'visual-studio-code'
 cask 'vlc'
 cask 'webpquicklook' # https://github.com/dchest/webp-quicklook
 cask 'zoomus'
-
+cask 'flipper'
