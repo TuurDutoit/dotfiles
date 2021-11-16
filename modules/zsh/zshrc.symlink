@@ -88,7 +88,22 @@ ZSH_THEME="robbyrussell"
 #   osx
 # )
 
-source $ZSH/oh-my-zsh.sh
+# source $ZSH/oh-my-zsh.sh
+
+##########
+# Prompt #
+##########
+
+# Based on:
+# - https://voracious.dev/a-guide-to-customizing-the-zsh-shell-prompt
+# - https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/robbyrussell.zsh-theme
+# - https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
+
+setopt PROMPT_SUBST # enable variable, command, etc. subsctitution in prompt
+autoload -Uz vcs_info # enable vcs_info plugin
+precmd () { vcs_info } # load git info before displaying the prompt
+zstyle ':vcs_info:*' formats ' %F{blue}%s(%F{red}%b%f%F{blue})' # apply the "git(main)" format when substituting $vcs_info_* vars
+PS1='%B%(?:%F{green}:%F{red})➜  %F{cyan}%1~%f$vcs_info_msg_0_ %b%f' # set the prompt format
 
 ###############
 # User config #
