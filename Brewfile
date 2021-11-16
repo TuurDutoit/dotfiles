@@ -31,7 +31,7 @@ brew 'wget'
 brew 'yarn'
 brew 'pyenv'
 
-#cask '1password'
+# cask '1password'
 cask 'adoptopenjdk'
 cask 'adoptopenjdk8'
 cask 'aerial'
@@ -49,7 +49,7 @@ cask 'qlstephen' # https://github.com/whomwah/qlstephen
 cask 'qlvideo' # https://github.com/Marginal/QLVideo
 cask 'quicklook-json' # http://www.sagtau.com/quicklookjson.html
 cask 'react-native-debugger'
-#cask 'slack'
+# cask 'slack'
 cask 'spotify'
 cask 'suspicious-package' # https://www.mothersruin.com/software/SuspiciousPackage/
 cask 'transmission'
@@ -57,5 +57,5 @@ cask 'tunnelblick'
 cask 'visual-studio-code'
 cask 'vlc'
 cask 'webpquicklook' # https://github.com/dchest/webp-quicklook
-cask 'zoomus'
+# cask 'zoomus'
 cask 'flipper'

@@ -1,0 +1,5 @@
+[user]
+        name = TuurDutoit
+        email = tuur@datacamp.com
+[credential]
+        helper = osxkeychain

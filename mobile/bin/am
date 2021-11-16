@@ -1,7 +1,0 @@
-AVAILABLE_DEVICES=$(adb devices | tail -n +2 | cut -f1)
-DEVICES=${1:-$AVAILABLE_DEVICES}
-
-for d in $DEVICES; do
-  echo $d
-  adb -s $d shell input keyevent 82
-done

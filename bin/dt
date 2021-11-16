@@ -1,0 +1,96 @@
+#!/bin/sh
+#
+# d
+#
+# `d` handles installation, updates, things like that. Run it periodically
+# to make sure you're on the latest and greatest.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+export DOTFILES=$HOME/.dotfiles
+
+info () {
+  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
+}
+
+user () {
+  printf "\r  [ \033[0;33m??\033[0m ] $1\n"
+}
+
+success () {
+  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+}
+
+fail () {
+  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
+  echo ''
+  exit
+}
+
+help() {
+	echo "d -- dotfiles management"
+	echo ""
+	echo "Usage: d [command]"
+	echo ""
+	echo "Commands:"
+	echo "  h, help                  Show this help message and exit"
+	echo "  e, edit                  Open dotfiles directory for editing"
+	echo "  i, install               Install software"
+  echo "  l, link                  Link .symlink files"
+  echo "  s, setup [module]        Run setup steps for a module"
+  echo "  b, build                 Build all modules"
+	exit
+}
+
+setup () {
+  source "modules/$1/setup.zsh"
+}
+
+while test $# -gt 0; do
+	case "$1" in
+    "h"|"help")
+      help
+      ;;
+    "e"|"edit")
+      local EDIT="${CODE_EDITOR:-${EDITOR:-nano}}"
+      exec "$EDIT" "$DOTFILES"
+      exit
+      ;;
+    "i"|"install")
+      setup software
+      exit
+      ;;
+    "l"|"link")
+      setup links
+      exit
+      ;;
+    "s"|"setup")
+      setup $2
+      exit
+      ;;
+    "b"|"build")
+      setup build
+      exit
+      ;;
+    *)
+      echo "Invalid option: $1"
+      displayUsageAndExit
+      ;;
+	esac
+	shift
+done
+
+# Full install
+setup projects
+setup git
+setup submodules
+setup links
+setup homebrew
+setup software
+setup os
+setup build
+
+echo ''
+echo '  All installed!'
