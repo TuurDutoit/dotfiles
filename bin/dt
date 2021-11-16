@@ -54,7 +54,7 @@ while test $# -gt 0; do
       help
       ;;
     "e"|"edit")
-      local EDIT="${CODE_EDITOR:-${EDITOR:-nano}}"
+      EDIT="${CODE_EDITOR:-${EDITOR:-nano}}"
       exec "$EDIT" "$DOTFILES"
       exit
       ;;
