@@ -24,9 +24,9 @@ done
 success "build files compiled"
 info "compiling init"
 
-local INIT_FILE="$DOTFILES/bin/init"
+local INIT_FILE="$DOTFILES/out/init.zsh"
+echo "alias init='source $INIT_FILE'" >> "$LOCALRC"
 echo "" > "$INIT_FILE"
-chmod +x "$INIT_FILE"
 
 local INIT_FILES=$(find "$DOTFILES/modules" -name 'init.zsh')
 for FILE in $INIT_FILES; do
