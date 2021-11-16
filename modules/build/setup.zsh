@@ -35,4 +35,7 @@ for FILE in $INIT_FILES; do
 done
 
 success "init compiled"
+
+echo "alias reload='source $HOME/.zshrc'" >> "$LOCALRC"
+
 success "modules built"
