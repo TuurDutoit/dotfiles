@@ -353,9 +353,12 @@ defaults write com.apple.dock wvous-tl-modifier -int 0
 # Top right screen corner → Desktop
 defaults write com.apple.dock wvous-tr-corner -int 4
 defaults write com.apple.dock wvous-tr-modifier -int 0
-# Bottom left screen corner → Lock screen
-defaults write com.apple.dock wvous-br-corner -int 13
+# Bottom left screen corner → None
+defaults write com.apple.dock wvous-br-corner -int 0
 defaults write com.apple.dock wvous-br-modifier -int 0
+# Bottom right screen corner → None
+defaults write com.apple.dock wvous-bl-corner -int 0
+defaults write com.apple.dock wvous-bl-modifier -int 0
 
 # Add apps to dock
 defaults write com.apple.dock persistent-apps -array \
