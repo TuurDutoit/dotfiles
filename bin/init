@@ -1,5 +1,0 @@
-
-eval "$(jenv init -)"
-
-eval "$(fnm env --use-on-cd)"
-

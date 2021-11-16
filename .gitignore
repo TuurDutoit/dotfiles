@@ -1,1 +1,3 @@
-git/gitconfig.local.symlink
+gitconfig.local.symlink
+out/
+bin/init
