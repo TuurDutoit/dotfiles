@@ -10,6 +10,7 @@ s () {
     adb -s $d reverse tcp:8083 tcp:8083
     adb -s $d reverse tcp:3000 tcp:3000
     adb -s $d reverse tcp:1234 tcp:1234
+    adb -s $d reverse tcp:9090 tcp:9090
   done
 }
 
@@ -29,6 +30,14 @@ e () {
 
 d () {
   adb devices
+}
+
+p () {
+  adb shell settings put global http_proxy 127.0.0.1:9090
+}
+
+pu () {
+  adb shell settings put global http_proxy :0
 }
 
 $@
