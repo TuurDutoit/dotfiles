@@ -16,3 +16,5 @@ function title() {
     ;;
   esac
 }
+
+alias reload='source ~/.zshrc'
