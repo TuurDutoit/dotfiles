@@ -362,7 +362,7 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 
 # Add apps to dock
 defaults write com.apple.dock persistent-apps -array \
-  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Brave Browser.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Firefox.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
   "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///System/Applications/Mail.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
   "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Slack.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
   "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/zoom.us.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
