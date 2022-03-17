@@ -85,7 +85,6 @@ done
 # Full install
 setup projects
 setup git
-setup submodules
 setup links
 setup homebrew
 setup software
