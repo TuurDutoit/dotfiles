@@ -45,6 +45,7 @@ cask 'lens'
 cask 'notion'
 cask 'paragon-ntfs'
 cask 'postman'
+cask 'proxyman'
 cask 'qlcolorcode' # https://github.com/anthonygelibert/QLColorCode
 cask 'qlmarkdown' # https://github.com/toland/qlmarkdown
 cask 'qlstephen' # https://github.com/whomwah/qlstephen
