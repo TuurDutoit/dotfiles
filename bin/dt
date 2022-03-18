@@ -90,6 +90,7 @@ setup homebrew
 setup software
 setup os
 setup build
+setup aws
 
 echo ''
 echo '  All installed!'
