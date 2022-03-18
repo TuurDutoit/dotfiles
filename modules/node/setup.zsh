@@ -1,0 +1,1 @@
+sudo ln -s "$(brew --prefix node)/bin/node" /usr/local/bin/node

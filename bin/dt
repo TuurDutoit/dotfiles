@@ -91,6 +91,7 @@ setup software
 setup os
 setup build
 setup aws
+setup node
 
 echo ''
 echo '  All installed!'
