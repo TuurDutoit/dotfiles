@@ -92,6 +92,7 @@ setup os
 setup build
 setup aws
 setup node
+setup ios
 
 echo ''
 echo '  All installed!'

@@ -12,6 +12,9 @@
       },
       "schniz/tap": {
         "revision": "ac3c440413f74b0b75a041d63f75c1bcddf98107"
+      },
+      "facebook/fb": {
+        "revision": "f660049bdec9965934973052e6331119a4985096"
       }
     },
     "brew": {
@@ -943,6 +946,25 @@
             }
           }
         }
+      },
+      "idb-companion": {
+        "version": "1.1.7",
+        "bottle": {
+          "rebuild": 0,
+          "root_url": "https://github.com/facebook/idb/releases/download/v1.1.7",
+          "files": {
+            "arm64_monterey": {
+              "cellar": ":any",
+              "url": "https://github.com/facebook/idb/releases/download/v1.1.7/idb-companion-1.1.7.arm64_monterey.bottle.tar.gz",
+              "sha256": "386fc014e107b4530b584d5e1f4ff0edec5cf408b973949c97f51f1966f1671c"
+            },
+            "monterey": {
+              "cellar": ":any",
+              "url": "https://github.com/facebook/idb/releases/download/v1.1.7/idb-companion-1.1.7.monterey.bottle.tar.gz",
+              "sha256": "100c27abd8e959b5561bb8ae0425d61088ed9c07bd44c95ad5b70b4f601b79e3"
+            }
+          }
+        }
       }
     },
     "cask": {
@@ -1224,7 +1246,7 @@
         }
       },
       "flipper": {
-        "version": "0.138.0",
+        "version": "0.139.0",
         "options": {
           "full_name": "flipper",
           "args": {
@@ -1233,7 +1255,7 @@
         }
       },
       "lens": {
-        "version": "5.4.2,20220314.1",
+        "version": "5.4.3,20220317.1",
         "options": {
           "full_name": "lens",
           "args": {
@@ -1260,7 +1282,7 @@
         }
       },
       "fig": {
-        "version": "1.0.56,405",
+        "version": "1.0.56,414",
         "options": {
           "full_name": "fig",
           "args": {
@@ -1269,7 +1291,7 @@
         }
       },
       "tableplus": {
-        "version": "4.6.0,406",
+        "version": "4.6.2,410",
         "options": {
           "full_name": "tableplus",
           "args": {
@@ -1309,7 +1331,7 @@
       "monterey": {
         "HOMEBREW_VERSION": "3.4.2",
         "HOMEBREW_PREFIX": "/opt/homebrew",
-        "Homebrew/homebrew-core": "c5c7adde1a72764c3458e4169eacd5ebe26ad083",
+        "Homebrew/homebrew-core": "8b0ba346e1f351881ddcf6e5522bdfbed79bcacf",
         "CLT": "13.3.0.0.1.1645755326",
         "Xcode": "13.3",
         "macOS": "12.2"
