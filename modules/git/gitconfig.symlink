@@ -84,7 +84,6 @@
 [core]
     attributesfile = ~/.gitattributes
 	autocrlf = false
-	editor = nano
     excludesfile = ~/.gitignore
     quotepath = false
     safecrlf = true
