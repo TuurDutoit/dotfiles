@@ -34,6 +34,7 @@ brew 'rustup-init'
 brew 'wget'
 brew 'yarn'
 brew 'pyenv'
+brew 'scrcpy'
 
 # cask '1password'
 cask 'adoptopenjdk'
