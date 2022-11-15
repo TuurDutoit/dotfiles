@@ -62,6 +62,7 @@ cask 'quicklook-json' # http://www.sagtau.com/quicklookjson.html
 cask 'react-native-debugger'
 # cask 'slack'
 cask 'spotify'
+cask 'sunsama'
 cask 'suspicious-package' # https://www.mothersruin.com/software/SuspiciousPackage/
 cask 'tableplus'
 cask 'todoist'
