@@ -1,26 +1,22 @@
 #! /bin/zsh
 
-s () {
-  AVAILABLE_DEVICES=$(adb devices | tail -n +2 | cut -f1)
-  DEVICES=${1:-$AVAILABLE_DEVICES}
+get_active_devices() {
+  adb devices -l | grep -v 'offline' | awk 'NR>1{print $1}'
+}
 
-  for d in $DEVICES; do
-    echo $d
-    adb -s $d reverse tcp:8081 tcp:8081
-    adb -s $d reverse tcp:8083 tcp:8083
-    adb -s $d reverse tcp:3000 tcp:3000
-    adb -s $d reverse tcp:1234 tcp:1234
-    adb -s $d reverse tcp:9090 tcp:9090
-  done
+s () {
+  get_active_devices | xargs -n1 sh -c 'for d do
+    echo $d;
+    adb -s $d reverse tcp:8081 tcp:8081;
+    adb -s $d reverse tcp:8083 tcp:8083;
+    adb -s $d reverse tcp:3000 tcp:3000;
+    adb -s $d reverse tcp:1234 tcp:1234;
+    adb -s $d reverse tcp:9090 tcp:9090;
+    done' _
 }
 
 m () {
-  DEVICES=$(adb devices | tail -n +2 | cut -f1)
-
-  for d in $DEVICES; do
-    echo $d
-    adb -s $d shell input keyevent 82
-  done
+  get_active_devices | xargs -n1 -I% adb -s % shell input keyevent 82
 }
 
 e () {
