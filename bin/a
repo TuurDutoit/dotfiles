@@ -15,8 +15,7 @@ s () {
 }
 
 m () {
-  AVAILABLE_DEVICES=$(adb devices | tail -n +2 | cut -f1)
-  DEVICES=${1:-$AVAILABLE_DEVICES}
+  DEVICES=$(adb devices | tail -n +2 | cut -f1)
 
   for d in $DEVICES; do
     echo $d
