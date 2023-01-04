@@ -91,7 +91,6 @@ setup software
 setup os
 setup build
 setup java
-setup aws
 setup node
 setup ios
 
