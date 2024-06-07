@@ -7,7 +7,7 @@ tap 'homebrew/cask-fonts'
 tap 'Schniz/tap'
 
 brew 'ack'
-brew 'awscli'
+# brew 'awscli'
 brew 'coreutils'
 brew 'deno'
 brew 'fasd'
