@@ -70,7 +70,7 @@
     autosetuprebase = always
 
 [pull]
-    rebase = preserve
+    rebase = merges
 
 [color]
     diff = auto
