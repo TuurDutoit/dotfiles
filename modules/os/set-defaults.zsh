@@ -311,7 +311,7 @@ defaults write com.apple.dock autohide-delay -float 0
 #defaults write com.apple.dock autohide-time-modifier -float 0
 
 # Automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide -bool false
 
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
@@ -362,15 +362,12 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 
 # Add apps to dock
 defaults write com.apple.dock persistent-apps -array \
-  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Firefox.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Google Chrome.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
   "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///System/Applications/Mail.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
   "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Slack.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
-  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/zoom.us.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
-  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Notion.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
   "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Todoist.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
   "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Visual Studio Code.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
-  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///System/Applications/Utilities/Terminal.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
-  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///System/Applications/System Preferences.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>"
+  "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///Applications/Warp.app</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>" \
 
 ###############################################################################
 # Safari & WebKit                                                             #
