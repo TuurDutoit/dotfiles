@@ -1,0 +1,7 @@
+alias ga='git commit --amend'
+alias gan='git commit --amend --no-edit'
+alias gf='git fixup'
+alias gc='git checkout'
+alias gp='git push'
+alias gpf='git push -f'
+alias gpi='git cherry-pick'
