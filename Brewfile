@@ -62,6 +62,7 @@ cask 'qlmarkdown' # https://github.com/toland/qlmarkdown
 cask 'qlstephen' # https://github.com/whomwah/qlstephen
 cask 'qlvideo' # https://github.com/Marginal/QLVideo
 cask 'quicklook-json' # http://www.sagtau.com/quicklookjson.html
+cask 'reactotron'
 cask 'react-native-debugger'
 # cask 'slack'
 cask 'spotify'
