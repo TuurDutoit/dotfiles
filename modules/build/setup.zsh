@@ -6,7 +6,7 @@ echo "" > "$LOCALRC"
 
 info "compiling path files"
 
-local PATH_FILES=$(find "$DOTFILES/modules" -name 'path.zsh')
+local PATH_FILES=$(find "$DOTFILES/modules" -name 'path.zsh' -or -name 'path.local.zsh')
 for FILE in $PATH_FILES; do
   cat "$FILE" >> "$LOCALRC"
   echo "\n" >> "$LOCALRC"
@@ -15,7 +15,7 @@ done
 success "path files compiled"
 info "compiling build files"
 
-local BUILD_FILES=$(find "$DOTFILES/modules" -name 'build.zsh')
+local BUILD_FILES=$(find "$DOTFILES/modules" -name 'build.zsh' -or -name 'build.local.zsh')
 for FILE in $BUILD_FILES; do
   source "$FILE" >> "$LOCALRC"
   echo "\n" >> "$LOCALRC"
@@ -28,7 +28,7 @@ local INIT_FILE="$DOTFILES/out/init.zsh"
 echo "alias init='source $INIT_FILE'" >> "$LOCALRC"
 echo "" > "$INIT_FILE"
 
-local INIT_FILES=$(find "$DOTFILES/modules" -name 'init.zsh')
+local INIT_FILES=$(find "$DOTFILES/modules" -name 'init.zsh' -or -name 'init.local.zsh')
 for FILE in $INIT_FILES; do
   cat "$FILE" >> "$INIT_FILE"
   echo "\n" >> "$INIT_FILE"
