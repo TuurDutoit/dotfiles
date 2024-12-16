@@ -76,7 +76,7 @@ while test $# -gt 0; do
       ;;
     *)
       echo "Invalid option: $1"
-      displayUsageAndExit
+      help
       ;;
 	esac
 	shift
