@@ -62,3 +62,4 @@ cask 'todoist'
 cask 'visual-studio-code'
 cask 'webpquicklook' # https://github.com/dchest/webp-quicklook
 # cask 'zoomus'
+cask 'zulu@17'
