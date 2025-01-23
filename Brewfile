@@ -46,6 +46,7 @@ cask 'figma'
 cask 'firefox'
 cask 'font-fira-code'
 cask 'graphql-playground'
+cask 'obsidian'
 cask 'proxyman'
 cask 'qlcolorcode' # https://github.com/anthonygelibert/QLColorCode
 cask 'qlmarkdown' # https://github.com/toland/qlmarkdown
