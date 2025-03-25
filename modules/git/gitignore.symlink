@@ -73,3 +73,6 @@ Thumbs.db
 build/*
 cache/*
 log/*
+
+# Fleet
+.fleet/*
