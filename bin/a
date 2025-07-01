@@ -12,6 +12,7 @@ s () {
     adb -s $d reverse tcp:3000 tcp:3000;
     adb -s $d reverse tcp:1234 tcp:1234;
     adb -s $d reverse tcp:9090 tcp:9090;
+    adb -s $d reverse tcp:5173 tcp:5173;
     done' _
 }
 
