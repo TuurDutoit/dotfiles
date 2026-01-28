@@ -88,6 +88,7 @@
     quotepath = false
     safecrlf = true
     whitespace = cr-at-eol,space-before-tab,-indent-with-non-tab,trailing-space
+	hooksPath = ~/.git-hooks
 
 [color "branch"]
     current = yellow reverse
