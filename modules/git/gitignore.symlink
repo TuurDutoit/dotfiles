@@ -39,17 +39,6 @@ Thumbs.db
 *.pyc
 
 
-# packages
-*.7z
-*.jar
-*.rar
-*.zip
-*.gz
-*.bzip
-*.xz
-*.lzma
-
-
 # packing-only formats
 *.iso
 *.tar
@@ -76,3 +65,6 @@ log/*
 
 # Fleet
 .fleet/*
+
+# Cursor agent working files
+.agent/*
