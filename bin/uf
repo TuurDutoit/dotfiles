@@ -1,4 +1,0 @@
-#! /bin/bash
-# Unimported Files
-
-node $DOTFILES/modules/js/ufn.js $@
