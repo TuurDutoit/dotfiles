@@ -37,7 +37,8 @@ help() {
 	echo "Commands:"
 	echo "  h, help                  Show this help message and exit"
 	echo "  e, edit                  Open dotfiles directory for editing"
-	echo "  i, install               Install software"
+	echo "  i, install               Install all software"
+  echo "  a, add [package]         Add a new package to the Brewfile"
   echo "  l, link                  Link .symlink files"
   echo "  s, setup [module]        Run setup steps for a module"
   echo "  b, build                 Build all modules"
@@ -52,6 +53,11 @@ while test $# -gt 0; do
 	case "$1" in
     "h"|"help")
       help
+      ;;
+    "a"|"add")
+      shift
+      brew bundle add $@
+      exit
       ;;
     "e"|"edit")
       EDIT="${CODE_EDITOR:-${EDITOR:-nano}}"
