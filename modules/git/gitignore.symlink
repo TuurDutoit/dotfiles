@@ -66,5 +66,7 @@ log/*
 # Fleet
 .fleet/*
 
-# Cursor agent working files
+# Cursor/Claude agent working files
 .agent/*
+.plans/*
+.specs/*
