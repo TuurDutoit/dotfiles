@@ -43,3 +43,6 @@ cask 'spotify'
 cask 'tableplus'
 cask 'todoist'
 # cask 'zoomus'
+brew "ripgrep"
+cask "gcloud-cli"
+brew "googleworkspace-cli"
