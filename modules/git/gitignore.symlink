@@ -70,3 +70,4 @@ log/*
 .agent/*
 .plans/*
 .specs/*
+brain/*
