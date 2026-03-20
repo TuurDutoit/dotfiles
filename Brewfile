@@ -46,3 +46,5 @@ cask 'todoist'
 brew "ripgrep"
 cask "gcloud-cli"
 brew "googleworkspace-cli"
+brew "typescript-language-server"
+brew "tree"
