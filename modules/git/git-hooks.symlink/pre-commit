@@ -5,5 +5,6 @@
 branch="$(git rev-parse --abbrev-ref HEAD)"
 if [[ "$branch" == "master" || "$branch" == "main" ]]; then
   echo "🚫 You cannot commit directly to $branch!"
+  echo "To disable for this repo: git config core.hooksPath /dev/null"
   exit 1
 fi
