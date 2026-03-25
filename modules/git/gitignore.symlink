@@ -70,4 +70,5 @@ log/*
 .agent/*
 .plans/*
 .specs/*
+.superset/*
 brain/*
