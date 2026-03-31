@@ -67,6 +67,8 @@ log/*
 .fleet/*
 
 # Cursor/Claude agent working files
+.claude/*
+!.claude/skills
 .agent/*
 .plans/*
 .specs/*
