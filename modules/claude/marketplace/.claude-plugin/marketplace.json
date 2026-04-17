@@ -1,0 +1,17 @@
+{
+  "name": "tuur",
+  "metadata": {
+    "description": "Tuur's personal Claude Code commands, skills, agents, and hooks"
+  },
+  "owner": {
+    "name": "Tuur Dutoit",
+    "email": "tuur@datacamp.com"
+  },
+  "plugins": [
+    {
+      "name": "tuur",
+      "description": "Personal Claude Code configuration: custom commands, skills, agents, and hooks",
+      "source": "./plugins/tuur"
+    }
+  ]
+}

@@ -99,6 +99,7 @@ setup build
 setup java
 setup node
 setup ios
+setup claude
 
 echo ''
 echo '  All installed!'

@@ -1,0 +1,246 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(ls *)",
+      "Bash(cd *)",
+      "Bash(echo *)",
+      "Bash(head *)",
+      "Bash(grep *)",
+      "Bash(sleep *)",
+      "Bash(tail *)",
+      "Bash(mkdir *)",
+      "Bash(cat *)",
+      "Bash(find *)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(yarn *)",
+      "Bash(npm *)",
+      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+      "mcp__claude_ai_Atlassian__getJiraIssue",
+      "mcp__claude_ai_Atlassian__getConfluencePage",
+      "mcp__claude_ai_Atlassian__getConfluencePageDescendants",
+      "mcp__claude_ai_Atlassian__getConfluenceSpaces",
+      "mcp__claude_ai_Atlassian__searchAtlassian",
+      "mcp__claude_ai_Atlassian__searchConfluenceUsingCql",
+      "mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql",
+      "mcp__claude_ai_Atlassian__atlassianUserInfo",
+      "mcp__claude_ai_Atlassian__fetchAtlassian",
+      "mcp__claude_ai_Atlassian__getConfluencePageFooterComments",
+      "mcp__claude_ai_Atlassian__getConfluencePageInlineComments",
+      "mcp__claude_ai_Atlassian__getConfluenceCommentChildren",
+      "mcp__claude_ai_Atlassian__getPagesInConfluenceSpace",
+      "mcp__claude_ai_Atlassian__getIssueLinkTypes",
+      "mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks",
+      "mcp__claude_ai_Atlassian__getJiraIssueTypeMetaWithFields",
+      "mcp__claude_ai_Atlassian__getJiraProjectIssueTypesMetadata",
+      "mcp__claude_ai_Atlassian__getTransitionsForJiraIssue",
+      "mcp__claude_ai_Atlassian__getVisibleJiraProjects",
+      "mcp__claude_ai_Atlassian__lookupJiraAccountId",
+      "mcp__circleci__get_build_failure_logs",
+      "mcp__circleci__get_latest_pipeline_status",
+      "mcp__sonarqube__get_project_quality_gate_status",
+      "mcp__sonarqube__search_files_by_coverage",
+      "mcp__sonarqube__get_file_coverage_details",
+      "mcp__sonarqube__search_security_hotspots",
+      "mcp__sonarqube__get_component_measures",
+      "mcp__sonarqube__get_duplications",
+      "mcp__sonarqube__search_sonar_issues_in_projects",
+      "mcp__sonarqube__search_duplicated_files",
+      "mcp__sonarqube__search_metrics",
+      "mcp__sonarqube__search_my_sonarqube_projects",
+      "mcp__sonarqube__show_rule",
+      "mcp__sonarqube__show_security_hotspot",
+      "mcp__sonarqube__list_pull_requests",
+      "mcp__sonarqube__list_quality_gates",
+      "mcp__claude_ai_Sentry__get_issue_details",
+      "mcp__claude_ai_Sentry__get_issue_tag_values",
+      "mcp__claude_ai_Sentry__get_event_attachment",
+      "mcp__claude_ai_Sentry__get_trace_details",
+      "mcp__claude_ai_Sentry__get_doc",
+      "mcp__claude_ai_Sentry__search_issues",
+      "mcp__claude_ai_Sentry__search_events",
+      "mcp__claude_ai_Sentry__search_issue_events",
+      "mcp__claude_ai_Sentry__search_docs",
+      "mcp__claude_ai_Sentry__find_organizations",
+      "mcp__claude_ai_Sentry__find_projects",
+      "mcp__claude_ai_Sentry__find_releases",
+      "mcp__claude_ai_Sentry__find_teams",
+      "mcp__claude_ai_Sentry__find_dsns",
+      "mcp__claude_ai_Sentry__analyze_issue_with_seer",
+      "mcp__claude_ai_Sentry__whoami",
+      "mcp__claude_ai_Slack__slack_read_channel",
+      "mcp__claude_ai_Slack__slack_read_thread",
+      "mcp__claude_ai_Slack__slack_read_user_profile",
+      "mcp__claude_ai_Slack__slack_read_canvas",
+      "mcp__claude_ai_Slack__slack_search_channels",
+      "mcp__claude_ai_Slack__slack_search_users",
+      "mcp__claude_ai_Slack__slack_search_public",
+      "mcp__claude_ai_Slack__slack_search_public_and_private",
+      "mcp__claude_ai_Gmail__gmail_get_profile",
+      "mcp__claude_ai_Gmail__gmail_search_messages",
+      "mcp__claude_ai_Gmail__gmail_read_message",
+      "mcp__claude_ai_Gmail__gmail_read_thread",
+      "mcp__claude_ai_Gmail__gmail_list_drafts",
+      "mcp__claude_ai_Gmail__gmail_list_labels",
+      "Read(*.sample)",
+      "Bash(nvm *)",
+      "Bash(fnm *)",
+      "Bash(rg *)",
+      "Bash(jq *)",
+      "Bash(ln *)",
+      "Bash(npx *)",
+      "Bash(sed *)",
+      "Bash(awk *)",
+      "Bash(wc *)",
+      "Bash(docker compose *up *)",
+      "Bash(docker compose *ps *)",
+      "Bash(docker ps *)",
+      "Bash(curl*http://localhost*)",
+      "Bash(curl*https://*.datacamp-staging.com*)",
+      "WebSearch",
+      "WebFetch(domain:datacamp.com)",
+      "WebFetch(domain:github.com)",
+      "Read(~/.claude/settings.json)",
+      "Read(~/.claude/CLAUDE.md)",
+      "Read(//tmp/**)",
+      "Edit(//tmp/**)",
+      "Write(//tmp/**)",
+      "Read(~/Documents/Obsidian/DataCamp/Claude/**)",
+      "Edit(~/Documents/Obsidian/DataCamp/Claude/**)",
+      "Write(~/Documents/Obsidian/DataCamp/Claude/**)",
+      "Bash(* --version)",
+      "Bash(* --help)",
+      "mcp__claude_ai_Figma__get_design_context",
+      "mcp__claude_ai_Figma__get_screenshot",
+      "mcp__claude_ai_Figma__get_metadata",
+      "mcp__claude_ai_Figma__get_figjam",
+      "mcp__claude_ai_Figma__get_code_connect_map",
+      "mcp__claude_ai_Figma__get_code_connect_suggestions",
+      "mcp__claude_ai_Figma__get_variable_defs",
+      "mcp__claude_ai_Figma__whoami",
+      "mcp__datadog-mcp__analyze_datadog_logs",
+      "mcp__datadog-mcp__check_datadog_mcp_setup",
+      "mcp__datadog-mcp__get_datadog_incident",
+      "mcp__datadog-mcp__get_datadog_metric",
+      "mcp__datadog-mcp__get_datadog_metric_context",
+      "mcp__datadog-mcp__get_datadog_notebook",
+      "mcp__datadog-mcp__get_datadog_trace",
+      "mcp__datadog-mcp__search_datadog_dashboards",
+      "mcp__datadog-mcp__search_datadog_events",
+      "mcp__datadog-mcp__search_datadog_hosts",
+      "mcp__datadog-mcp__search_datadog_incidents",
+      "mcp__datadog-mcp__search_datadog_logs",
+      "mcp__datadog-mcp__search_datadog_metrics",
+      "mcp__datadog-mcp__search_datadog_monitors",
+      "mcp__datadog-mcp__search_datadog_notebooks",
+      "mcp__datadog-mcp__search_datadog_rum_events",
+      "mcp__datadog-mcp__search_datadog_service_dependencies",
+      "mcp__datadog-mcp__search_datadog_services",
+      "mcp__datadog-mcp__search_datadog_spans",
+      "mcp__braintrust__generate_permalink",
+      "mcp__braintrust__infer_schema",
+      "mcp__braintrust__list_recent_objects",
+      "mcp__braintrust__resolve_object",
+      "mcp__braintrust__search_docs",
+      "mcp__braintrust__sql_query",
+      "mcp__braintrust__summarize_experiment",
+      "Edit(./**)",
+      "Write(./**)",
+      "Skill"
+    ],
+    "deny": [
+      "Read(**/.env*)",
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ],
+    "defaultMode": "auto",
+    "additionalDirectories": [
+      "~/Documents/Obsidian/DataCamp/Claude/Initiatives"
+    ]
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/tuur/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": false,
+    "ralph-loop@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "tuur@tuur": true
+  },
+  "extraKnownMarketplaces": {},
+  "sandbox": {
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "api.github.com",
+        "datacamp.com"
+      ]
+    }
+  },
+  "effortLevel": "xhigh",
+  "autoDreamEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true,
+  "teammateMode": "in-process"
+}

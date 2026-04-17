@@ -1,0 +1,9 @@
+{
+  "name": "tuur",
+  "version": "1.0.0",
+  "description": "Personal Claude Code configuration: custom commands, skills, agents, and hooks",
+  "author": {
+    "name": "Tuur Dutoit",
+    "email": "tuur@datacamp.com"
+  }
+}
