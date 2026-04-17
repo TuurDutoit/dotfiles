@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# u -- update all brew-managed software
+
+set -u
+
+if [ -x /opt/homebrew/bin/brew ]
+then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]
+then
+  eval "$(/usr/local/bin/brew shellenv)"
+else
+  echo "brew not found" >&2
+  exit 1
+fi
+
+echo "=== $(date) — brew update ==="
+brew update
+
+echo "=== $(date) — brew upgrade ==="
+brew upgrade
+
+echo "=== $(date) — brew cleanup ==="
+brew cleanup
+
+echo "=== $(date) — done ==="

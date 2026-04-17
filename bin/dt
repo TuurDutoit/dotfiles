@@ -100,6 +100,7 @@ setup java
 setup node
 setup ios
 setup claude
+setup launchagents
 
 echo ''
 echo '  All installed!'
