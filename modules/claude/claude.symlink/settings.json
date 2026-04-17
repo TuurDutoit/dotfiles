@@ -228,7 +228,20 @@
     "claude-md-management@claude-plugins-official": true,
     "tuur@tuur": true
   },
-  "extraKnownMarketplaces": {},
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "tuur": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/tuur/.dotfiles/modules/claude/marketplace"
+      }
+    }
+  },
   "sandbox": {
     "network": {
       "allowedDomains": [
