@@ -1,7 +1,6 @@
 cask_args appdir: '/Applications'
 
 tap 'facebook/fb'
-tap 'homebrew/bundle'
 tap 'Schniz/tap'
 
 # brew 'awscli'
