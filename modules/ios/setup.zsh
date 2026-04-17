@@ -1,3 +1,3 @@
 info "Installing fb-idb"
-pip3 install --upgrade --user fb-idb
+pipx install --force fb-idb
 success "fb-idb installed"
