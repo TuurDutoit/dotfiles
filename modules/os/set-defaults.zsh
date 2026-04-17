@@ -260,6 +260,9 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 # Dock, Dashboard, and hot corners                                            #
 ###############################################################################
 
+# Position the Dock on the left edge of the screen
+defaults write com.apple.dock orientation -string "left"
+
 # Enable highlight hover effect for the grid view of a stack (Dock)
 defaults write com.apple.dock mouse-over-hilite-stack -bool true
 
@@ -323,11 +326,18 @@ defaults write com.apple.dock show-recents -bool false
 #defaults write com.apple.dock showLaunchpadGestureEnabled -int 0
 
 # Reset Launchpad, but keep the desktop wallpaper intact
-find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete
+if [ -d "${HOME}/Library/Application Support/Dock" ]; then
+  find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete
+fi
 
-# Add iOS & Watch Simulator to Launchpad
-sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simulator.app"
-sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
+# Add iOS & Watch Simulator to Launchpad (only when Xcode is installed).
+# `-h` prevents following an existing symlink to a directory.
+if [ -d "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" ]; then
+  sudo ln -shf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simulator.app"
+fi
+if [ -d "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" ]; then
+  sudo ln -shf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
+fi
 
 # Add a spacer to the left side of the Dock (where the applications are)
 #defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type="spacer-tile";}'
@@ -373,6 +383,12 @@ defaults write com.apple.dock persistent-apps -array \
 ###############################################################################
 # Safari & WebKit                                                             #
 ###############################################################################
+
+# Safari's preferences are sandboxed; writing them requires Full Disk Access
+# for the terminal running this script (System Settings → Privacy & Security →
+# Full Disk Access). Skip the section otherwise to avoid noisy errors.
+if [ -r "${HOME}/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari.plist" ] || \
+   [ -w "${HOME}/Library/Containers/com.apple.Safari/Data/Library/Preferences" ]; then
 
 # Privacy: don’t send search queries to Apple
 defaults write com.apple.Safari UniversalSearchEnabled -bool false
@@ -458,6 +474,10 @@ defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 # Update extensions automatically
 defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 
+else
+  echo "Skipping Safari defaults: grant the terminal Full Disk Access to set these."
+fi
+
 ###############################################################################
 # Mail                                                                        #
 ###############################################################################
@@ -532,7 +552,7 @@ sudo mdutil -i on / > /dev/null
 sudo mdutil -E / > /dev/null
 
 ###############################################################################
-# Terminal & iTerm 2                                                          #
+# Terminal                                                                    #
 ###############################################################################
 
 # Only use UTF-8 in Terminal.app
@@ -550,15 +570,6 @@ defaults write com.apple.terminal SecureKeyboardEntry -bool false
 # Disable the annoying line marks
 defaults write com.apple.Terminal ShowLineMarks -int 0
 
-# Don’t display the annoying prompt when quitting iTerm
-defaults write com.googlecode.iterm2 PromptOnQuit -bool false
-
-# Load settings from dotfiles dir.
-defaults write com.googlecode.iterm2 PrefsCustomFolder -string "~/.dotfiles/iterm2/"
-
-# Disable shortcut ⌘↩ toggling full screen on iTerm and change ^⌘F
-defaults write -app iTerm NSUserKeyEquivalents -dict-add "Toggle Full Screen" "@^f"
-
 ###############################################################################
 # Time Machine                                                                #
 ###############################################################################
@@ -567,7 +578,8 @@ defaults write -app iTerm NSUserKeyEquivalents -dict-add "Toggle Full Screen" "@
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 # Disable local Time Machine backups
-hash tmutil &> /dev/null && sudo tmutil disablelocal
+# Note: `tmutil disablelocal` was removed in macOS 10.13+; local snapshots are
+# now managed automatically.
 
 ###############################################################################
 # Activity Monitor                                                            #
@@ -590,8 +602,8 @@ defaults write com.apple.ActivityMonitor SortDirection -int 0
 # Address Book, Dashboard, iCal, TextEdit, and Disk Utility                   #
 ###############################################################################
 
-# Enable the debug menu in Address Book
-defaults write com.apple.addressbook ABShowDebugMenu -bool true
+# Enable the debug menu in Address Book (sandboxed; requires Full Disk Access)
+#defaults write com.apple.addressbook ABShowDebugMenu -bool true
 
 # Enable Dashboard dev mode (allows keeping widgets on the desktop)
 defaults write com.apple.dashboard devmode -bool true
