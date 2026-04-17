@@ -482,6 +482,11 @@ fi
 # Mail                                                                        #
 ###############################################################################
 
+# Mail's preferences are sandboxed; writing them requires Full Disk Access
+# for the terminal running this script.
+if [ -r "${HOME}/Library/Containers/com.apple.mail/Data/Library/Preferences/com.apple.mail.plist" ] || \
+   [ -w "${HOME}/Library/Containers/com.apple.mail/Data/Library/Preferences" ]; then
+
 # Disable send and reply animations in Mail.app
 defaults write com.apple.mail DisableReplyAnimations -bool true
 defaults write com.apple.mail DisableSendAnimations -bool true
@@ -502,6 +507,10 @@ defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 
 # Disable automatic spell checking
 defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnabled"
+
+else
+  echo "Skipping Mail defaults: grant the terminal Full Disk Access to set these."
+fi
 
 ###############################################################################
 # Spotlight                                                                   #
