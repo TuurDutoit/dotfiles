@@ -1,5 +1,5 @@
 {
-  "description": "Personal Claude Code hooks: format/lint after edits, copy env into new worktrees",
+  "description": "Personal Claude Code hooks: format/lint after edits",
   "hooks": {
     "PostToolUse": [
       {
@@ -17,16 +17,6 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/format-and-lint.sh\""
-          }
-        ]
-      }
-    ],
-    "WorktreeCreate": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/copy-env-to-worktree.sh\""
           }
         ]
       }

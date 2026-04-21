@@ -151,11 +151,7 @@
       "Write(./**)",
       "Skill"
     ],
-    "deny": [
-      "Read(**/.env*)",
-      "Bash(rm -rf *)",
-      "Bash(sudo *)"
-    ],
+    "deny": ["Read(**/.env*)", "Bash(rm -rf *)", "Bash(sudo *)"],
     "defaultMode": "auto",
     "additionalDirectories": [
       "~/Documents/Obsidian/DataCamp/Claude/Initiatives"
@@ -215,6 +211,16 @@
           }
         ]
       }
+    ],
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /Users/tuur/.dotfiles/modules/claude/marketplace/plugins/tuur/hooks/copy-env-to-worktree.sh"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
@@ -244,11 +250,7 @@
   },
   "sandbox": {
     "network": {
-      "allowedDomains": [
-        "github.com",
-        "api.github.com",
-        "datacamp.com"
-      ]
+      "allowedDomains": ["github.com", "api.github.com", "datacamp.com"]
     }
   },
   "effortLevel": "xhigh",
