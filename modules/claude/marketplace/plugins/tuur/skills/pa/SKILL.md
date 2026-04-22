@@ -20,7 +20,10 @@ The TODO file uses this structure:
 
 ```markdown
 In progress
-- <item currently being worked on>
+- <item currently being actively worked on>
+
+Waiting
+- <item waiting on someone/something external>
 
 Today
 - <task 1>
@@ -44,7 +47,11 @@ Rules:
 - Format PR links as: `[repo #number](full_url)` — e.g. `[practice-api #72](https://github.com/datacamp-engineering/practice-api/pull/72)`
 - Format Jira links as: `[MPE-1234](https://datacamp.atlassian.net/browse/MPE-1234)`
 - Keep items concise — one line per task, with parenthetical context where needed.
-- The "In progress" section tracks what's actively being worked on right now (including background tasks).
+- **Section semantics:**
+  - **In progress** — Tuur is actively working on it (the work is on his machine/head right now).
+  - **Waiting** — blocked on someone/something external: PR review, CI, deploy, feedback, another team. Tuur is not actively working on it.
+  - **Today** — queued for today but not yet started.
+  - When presenting status, show "In progress" and "Waiting" separately.
 
 ## Data Sources
 
@@ -60,12 +67,14 @@ Look for: action items, requests, questions directed at Tuur, updates on ongoing
 
 ### 2. Gmail
 
-Use `mcp__claude_ai_Gmail__gmail_search_messages` and `mcp__claude_ai_Gmail__gmail_read_message` to check:
+Use `mcp__claude_ai_Gmail__search_threads` and `mcp__claude_ai_Gmail__get_thread` to check:
 - Unread emails from the last 24 hours
 - GitHub notification emails (PR reviews, comments, CI failures)
 - Calendar invites or updates
 
 Look for: action items, PR review requests, meeting changes, important communications.
+
+**Large-output handling:** `search_threads` often returns results too large for context. When it saves to a file path, use `jq` on that file via Bash to extract what you need (e.g., unique subjects, filter by date, find closed/merged). Don't re-query with a smaller page size — the data is already on disk.
 
 ### 3. Google Calendar
 
@@ -77,16 +86,22 @@ Look for: meetings that need preparation, time blocks that affect task schedulin
 
 ### 4. GitHub PRs
 
-Use `gh` CLI to check:
-- PRs authored by Tuur that need attention (reviews received, CI status, merge readiness)
-- PRs where Tuur is requested as reviewer
-- Recent comments on Tuur's PRs
+Use `gh` CLI as the primary source, and **merge its output with Gmail GitHub notification data** (sender `notifications@github.com`) to catch anything the CLI misses (comments, pushed commits, re-review requests). Tuur cares about:
+- PRs authored by Tuur — reviews received, CI status, merge readiness, **new comments from reviewers**
+- PRs where Tuur is requested as reviewer, or **re-review is requested after pushing fixes**
+- Recent comments/threads on Tuur's open PRs that need a response
 
 ```sh
 gh search prs --author=@me --state=open --json title,url,number,repository,reviewDecision,statusCheckRollup
 gh search prs --review-requested=@me --state=open --json title,url,number,repository
 gh api notifications --jq '.[] | select(.reason == "review_requested" or .reason == "mention" or .reason == "comment") | {title: .subject.title, url: .subject.url, reason: .reason, updated: .updated_at}'
 ```
+
+When presenting, explicitly call out:
+- **New human comments** on Tuur's PRs (not bots like sonarqube/coderabbit) — these often need a response.
+- **Re-review requests** after Tuur previously reviewed and the author pushed fixes.
+
+If `gh` is unavailable on PATH, fall back to Gmail GitHub notifications only — but flag that GH data is incomplete.
 
 ### 5. Jira
 
@@ -95,6 +110,8 @@ Use `mcp__claude_ai_Atlassian_Rovo__searchJiraIssuesUsingJql` to check:
 - Recently updated tickets
 
 JQL: `assignee = currentUser() AND status in ("In Progress", "In Review") ORDER BY updated DESC`
+
+**Type-strictness gotcha:** the Rovo Jira MCP validates input strictly. `maxResults` must be a JSON number (not a string); `fields` must be an array (not a comma-separated string). If in doubt, omit optional params and let defaults apply.
 
 ### 6. Inbox File
 
@@ -144,9 +161,26 @@ When Tuur mentions something new (a new task, a status change, a reprioritizatio
 ### Background Tasks
 
 When Tuur starts something that runs in the background (CI build, long-running process, waiting on someone):
-- Keep it in the "In progress" section with a note about what it's waiting on.
-- When presenting the next task, mention what's still running in the background.
-- When the background task completes, update the list.
+- Keep it in the "Waiting" section with a note about what it's waiting on.
+- When presenting the next task, mention what's waiting in the background.
+- When the background task completes, move it out of Waiting and log it.
+
+### Drafting a Standup / Status Update
+
+When Tuur asks for a standup post, weekly update, or team status:
+1. Draft using this structure (keep it brief, skip business-as-usual):
+   - **Blockers** — things that need team attention to unblock
+   - **Highlights** — noteworthy items the rest of the team should know about (scope shifts, new bugs, major changes)
+   - **Today** (or "This week") — focus areas
+2. **Always present the draft for approval before sending.** Iterate on it based on feedback.
+3. Only send after explicit approval ("post it", "send it", etc.).
+
+### Posting to Slack
+
+1. Confirm the destination channel — use `mcp__claude_ai_Slack__slack_search_channels` to find the channel ID.
+2. **Format reminder:** the Slack MCP uses standard markdown — use `**bold**` (not `*bold*`, which is italic). Use Slack link syntax `<url|text>` for cleaner rendering.
+3. Never send a Slack message without explicit approval of the exact text.
+4. After sending, return the message link to Tuur.
 
 ## Presentation Style
 
@@ -210,7 +244,8 @@ Log every completed task/action with a timestamp. The file is organized in **rev
 
 ## Important Notes
 
-- **Always run `date '+%Y-%m-%d %H:%M'` at the start of every interaction** to get the current time. Use this for accurate log timestamps, calendar-aware prioritization, and date headers in LOG.md.
+- **ALWAYS run `date '+%Y-%m-%d %H:%M'` via the Bash tool immediately before writing any timestamp to LOG.md.** Do NOT reuse a date from earlier in the conversation, do NOT estimate, do NOT infer from context. If your last `date` call was more than 60 seconds ago, call it again. Each log entry requires a fresh `date` call. The same rule applies at the start of every user interaction for calendar-aware prioritization and date headers.
+- **Before adding to LOG.md**, check whether today's date already has a `# YYYY-MM-DD` section at the top. If not, add a new one. Don't assume the top section matches today.
 - Load MCP tool schemas with `ToolSearch` before calling any MCP tool.
 - Use parallel tool calls aggressively — fetch all sources at once.
 - Don't overwhelm with information. Summarize changes, don't list every email.
