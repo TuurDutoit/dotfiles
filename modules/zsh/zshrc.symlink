@@ -111,7 +111,7 @@ PS1='%B%(?:%F{green}:%F{red})➜  %F{cyan}%1~%f$vcs_info_msg_0_ %b%f' # set the 
 
 # Preferred editor for local and remote sessions
 export EDITOR='nano'
-export CODE_EDITOR='cursor'
+export CODE_EDITOR='code'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
