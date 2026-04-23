@@ -28,7 +28,15 @@ echo "=== $(date) — brew update ==="
 brew update
 
 echo "=== $(date) — brew upgrade ==="
-brew upgrade
+# zulu@17: excluded — its uninstaller calls sudo, which fails in background launchd context
+EXCLUDE="zulu@17"
+outdated=$(brew outdated --quiet | grep -vFx "$EXCLUDE" || true)
+if [ -n "$outdated" ]
+then
+  echo "$outdated" | xargs brew upgrade
+else
+  echo "nothing to upgrade"
+fi
 
 echo "=== $(date) — brew cleanup ==="
 brew cleanup
