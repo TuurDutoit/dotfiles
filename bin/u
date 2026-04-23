@@ -1,8 +1,17 @@
 #!/bin/sh
 #
-# u -- update all brew-managed software
+# u -- update all brew-managed software (at most once per day)
 
 set -u
+
+STAMP="$HOME/Library/Caches/dotfiles-brew-update.stamp"
+today=$(date +%Y-%m-%d)
+
+if [ -f "$STAMP" ] && [ "$(cat "$STAMP")" = "$today" ]
+then
+  echo "=== $(date) — skip, already ran today ==="
+  exit 0
+fi
 
 if [ -x /opt/homebrew/bin/brew ]
 then
@@ -23,5 +32,8 @@ brew upgrade
 
 echo "=== $(date) — brew cleanup ==="
 brew cleanup
+
+mkdir -p "$(dirname "$STAMP")"
+echo "$today" > "$STAMP"
 
 echo "=== $(date) — done ==="
