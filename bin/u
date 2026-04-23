@@ -1,13 +1,17 @@
 #!/bin/sh
 #
-# u -- update all brew-managed software (at most once per day)
+# u -- update all brew-managed software
+# Usage: u           -- always run
+#        u --daily   -- skip if already ran today (used by LaunchAgent)
 
 set -u
 
 STAMP="$HOME/Library/Caches/dotfiles-brew-update.stamp"
 today=$(date +%Y-%m-%d)
 
-if [ -f "$STAMP" ] && [ "$(cat "$STAMP")" = "$today" ]
+if [ "${1:-}" = "--daily" ] \
+  && [ -f "$STAMP" ] \
+  && [ "$(cat "$STAMP")" = "$today" ]
 then
   echo "=== $(date) — skip, already ran today ==="
   exit 0
