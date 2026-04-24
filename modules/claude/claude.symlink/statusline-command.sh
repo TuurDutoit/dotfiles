@@ -33,20 +33,62 @@ if cache_is_stale; then
         BRANCH=$(git -C "$DIR" branch --show-current 2>/dev/null)
         STAGED=$(git -C "$DIR" diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')
         MODIFIED=$(git -C "$DIR" diff --numstat 2>/dev/null | wc -l | tr -d ' ')
-        printf '%s|%s|%s' "$BRANCH" "$STAGED" "$MODIFIED" > "$CACHE_FILE"
+        TOPLEVEL=$(git -C "$DIR" rev-parse --show-toplevel 2>/dev/null)
+        printf '%s|%s|%s|%s' "$BRANCH" "$STAGED" "$MODIFIED" "$TOPLEVEL" > "$CACHE_FILE"
     else
-        printf '||' > "$CACHE_FILE"
+        printf '|||' > "$CACHE_FILE"
     fi
 fi
 
-IFS='|' read -r BRANCH STAGED MODIFIED < "$CACHE_FILE"
+IFS='|' read -r BRANCH STAGED MODIFIED TOPLEVEL < "$CACHE_FILE"
 
 COST_FMT=$(printf '$%.2f' "$COST")
 
+format_dir() {
+    local dir="$1"
+    local toplevel="$2"
+    local projects="$HOME/Projects"
+
+    if [[ "$dir" == "$projects/"* ]]; then
+        local rel="${dir#$projects/}"
+        local project="${rel%%/*}"
+        local subpath="${rel#$project}"
+        subpath="${subpath#/}"
+
+        local wt_name=""
+        local wt_root="$projects/$project/.claude/worktrees/"
+        if [ -n "$toplevel" ] && [[ "$toplevel" == "$wt_root"* ]]; then
+            wt_name="${toplevel#$wt_root}"
+            if [ "$dir" = "$toplevel" ]; then
+                subpath=""
+            else
+                subpath="${dir#$toplevel/}"
+            fi
+        fi
+
+        local result="$project"
+        if [ -n "$wt_name" ]; then
+            result="$project:$wt_name"
+        fi
+        if [ -n "$subpath" ]; then
+            result="$result > ${subpath//\// > }"
+        fi
+        printf '%s' "$result"
+    elif [ "$dir" = "$HOME" ]; then
+        printf '~'
+    elif [[ "$dir" == "$HOME/"* ]]; then
+        printf '~/%s' "${dir#$HOME/}"
+    else
+        printf '%s' "$dir"
+    fi
+}
+
+DIR_DISPLAY=$(format_dir "$DIR" "$TOPLEVEL")
+
 if [ -n "$BRANCH" ]; then
-    printf "${CYAN}[%s]${RESET} %s | 🌿 %s +%s ~%s\n" "$MODEL" "${DIR##*/}" "$BRANCH" "$STAGED" "$MODIFIED"
+    printf "${CYAN}[%s]${RESET} %s | 🌿 %s +%s ~%s\n" "$MODEL" "$DIR_DISPLAY" "$BRANCH" "$STAGED" "$MODIFIED"
 else
-    printf "${CYAN}[%s]${RESET} %s\n" "$MODEL" "${DIR##*/}"
+    printf "${CYAN}[%s]${RESET} %s\n" "$MODEL" "$DIR_DISPLAY"
 fi
 
 printf "${BAR_COLOR}%s${RESET} %s%% | ${YELLOW}%s${RESET} | %dh %dm\n" "$BAR" "$PCT" "$COST_FMT" "$HOURS" "$MINS"
