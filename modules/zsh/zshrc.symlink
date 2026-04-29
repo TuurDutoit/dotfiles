@@ -179,6 +179,12 @@ unset config_files
 # History #
 ###########
 
+# Each shell keeps its own session history (Up arrow only shows commands
+# from this terminal). Commands are still appended to $HISTFILE as they run,
+# so newly-spawned shells see recent history.
+unsetopt share_history
+setopt inc_append_history
+
 # Better history
 # Credits to https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
 autoload -U up-line-or-beginning-search
