@@ -151,7 +151,11 @@
       "Write(./**)",
       "Skill"
     ],
-    "deny": ["Read(**/.env*)", "Bash(rm -rf *)", "Bash(sudo *)"],
+    "deny": [
+      "Read(**/.env*)",
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ],
     "defaultMode": "auto",
     "additionalDirectories": [
       "~/Documents/Obsidian/DataCamp/Claude/Initiatives"
@@ -250,12 +254,17 @@
   },
   "sandbox": {
     "network": {
-      "allowedDomains": ["github.com", "api.github.com", "datacamp.com"]
+      "allowedDomains": [
+        "github.com",
+        "api.github.com",
+        "datacamp.com"
+      ]
     }
   },
   "effortLevel": "xhigh",
   "autoDreamEnabled": true,
+  "teammateMode": "in-process",
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": true,
-  "teammateMode": "in-process"
+  "agentPushNotifEnabled": true
 }
