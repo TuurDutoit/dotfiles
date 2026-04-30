@@ -15,6 +15,20 @@
 - Never log secrets (env vars, auth headers, tokens, sensitive payloads).
 - When posting PR review comments, always submit them as a review with inline comments (not individual comments), unless told otherwise. If category and severity are known, prefix each comment with e.g. **[Code Quality • Medium]**.
 
+## Pull Request Descriptions
+
+Stay within the repo's PR template if there is one. Otherwise, structure the description as:
+
+- **What it does**:
+  - High-level goal: what problem this solves or feature it implements (1-2 sentences).
+  - Approach: high-level rundown of the chosen approach (1-3 sentences/bullets). Briefly note tradeoffs if you picked between options.
+  - Highlights: call out changes that could affect external services — API changes, DB schema changes, new env vars, new dependencies.
+  - Don't list changed files or minor details. Reviewers want a quick overview and the riskiest changes, not a changelog.
+- **How to test**:
+  - QA plan: positive cases, negative cases, and existing functionality to regression-check.
+  - Test instructions: minimal setup needed to run the test environment.
+  - Keep it brief. "The unit tests cover this" is a valid test plan when true.
+
 ## Worktrees
 
 - When setting up a worktree, use a subagent or team agent to handle app setup (dependency installation, build, dev server, etc.) so the main context stays focused.
