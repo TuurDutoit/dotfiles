@@ -31,6 +31,7 @@ Stay within the repo's PR template if there is one. Otherwise, structure the des
 
 ## Worktrees
 
+- Default to working in a worktree. When starting any task that involves modifying code in a git repo, set up a worktree first (via `EnterWorktree`) before making changes — unless the user explicitly says otherwise or you are already inside one (cwd contains `/.claude/worktrees/`). Read-only investigation, quick questions, and edits to non-repo files (e.g. dotfiles, `~/.claude/`) do not need a worktree.
 - When setting up a worktree, use a subagent or team agent to handle app setup (dependency installation, build, dev server, etc.) so the main context stays focused.
 - Do not run database migrations or seeds when setting up a worktree.
 - When working in a worktree, always use the worktree path for all file operations. Never read or edit files in the original repo directory.
