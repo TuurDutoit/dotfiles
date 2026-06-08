@@ -15,6 +15,7 @@
 - Never log secrets (env vars, auth headers, tokens, sensitive payloads).
 - When posting PR review comments, always submit them as a review with inline comments (not individual comments), unless told otherwise. If category and severity are known, prefix each comment with e.g. **[Code Quality • Medium]**.
 - After pushing to a branch with an open PR (or after creating one), keep an eye on CI checks until they finish. Prefer the `babysit-pr` skill (or `tuur:pr` when creating a PR) over fire-and-forget pushes — surface failures and offer to fix them.
+- Never use `gh pr checks <num> --watch` — it blocks the session until CI completes. Watch checks in the background instead (e.g. via `Monitor`, or `gh pr checks` polling without `--watch`).
 
 ## Pull Request Descriptions
 

@@ -154,3 +154,5 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
+[coderabbit]
+	machineId = cli/e950f25823b94b348d84b664800e89ee

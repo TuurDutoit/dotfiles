@@ -152,7 +152,16 @@
       "Skill"
     ],
     "deny": [
-      "Read(**/.env*)",
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.production)",
+      "Read(**/.env.staging)",
+      "Read(**/.env.debug)",
+      "Read(**/.production.env)",
+      "Read(**/.staging.env)",
+      "Read(**/.debug.env)",
+      "Read(**/.local.env)",
       "Bash(rm -rf *)",
       "Bash(sudo *)"
     ],
@@ -236,7 +245,8 @@
     "superpowers@claude-plugins-official": false,
     "ralph-loop@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
-    "tuur@tuur": true
+    "tuur@tuur": true,
+    "coderabbit@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -263,8 +273,9 @@
   },
   "effortLevel": "xhigh",
   "autoDreamEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
   "teammateMode": "in-process",
+  "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "agentPushNotifEnabled": true
+  "voiceEnabled": true
 }
