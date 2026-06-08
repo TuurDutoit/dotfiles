@@ -125,6 +125,8 @@ export CODE_EDITOR='code'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias kk="EDITOR='code --wait' k9s"
+
 # Include the (compiled) path.zsh files
 if [[ -a $DOTFILES/out/localrc ]]
 then
