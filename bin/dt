@@ -100,7 +100,6 @@ setup java
 setup node
 setup ios
 setup claude
-setup skills
 setup launchagents
 
 echo ''

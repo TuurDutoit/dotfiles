@@ -22,6 +22,7 @@ do
   fi
 done <<MARKETPLACES
 claude-plugins-official|anthropics/claude-plugins-official
+datacamp|datacamp-engineering/skills
 tuur|$DOTFILES/modules/claude/marketplace
 MARKETPLACES
 
@@ -47,6 +48,9 @@ claude-md-management@claude-plugins-official
 ralph-loop@claude-plugins-official
 typescript-lsp@claude-plugins-official
 superpowers@claude-plugins-official|disabled
+dc@datacamp
+dc-developer@datacamp
+dc-team-learner-experience@datacamp
 tuur@tuur
 PLUGINS
 

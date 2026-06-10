@@ -246,7 +246,10 @@
     "ralph-loop@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "tuur@tuur": true,
-    "coderabbit@claude-plugins-official": true
+    "coderabbit@claude-plugins-official": true,
+    "dc@datacamp": true,
+    "dc-developer@datacamp": true,
+    "dc-team-learner-experience@datacamp": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -259,6 +262,12 @@
       "source": {
         "source": "directory",
         "path": "/Users/tuur/.dotfiles/modules/claude/marketplace"
+      }
+    },
+    "datacamp": {
+      "source": {
+        "source": "github",
+        "repo": "datacamp-engineering/skills"
       }
     }
   },
