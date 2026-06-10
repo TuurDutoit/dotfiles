@@ -2,6 +2,7 @@ cask_args appdir: '/Applications'
 
 tap 'facebook/fb'
 tap 'Schniz/tap'
+tap 'kong/deck'
 
 # brew 'awscli'
 brew 'coreutils'
@@ -60,3 +61,6 @@ brew "teleport"
 brew "mysql"
 cask "1password-cli"
 cask "coderabbit"
+brew "deck"
+brew "cloudflared"
+brew "mcp-publisher"
