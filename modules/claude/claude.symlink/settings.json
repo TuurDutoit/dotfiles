@@ -170,7 +170,7 @@
       "~/Documents/Obsidian/DataCamp/Claude/Initiatives"
     ]
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus",
   "hooks": {
     "PostToolUse": [
       {
@@ -225,12 +225,13 @@
         ]
       }
     ],
-    "WorktreeCreate": [
+    "PreToolUse": [
       {
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "bash /Users/tuur/.dotfiles/modules/claude/marketplace/plugins/tuur/hooks/copy-env-to-worktree.sh"
+            "command": "rtk hook claude"
           }
         ]
       }

@@ -82,3 +82,5 @@ Stay within the repo's PR template if there is one. Otherwise, structure the des
 - Only add rules that are general enough to apply across most projects.
 - Keep this file under 200 lines.
 - Before restructuring or removing existing rules, ask for confirmation.
+
+@RTK.md
