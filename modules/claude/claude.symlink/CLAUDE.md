@@ -3,8 +3,6 @@
 ## Git & GitHub
 
 - Use `gh` CLI for all GitHub operations (PRs, issues, checks, etc.).
-- Prepend the Jira ticket number to PR titles: `[MPE-XXX] feat(scope): description`.
-- Follow the repo's PR template when creating pull requests.
 - Write short commit messages using conventional commits (`feat:`, `fix:`, `chore:`, etc.).
 - Never commit or push directly to `main` or `master` — always use feature branches.
 - Default branch is `master` in most repos. Do not assume `main`.
@@ -44,6 +42,21 @@ Stay within the repo's PR template if there is one. Otherwise, structure the des
   - When spawning subagents or teammates from a worktree, explicitly include the worktree path in their prompt and instruct them to use it for all file operations.
 - When running `docker compose` from a worktree, use `-f` to point to the docker-compose file in the original project directory (Docker dependencies are shared, not per-worktree).
 
+## Subagents
+
+- Avoid making code edits in the main context — delegate to subagents instead. Exception: trivial 1-line edits where subagent overhead is not worth it.
+- Choose the right model for the job:
+  - **Haiku**: small, focused edits (max 2-3 files, well-understood changes)
+  - **Sonnet**: most tasks — new features, multi-file changes, moderate complexity
+  - **Opus**: large-scale, context-heavy work (many files, complex logic, critical systems)
+- Use a team of parallel agents for changes that can be split across independent modules or repos.
+
+Examples:
+- 1-line fix → main context (no subagent)
+- Merging 2 functions + updating tests → 1 Haiku subagent
+- Implementing a new feature in one repo → 1 Sonnet agent for changes + 1 Haiku agent to run tests and summarize
+- Large-scale changes across 2 critical repos (e.g. Keycloak) → team of Opus agents
+
 ## Code Quality
 
 - Before modifying code, verify it has adequate test coverage. If not, write tests first, confirm they pass against the existing code, and commit them separately before making changes.
@@ -59,13 +72,6 @@ Stay within the repo's PR template if there is one. Otherwise, structure the des
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
-
-## Tool Usage
-
-- Avoid command substitution (`$()`, backticks) in Bash tool calls. Run each command separately and use the output directly in the next call.
-- Avoid chaining commands with `&&` or `;` in Bash tool calls. Use separate, parallel Bash tool calls instead so each command is individually visible and reviewable. Pipes (`|`) are fine.
-- Do not use `cd` in Bash tool calls — it breaks permission checks. Use absolute paths instead.
-- Use `jq` for JSON parsing in shell commands, not Python.
 
 ## Jira
 
