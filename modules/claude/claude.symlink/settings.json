@@ -170,7 +170,7 @@
       "~/Documents/Obsidian/DataCamp/Claude/Initiatives"
     ]
   },
-  "model": "opus",
+  "model": "opusplan",
   "hooks": {
     "PostToolUse": [
       {
