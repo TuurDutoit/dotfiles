@@ -13,6 +13,7 @@
 - Never log secrets (env vars, auth headers, tokens, sensitive payloads).
 - When posting PR review comments, always submit them as a review with inline comments (not individual comments), unless told otherwise. If category and severity are known, prefix each comment with e.g. **[Code Quality • Medium]**.
 - After pushing to a branch with an open PR (or after creating one), keep an eye on CI checks until they finish. Prefer the `dc-babysit-pr` skill (or `tuur:pr` when creating a PR) over fire-and-forget pushes — surface failures and offer to fix them.
+- When pushing changes to a branch that has an open PR, update the PR title and description to reflect the latest state of the changes. If there are existing review comments that have been addressed, reply to them noting they've been resolved.
 - Never use `gh pr checks <num> --watch` — it blocks the session until CI completes. Watch checks in the background instead (e.g. via `Monitor`, or `gh pr checks` polling without `--watch`).
 
 ## Pull Request Descriptions
@@ -50,6 +51,17 @@ Stay within the repo's PR template if there is one. Otherwise, structure the des
   - **Sonnet**: most tasks — new features, multi-file changes, moderate complexity
   - **Opus**: large-scale, context-heavy work (many files, complex logic, critical systems)
 - Use a team of parallel agents for changes that can be split across independent modules or repos.
+
+### Workflow Steps
+
+Follow these steps for non-trivial tasks:
+
+1. **Explore** — Use an `Explore` subagent to map entry points, dependencies, and existing tests before touching anything.
+2. **Plan** — Use a `Plan` subagent to design the implementation. Align with the user before writing code.
+3. **Implement** — Delegate code changes to a Sonnet/Opus subagent. Commit each logical step separately.
+4. **Test** — Run the test suite in a subagent. If coverage was thin, write and commit tests first before implementing.
+5. **QA** — Use the `verify` skill to exercise the real app and confirm the golden path and edge cases work.
+6. **Review** — Always run `/coderabbit:code-review`. For medium-to-large changes, also run `/dc-team-lx-multi-review`.
 
 Examples:
 - 1-line fix → main context (no subagent)
