@@ -243,8 +243,6 @@
   },
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": false,
-    "ralph-loop@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "tuur@tuur": true,
     "coderabbit@claude-plugins-official": true,
