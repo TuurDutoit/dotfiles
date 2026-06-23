@@ -64,3 +64,9 @@ brew "deck"
 brew "cloudflared"
 brew "mcp-publisher"
 brew "rtk"
+# Multiplayer code editor
+cask "zed"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# OpenAI's Codex desktop app for managing coding agents
+cask "codex-app"
