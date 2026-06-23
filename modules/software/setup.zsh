@@ -11,7 +11,8 @@ brew bundle
 success "brew bundle completed"
 
 # find the installers and run them iteratively
+# only run modules/*/installer.sh, not nested install.sh files vendored by plugins/caches
 info "running custom installers"
-find "$DOTFILES/modules" -name install.sh | while read installer ; do info "${installer}" ; sh -c "${installer}" ; success ${installer} ; done
+find "$DOTFILES/modules" -mindepth 2 -maxdepth 2 -name installer.sh | while read installer ; do info "${installer}" ; sh "${installer}" ; success "${installer}" ; done
 
 success "software installed successfully"
