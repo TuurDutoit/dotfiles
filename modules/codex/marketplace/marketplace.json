@@ -1,0 +1,20 @@
+{
+  "name": "tuur",
+  "interface": {
+    "displayName": "Tuur"
+  },
+  "plugins": [
+    {
+      "name": "tuur",
+      "source": {
+        "source": "local",
+        "path": "./plugins/tuur"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

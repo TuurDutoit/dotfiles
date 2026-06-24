@@ -1,0 +1,12 @@
+/*
+!/.gitignore
+!/AGENTS.md
+!/config.toml
+!/hooks.json
+!/commands
+/commands/*
+!/commands/visual-plan.md
+!/skills
+/skills/*
+!/skills/visual-plan
+!/skills/visual-plan/**
