@@ -1,0 +1,6 @@
+interface:
+  display_name: "Lora"
+  short_description: "Local staging domain routing setup"
+  default_prompt: "Use $lora to bind local dev servers to datacamp-staging.com subdomains."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Knex To Kysely"
+  short_description: "Knex to Kysely migration workflow"
+  default_prompt: "Use $knex-to-kysely to migrate a TypeScript backend from Knex to Kysely."
+policy:
+  allow_implicit_invocation: true

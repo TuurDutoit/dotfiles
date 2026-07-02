@@ -1,0 +1,6 @@
+interface:
+  display_name: "Setup"
+  short_description: "Set up and verify all repo apps"
+  default_prompt: "Use $setup to install, start, and verify all applications in the current repo."
+policy:
+  allow_implicit_invocation: true

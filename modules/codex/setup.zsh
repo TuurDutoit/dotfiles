@@ -1,33 +1,55 @@
-info 'installing Codex marketplaces & plugins'
+info 'installing Codex skills'
 
 if ! command -v codex > /dev/null
 then
   fail 'codex CLI not found — install it first'
 fi
 
-current_marketplaces=$(codex plugin marketplace list 2>/dev/null || true)
+codex plugin remove tuur@tuur > /dev/null 2>&1 \
+  && success 'removed old Codex plugin tuur@tuur' \
+  || success 'old Codex plugin tuur@tuur not installed'
 
-codex_marketplace="$DOTFILES/modules/codex/marketplace"
-tuur_marketplace_root=$(printf '%s\n' "$current_marketplaces" | awk '$1 == "tuur" {print $2}')
+codex plugin marketplace remove tuur > /dev/null 2>&1 \
+  && success 'removed old Codex marketplace tuur' \
+  || success 'old Codex marketplace tuur not configured'
 
-if [ "$tuur_marketplace_root" = "$codex_marketplace" ]
-then
-  success 'marketplace tuur already added'
-else
-  if [ -n "$tuur_marketplace_root" ]
+skills_source="$DOTFILES/modules/agents/skills"
+skills_target="$HOME/.codex/skills"
+mkdir -p "$skills_target"
+
+while IFS= read -r skill
+do
+  [ -z "$skill" ] && continue
+
+  src="$skills_source/$skill"
+  dst="$skills_target/$skill"
+
+  if [ ! -d "$src" ]
   then
-    codex plugin marketplace remove tuur > /dev/null \
-      && success "removed stale marketplace tuur ($tuur_marketplace_root)" \
-      || fail 'failed to remove stale marketplace tuur'
+    fail "missing shared skill source $src"
   fi
 
-  codex plugin marketplace add "$codex_marketplace" > /dev/null \
-    && success 'marketplace tuur added' \
-    || fail 'failed to add marketplace tuur'
-fi
+  if [ -e "$dst" ] || [ -L "$dst" ]
+  then
+    rm -rf "$dst"
+  fi
 
-codex plugin add "tuur@tuur" > /dev/null \
-  && success 'plugin tuur@tuur installed' \
-  || fail 'failed to install plugin tuur@tuur'
+  ln -s "$src" "$dst" \
+    && success "linked Codex skill $skill" \
+    || fail "failed to link Codex skill $skill"
+done <<'SKILLS'
+campus-api
+dotfiles
+fly
+install
+knex-to-kysely
+lora
+pr
+setup
+SKILLS
 
-success 'Codex plugins installed'
+codex features enable memories > /dev/null \
+  && success 'Codex memories feature enabled' \
+  || fail 'failed to enable Codex memories feature'
+
+success 'Codex skills installed'
