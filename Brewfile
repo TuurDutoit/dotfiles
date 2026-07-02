@@ -3,6 +3,7 @@ cask_args appdir: '/Applications'
 tap 'facebook/fb'
 tap 'Schniz/tap'
 tap 'kong/deck'
+tap 'mobile-dev-inc/tap'
 
 # brew 'awscli'
 brew 'coreutils'
@@ -70,3 +71,7 @@ cask "zed"
 cask "codex"
 # OpenAI's Codex desktop app for managing coding agents
 cask "codex-app"
+# OpenAI's official ChatGPT desktop app
+cask "chatgpt"
+brew 'mobile-dev-inc/tap/maestro'# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
