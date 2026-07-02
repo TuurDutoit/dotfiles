@@ -3,5 +3,4 @@
 !/CLAUDE.md
 !/settings.json
 !/statusline-command.sh
-!/skills/
-!/skills/**
+/skills/
