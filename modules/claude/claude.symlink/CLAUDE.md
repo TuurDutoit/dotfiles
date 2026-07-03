@@ -3,6 +3,7 @@
 ## Pointers
 
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
+- When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
 
 ## Git & GitHub
 
