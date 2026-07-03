@@ -43,6 +43,7 @@ Before using the bundled template:
 
 2. **Interview**
    - Ask exactly one question at a time.
+   - Start each interview turn with the actual question to answer before showing any recommendation or options.
    - Prefer multiple-choice questions with a recommended answer first.
    - Include why the recommendation is best in 1-2 sentences.
    - Accept "yes", "recommended", or "suggested" as choosing your recommendation.
@@ -82,6 +83,8 @@ Before using the bundled template:
 Use this compact format for most interview questions:
 
 ```markdown
+**Question:** <the concrete question the user should answer?>
+
 **Recommended:** A - <answer>
 
 <one or two sentences explaining why>
