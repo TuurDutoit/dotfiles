@@ -1,5 +1,9 @@
 # Global Rules
 
+## Pointers
+
+- My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
+
 ## Git & GitHub
 
 - Use `gh` CLI for all GitHub operations (PRs, issues, checks, etc.).
@@ -64,6 +68,7 @@ Follow these steps for non-trivial tasks:
 6. **Review** — Always run `/coderabbit:code-review`. For medium-to-large changes, also run `/dc-team-lx-multi-review`.
 
 Examples:
+
 - 1-line fix → main context (no subagent)
 - Merging 2 functions + updating tests → 1 Haiku subagent
 - Implementing a new feature in one repo → 1 Sonnet agent for changes + 1 Haiku agent to run tests and summarize

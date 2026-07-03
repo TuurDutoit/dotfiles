@@ -1,5 +1,9 @@
 # Global Rules
 
+## Pointers
+
+- My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
+
 ## Git & GitHub
 
 - Use `gh` CLI for all GitHub operations (PRs, issues, checks, etc.).
@@ -40,6 +44,7 @@ Stay within the repo's PR template if there is one. Otherwise, structure the des
 - Use a team of parallel agents for changes that can be split across independent modules or repos.
 
 Examples:
+
 - 1-line fix → main context (no subagent)
 - Merging 2 functions + updating tests → 1 gpt-5.4-mini subagent
 - Implementing a new feature in one repo → 1 gpt-5.4 agent for changes + 1 gpt-5.4-mini agent to run tests and summarize
@@ -71,7 +76,6 @@ Follow these steps for non-trivial tasks:
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
-- Tuur's dotfiles live at `/Users/tuur/.dotfiles`. Before editing anything there, read `/Users/tuur/.dotfiles/AGENTS.md` and follow its commit/push workflow.
 
 ## Jira
 

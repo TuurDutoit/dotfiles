@@ -1,6 +1,0 @@
-interface:
-  display_name: "Dotfiles"
-  short_description: "Personal dotfiles workflow guardrails"
-  default_prompt: "Use $dotfiles when editing, committing, or pushing changes in ~/.dotfiles."
-policy:
-  allow_implicit_invocation: true
