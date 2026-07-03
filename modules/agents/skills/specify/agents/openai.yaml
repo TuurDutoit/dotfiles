@@ -1,0 +1,6 @@
+interface:
+  display_name: "Specify"
+  short_description: "Interview to write initiative PRDs"
+  default_prompt: "Use $specify to interview me and write a PRD for a new initiative."
+policy:
+  allow_implicit_invocation: true
