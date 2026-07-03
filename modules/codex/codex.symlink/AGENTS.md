@@ -71,6 +71,7 @@ Follow these steps for non-trivial tasks:
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
+- Tuur's dotfiles live at `/Users/tuur/.dotfiles`. Before editing anything there, read `/Users/tuur/.dotfiles/AGENTS.md` and follow its commit/push workflow.
 
 ## Jira
 
