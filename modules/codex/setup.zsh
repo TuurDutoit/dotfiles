@@ -17,17 +17,10 @@ skills_source="$DOTFILES/modules/agents/skills"
 skills_target="$HOME/.codex/skills"
 mkdir -p "$skills_target"
 
-while IFS= read -r skill
+find "$skills_source" -mindepth 1 -maxdepth 1 -type d -print | sort | while IFS= read -r src
 do
-  [ -z "$skill" ] && continue
-
-  src="$skills_source/$skill"
+  skill=$(basename "$src")
   dst="$skills_target/$skill"
-
-  if [ ! -d "$src" ]
-  then
-    fail "missing shared skill source $src"
-  fi
 
   if [ -e "$dst" ] || [ -L "$dst" ]
   then
@@ -37,16 +30,7 @@ do
   ln -s "$src" "$dst" \
     && success "linked Codex skill $skill" \
     || fail "failed to link Codex skill $skill"
-done <<'SKILLS'
-campus-api
-dotfiles
-fly
-install
-knex-to-kysely
-lora
-pr
-setup
-SKILLS
+done
 
 codex features enable memories > /dev/null \
   && success 'Codex memories feature enabled' \
