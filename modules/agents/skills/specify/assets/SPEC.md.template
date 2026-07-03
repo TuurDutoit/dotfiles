@@ -53,19 +53,19 @@
 
 1. **Given** <initial state>, **when** <action>, **then** <expected outcome>.
 
-## Requirements
+## Product Requirements
 
 - **FR-001**: <The system/user/workflow must...>
 - **FR-002**: <The system/user/workflow must...>
 - **FR-003**: <The system/user/workflow must...>
 
-## Data and Entities
+## Product Concepts and Rules
 
-- **<Entity>**: <what it represents, important attributes, lifecycle, relationships>
+- **<Concept>**: <what it means to the user and what rules govern it>
 
 ## Dependencies and Constraints
 
-- <Dependency, policy, team, service, deadline, platform, or operational constraint>
+- <Dependency, policy, team, deadline, platform, or product constraint that affects scope or user behavior>
 
 ## Edge Cases and Failure Modes
 
@@ -78,13 +78,13 @@
 - **SC-002**: <Measurable, user- or business-focused outcome>
 - **SC-003**: <Measurable, user- or business-focused outcome>
 
-## Approach
+## Product Direction
 
-<Recommended approach and why it was chosen over alternatives. Keep this at product/design level unless implementation constraints are part of the spec.>
+<Recommended product direction and why it was chosen. Keep this focused on user value, scope, risk, and learning goals. Do not include architecture, implementation tasks, internal APIs, storage choices, framework choices, or delivery plans.>
 
-## Alternatives Considered
+## Product Alternatives Considered
 
-- **<Alternative>**: <trade-off and why it was not chosen>
+- **<Alternative>**: <product trade-off and why it was not chosen>
 
 ## Risks and Mitigations
 
