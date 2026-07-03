@@ -44,7 +44,10 @@ Before using the bundled template:
 2. **Interview**
    - Ask exactly one question at a time.
    - Start each interview turn with the actual question to answer before showing any recommendation or options.
+   - Make the question concrete: include a short context sentence and, when useful, a specific example of what the decision would mean in practice.
    - Prefer multiple-choice questions with a recommended answer first.
+   - Make each option concrete enough to choose without guessing; avoid vague labels like "simple", "advanced", or "flexible" unless they are explained with observable behavior.
+   - For each option, estimate technical feasibility as `High`, `Medium`, `Low`, or `Unknown`, with a short reason. Keep this at the constraint/risk level; do not design the implementation.
    - Include why the recommendation is best in 1-2 sentences.
    - Accept "yes", "recommended", or "suggested" as choosing your recommendation.
    - Keep asking until major branches of the decision tree are resolved: users, problem, goals, non-goals, workflows, entities from the user's perspective, permissions as product rules, dependencies, risks, success metrics, rollout expectations, and open questions.
@@ -59,7 +62,7 @@ Before using the bundled template:
 
 4. **Compare product directions**
    - Before writing the PRD, present 2-3 viable product directions or scope shapes with trade-offs.
-   - Recommend one direction and explain the reasoning in terms of user value, scope, risk, and learnings.
+   - Include a technical feasibility estimate for each direction, then recommend one direction in terms of user value, scope, risk, feasibility, and learnings.
    - Do not compare implementation approaches, frameworks, libraries, storage engines, services, APIs, or architecture.
    - Ask for approval or correction before writing `SPEC.md`.
 
@@ -83,23 +86,25 @@ Before using the bundled template:
 Use this compact format for most interview questions:
 
 ```markdown
+**Context:** <one sentence grounding the decision in the user's initiative.>
+**Example:** <a concrete example of what one likely answer would mean.>
 **Question:** <the concrete question the user should answer?>
 
 **Recommended:** A - <answer>
 
 <one or two sentences explaining why>
 
-| Option | Answer |
-|--------|--------|
-| A | <recommended answer> |
-| B | <alternative> |
-| C | <alternative> |
-| Short | Provide a different short answer |
+| Option | Answer | What this means | Technical feasibility |
+|--------|--------|-----------------|-----------------------|
+| A | <recommended answer> | <concrete user-visible behavior or scope choice> | <High/Medium/Low/Unknown - brief reason> |
+| B | <alternative> | <concrete user-visible behavior or scope choice> | <High/Medium/Low/Unknown - brief reason> |
+| C | <alternative> | <concrete user-visible behavior or scope choice> | <High/Medium/Low/Unknown - brief reason> |
+| Short | Provide a different short answer | <use this when none fit> | Depends on the answer |
 
 Reply with the option letter, "recommended", or a short custom answer.
 ```
 
-For open-ended questions, provide a suggested answer and ask the user to accept or replace it.
+For open-ended questions, provide context, a concrete example, a suggested answer, and any feasibility assumptions behind that suggestion. Ask the user to accept or replace it.
 
 ## Completion Report
 
