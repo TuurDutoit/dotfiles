@@ -39,7 +39,9 @@ Before using the bundled template:
    - Restate the user's initial idea in one compact paragraph.
    - Inspect any provided docs, links, code, tickets, notes, or existing specs before asking questions.
    - Determine the output location and template using the rules above.
+   - Infer obvious answers from available artifacts before asking. Track the evidence and confidence behind each inference.
    - If a question can be answered from available artifacts, answer it yourself and cite the artifact in the PRD.
+   - If you still need to double-check an inferred answer, show what you found, where you found it, and the assumption you will make unless the user corrects it.
 
 2. **Interview**
    - Ask exactly one question at a time.
@@ -87,6 +89,8 @@ Use this compact format for most interview questions:
 
 ```markdown
 **Context:** <one sentence grounding the decision in the user's initiative.>
+**What I found:** <brief evidence from docs/code/tickets, with path or source when available; omit only if nothing relevant was found.>
+**Current assumption:** <the inferred answer you will use unless corrected.>
 **Example:** <a concrete example of what one likely answer would mean.>
 **Question:** <the concrete question the user should answer?>
 
@@ -104,7 +108,7 @@ Use this compact format for most interview questions:
 Reply with the option letter, "recommended", or a short custom answer.
 ```
 
-For open-ended questions, provide context, a concrete example, a suggested answer, and any feasibility assumptions behind that suggestion. Ask the user to accept or replace it.
+For open-ended questions, provide context, what you found, a current assumption or suggested answer, a concrete example, and any feasibility assumptions behind that suggestion. Ask the user to accept or replace it.
 
 ## Completion Report
 
