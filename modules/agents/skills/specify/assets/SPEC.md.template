@@ -1,0 +1,104 @@
+# <Initiative Name>
+
+**Created**: <YYYY-MM-DD>
+**Status**: Draft
+**Owner**: <owner or team>
+
+## Summary
+
+<One concise paragraph describing the problem, target users, and intended outcome.>
+
+## Problem
+
+<What is broken, missing, inefficient, or risky today? Why does it matter now?>
+
+## Goals
+
+- <Goal 1>
+- <Goal 2>
+- <Goal 3>
+
+## Non-Goals
+
+- <Explicitly out-of-scope item>
+- <Explicitly out-of-scope item>
+
+## Users and Stakeholders
+
+- **<User or stakeholder>**: <needs, motivations, constraints>
+
+## Shared Vocabulary
+
+- **<Term>**: <precise meaning>
+
+## User Scenarios
+
+### P1: <Scenario title>
+
+**Why this priority**: <value and urgency>
+
+**Journey**: <plain-language user journey>
+
+**Acceptance scenarios**:
+
+1. **Given** <initial state>, **when** <action>, **then** <expected outcome>.
+
+### P2: <Scenario title>
+
+**Why this priority**: <value and urgency>
+
+**Journey**: <plain-language user journey>
+
+**Acceptance scenarios**:
+
+1. **Given** <initial state>, **when** <action>, **then** <expected outcome>.
+
+## Requirements
+
+- **FR-001**: <The system/user/workflow must...>
+- **FR-002**: <The system/user/workflow must...>
+- **FR-003**: <The system/user/workflow must...>
+
+## Data and Entities
+
+- **<Entity>**: <what it represents, important attributes, lifecycle, relationships>
+
+## Dependencies and Constraints
+
+- <Dependency, policy, team, service, deadline, platform, or operational constraint>
+
+## Edge Cases and Failure Modes
+
+- <Boundary condition or negative path>
+- <Failure mode and expected behavior>
+
+## Success Criteria
+
+- **SC-001**: <Measurable, user- or business-focused outcome>
+- **SC-002**: <Measurable, user- or business-focused outcome>
+- **SC-003**: <Measurable, user- or business-focused outcome>
+
+## Approach
+
+<Recommended approach and why it was chosen over alternatives. Keep this at product/design level unless implementation constraints are part of the spec.>
+
+## Alternatives Considered
+
+- **<Alternative>**: <trade-off and why it was not chosen>
+
+## Risks and Mitigations
+
+- **Risk**: <risk>
+  **Mitigation**: <mitigation>
+
+## Rollout and Validation
+
+- <How to introduce, validate, measure, or reverse the change>
+
+## Open Questions
+
+- [NEEDS CLARIFICATION: <question>]
+
+## Source Notes
+
+- <Links, documents, tickets, conversations, or code artifacts used to derive this PRD>
