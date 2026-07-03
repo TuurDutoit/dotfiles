@@ -1,0 +1,6 @@
+interface:
+  display_name: "Campus API"
+  short_description: "DataCamp content platform API guide"
+  default_prompt: "Use $campus-api to inspect DataCamp course, chapter, lesson, or exercise data."
+policy:
+  allow_implicit_invocation: true

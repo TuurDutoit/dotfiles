@@ -1,0 +1,6 @@
+interface:
+  display_name: "Install"
+  short_description: "Install dependencies and run checks"
+  default_prompt: "Use $install to install project dependencies and run the required checks."
+policy:
+  allow_implicit_invocation: true

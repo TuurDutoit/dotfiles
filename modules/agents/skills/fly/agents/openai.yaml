@@ -1,0 +1,6 @@
+interface:
+  display_name: "Fly"
+  short_description: "Concourse fly CLI workflow guide"
+  default_prompt: "Use $fly to inspect, trigger, or debug Concourse pipelines with the fly CLI."
+policy:
+  allow_implicit_invocation: true

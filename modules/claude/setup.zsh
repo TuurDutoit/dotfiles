@@ -1,47 +1,21 @@
-info 'installing Claude Code marketplaces & plugins'
+info 'installing Claude Code skills'
 
 if ! command -v claude > /dev/null
 then
   fail 'claude CLI not found — install it first (via brew cask)'
 fi
 
-current_marketplaces=$(claude plugin marketplace list 2>/dev/null)
 current_plugins=$(claude plugin list 2>/dev/null)
 
-# Marketplaces: "name|source" (source = github repo, URL, or path)
-while IFS='|' read -r name source
-do
-  [ -z "$name" ] && continue
-  if echo "$current_marketplaces" | grep -qF "❯ $name"
-  then
-    success "marketplace $name already added"
-  else
-    claude plugin marketplace add "$source" > /dev/null \
-      && success "marketplace $name added" \
-      || fail "failed to add marketplace $name"
-  fi
-done <<MARKETPLACES
-claude-plugins-official|anthropics/claude-plugins-official
-datacamp|datacamp-engineering/skills
-tuur|$DOTFILES/modules/claude/marketplace
-MARKETPLACES
-
-# Plugins: "plugin@marketplace[|disabled]"
-while IFS='|' read -r spec flag
+# Plugins previously managed by this setup module.
+while IFS= read -r spec
 do
   [ -z "$spec" ] && continue
-  if echo "$current_plugins" | grep -qF "❯ $spec"
+  if printf '%s\n' "$current_plugins" | grep -qF "❯ $spec"
   then
-    success "plugin $spec already installed"
-  else
-    claude plugin install "$spec" > /dev/null \
-      && success "plugin $spec installed" \
-      || fail "failed to install plugin $spec"
-  fi
-  if [ "$flag" = "disabled" ]
-  then
-    claude plugin disable "${spec%@*}" > /dev/null 2>&1 || true
-    success "plugin $spec disabled"
+    claude plugin uninstall --scope user --yes "$spec" > /dev/null \
+      && success "removed old Claude plugin $spec" \
+      || fail "failed to remove old Claude plugin $spec"
   fi
 done <<'PLUGINS'
 claude-md-management@claude-plugins-official
@@ -52,4 +26,39 @@ dc-team-learner-experience@datacamp
 tuur@tuur
 PLUGINS
 
-success 'Claude Code plugins installed'
+skills_source="$DOTFILES/modules/agents/skills"
+skills_target="$HOME/.claude/skills"
+mkdir -p "$skills_target"
+
+while IFS= read -r skill
+do
+  [ -z "$skill" ] && continue
+
+  src="$skills_source/$skill"
+  dst="$skills_target/$skill"
+
+  if [ ! -d "$src" ]
+  then
+    fail "missing shared skill source $src"
+  fi
+
+  if [ -e "$dst" ] || [ -L "$dst" ]
+  then
+    rm -rf "$dst"
+  fi
+
+  ln -s "$src" "$dst" \
+    && success "linked Claude skill $skill" \
+    || fail "failed to link Claude skill $skill"
+done <<'SKILLS'
+campus-api
+dotfiles
+fly
+install
+knex-to-kysely
+lora
+pr
+setup
+SKILLS
+
+success 'Claude Code skills installed'
