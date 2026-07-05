@@ -70,6 +70,7 @@ Before using the bundled template:
 
 4. **Question the spec**
    - Ask exactly one question at a time.
+   - Start each question with a clear, direct sentence ending in a question mark.
    - Prefer multiple-choice questions with a recommended answer first.
    - Include why the recommendation is best in 1-2 sentences.
    - Accept "yes", "recommended", or "suggested" as choosing your recommendation.
@@ -103,6 +104,8 @@ Before using the bundled template:
 Use this compact format for most interview questions:
 
 ```markdown
+**Question:** <clear question?>
+
 **Recommended:** A - <answer>
 
 <one or two sentences explaining why>
@@ -117,7 +120,7 @@ Use this compact format for most interview questions:
 Reply with the option letter, "recommended", or a short custom answer.
 ```
 
-For open-ended questions, provide a suggested answer and ask the user to accept or replace it.
+For open-ended questions, still start with `**Question:** <clear question?>`, then provide a suggested answer and ask the user to accept or replace it.
 
 ## Completion Report
 
