@@ -1,16 +1,17 @@
-# <Initiative Name>
+# <Initiative Name> Specification
 
 **Created**: <YYYY-MM-DD>
-**Status**: Draft
+**Status**: Draft | Ready for Plan | Blocked
 **Owner**: <owner or team>
+**Problem**: <relative or absolute link to PROBLEM.md if available>
 
 ## Summary
 
-<One concise paragraph describing the problem, target users, and intended outcome.>
+<One concise paragraph describing the selected product direction, target users, and intended outcome.>
 
-## Problem
+## Problem Recap
 
-<What is broken, missing, inefficient, or risky today? Why does it matter now?>
+<Restate the problem from PROBLEM.md or the conversation. Keep this short and solution-neutral.>
 
 ## Goals
 
@@ -31,6 +32,14 @@
 
 - **<Term>**: <precise meaning>
 
+## Selected Product Direction
+
+<Describe the chosen solution direction in user-facing terms. Explain why this direction best addresses the problem, including user value, scope, risk, and learning value.>
+
+## Alternatives Considered
+
+- **<Alternative>**: <product trade-off and why it was not chosen>
+
 ## User Scenarios
 
 ### P1: <Scenario title>
@@ -39,15 +48,20 @@
 
 **Journey**: <plain-language user journey>
 
+**Independent validation**: <how this scenario can be confirmed on its own>
+
 **Acceptance scenarios**:
 
 1. **Given** <initial state>, **when** <action>, **then** <expected outcome>.
+2. **Given** <initial state>, **when** <negative or edge action>, **then** <expected outcome>.
 
 ### P2: <Scenario title>
 
 **Why this priority**: <value and urgency>
 
 **Journey**: <plain-language user journey>
+
+**Independent validation**: <how this scenario can be confirmed on its own>
 
 **Acceptance scenarios**:
 
@@ -63,6 +77,10 @@
 
 - **<Concept>**: <what it means to the user and what rules govern it>
 
+## Data, Permissions, and External Contracts
+
+- <User-visible data concept, permission rule, API/CLI/config behavior, integration expectation, or compliance constraint. Keep this at the product contract level, not the implementation level.>
+
 ## Dependencies and Constraints
 
 - <Dependency, policy, team, deadline, platform, or product constraint that affects scope or user behavior>
@@ -76,24 +94,50 @@
 
 - **SC-001**: <Measurable, user- or business-focused outcome>
 - **SC-002**: <Measurable, user- or business-focused outcome>
-- **SC-003**: <Measurable, user- or business-focused outcome>
+- **SC-003**: <Measurable guardrail showing the change did not regress existing behavior>
 
-## Product Direction
+## Problem Signal Mapping
 
-<Recommended product direction and why it was chosen. Keep this focused on user value, scope, risk, and learning goals. Do not include architecture, implementation tasks, internal APIs, storage choices, framework choices, or delivery plans.>
+| Problem success signal | Spec success criterion or non-goal |
+|------------------------|------------------------------------|
+| SS-001 | SC-001 |
 
-## Product Alternatives Considered
+## Manual QA Plan
 
-- **<Alternative>**: <product trade-off and why it was not chosen>
+### Setup
+
+- <Environment, account, data, flags, or prerequisites needed for manual QA>
+
+### Happy Paths
+
+1. <Step a user or QA engineer takes>
+
+   **Expected**: <observable result>
+
+### Edge and Negative Paths
+
+1. <Step that exercises an edge case or failure mode>
+
+   **Expected**: <observable result>
+
+### Regression Checks
+
+1. <Existing behavior that must still work>
+
+   **Expected**: <observable result>
+
+### QA Exit Criteria
+
+- <Condition that must be true before the work is considered validated>
+
+## Rollout and Reversibility
+
+- <How to introduce, measure, communicate, or reverse the change>
 
 ## Risks and Mitigations
 
 - **Risk**: <risk>
   **Mitigation**: <mitigation>
-
-## Rollout and Validation
-
-- <How to introduce, validate, measure, or reverse the change>
 
 ## Open Questions
 
@@ -101,4 +145,4 @@
 
 ## Source Notes
 
-- <Links, documents, tickets, conversations, or code artifacts used to derive this PRD>
+- <Links, documents, tickets, conversations, or code artifacts used to derive this spec>

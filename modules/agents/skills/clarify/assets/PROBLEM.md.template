@@ -1,0 +1,68 @@
+# <Initiative Name> Problem Statement
+
+**Created**: <YYYY-MM-DD>
+**Status**: Draft | Ready for Spec | Blocked
+**Owner**: <owner or team>
+
+## One-Sentence Problem
+
+<One sentence describing the problem, affected users, and why it matters.>
+
+## Problem Summary
+
+<A concise paragraph explaining what is broken, missing, inefficient, confusing, risky, or newly necessary. Do not describe the solution.>
+
+## Current State
+
+- **What happens today**: <observable current behavior or workflow>
+- **Where it happens**: <product area, system, team process, or user journey>
+- **Who is affected**: <users, teams, roles, or stakeholders>
+- **Frequency or scale**: <how often or how broadly this occurs>
+
+## User and Business Impact
+
+- **User impact**: <pain, delay, confusion, risk, missed outcome>
+- **Business or team impact**: <support load, revenue, compliance, operational cost, strategic risk>
+- **Why now**: <timing, urgency, deadline, trigger, or opportunity>
+
+## Evidence and Source Notes
+
+- <Links, tickets, logs, user reports, metrics, screenshots, conversations, or code artifacts that support this problem framing>
+
+## Scope Boundaries
+
+### In Scope
+
+- <Problem area or affected workflow>
+
+### Out of Scope
+
+- <Related problem deliberately excluded>
+
+## Constraints
+
+- <Policy, deadline, platform, user expectation, dependency, or technical constraint that affects the problem framing>
+
+## Shared Vocabulary
+
+- **<Term>**: <precise meaning>
+
+## Success Signals
+
+- **SS-001**: <Observable signal that the problem has been solved or materially reduced>
+- **SS-002**: <Observable signal that users or stakeholders are better off>
+- **SS-003**: <Observable guardrail showing the fix did not create a new problem>
+
+## Clarifications Resolved
+
+- **Q**: <question>
+
+  **A**: <answer>
+
+## Open Questions
+
+- [NEEDS CLARIFICATION: <question>]
+
+## Notes for Specify
+
+- <Problem facts, boundaries, constraints, or success signals the spec phase must preserve. Do not list solution ideas here unless the user stated a hard constraint.>

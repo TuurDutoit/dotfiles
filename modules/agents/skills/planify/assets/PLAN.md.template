@@ -1,0 +1,155 @@
+# <Initiative Name> Implementation Plan
+
+**Created**: <YYYY-MM-DD>
+**Status**: Draft | Ready for Implementation | Blocked
+**Owner**: <owner or team>
+**Spec**: <relative or absolute link to SPEC.md>
+**Problem**: <relative or absolute link to PROBLEM.md if available>
+
+## Goal
+
+<One sentence describing what this plan implements.>
+
+## Approach Summary
+
+<Two to four sentences describing the technical approach, major boundaries, and why this approach fits the spec.>
+
+## Repository Context
+
+- **Project type**: <web app, service, CLI, library, mobile app, infra repo, etc.>
+- **Primary commands**: <install, lint, typecheck, test, build, run>
+- **Relevant existing patterns**: <modules, helpers, tests, conventions to follow>
+- **Constraints from instructions**: <AGENTS.md, README, PR template, CI, ownership, release rules>
+
+## Spec Traceability
+
+| Spec item | Plan coverage | Tests/QA |
+|-----------|---------------|----------|
+| FR-001 | <module/task/phase> | <automated or manual validation> |
+| FR-002 | <module/task/phase> | <automated or manual validation> |
+| SC-001 | <module/task/phase> | <automated or manual validation> |
+
+## Change Surface
+
+### Modules, Classes, and Functions
+
+- **`<path or module>`**
+  - **Change**: <create/modify/delete>
+  - **Classes/functions**: `<ClassName>`, `<functionName>`
+  - **Responsibility**: <what this unit owns>
+  - **Reason**: <which spec requirement or behavior this supports>
+
+### Data, Contracts, and Configuration
+
+- **`<contract/schema/config>`**
+  - **Change**: <what changes at the contract level>
+  - **Compatibility**: <migration, backwards compatibility, rollout, or consumer impact>
+
+### Tests
+
+- **`<test file or suite>`**
+  - **Coverage**: <behavior under test>
+  - **Expected first result**: <fail before implementation, pass after implementation, or regression guard>
+
+## Key Logic
+
+<Include short pseudocode, state transitions, validation rules, or shared interface shapes only when they are essential to remove ambiguity. Avoid full implementation code.>
+
+## Implementation Phases
+
+### Phase 1: <Name>
+
+**Goal**: <verifiable outcome>
+
+**Files**:
+
+- Create: `<path>`
+- Modify: `<path>`
+- Test: `<path>`
+
+**Steps**:
+
+1. <Write or update the failing test for specific behavior.>
+2. <Run the narrow test command and confirm the expected failure.>
+3. <Make the smallest implementation change in the named module/class/function.>
+4. <Run the narrow test command and confirm it passes.>
+5. <Run related regression checks.>
+6. <Commit with a conventional commit message.>
+
+**Validation**:
+
+- `<command>` -> <expected result>
+
+### Phase 2: <Name>
+
+**Goal**: <verifiable outcome>
+
+**Files**:
+
+- Create: `<path>`
+- Modify: `<path>`
+- Test: `<path>`
+
+**Steps**:
+
+1. <Concrete implementation step>
+2. <Concrete test/validation step>
+3. <Commit with a conventional commit message>
+
+**Validation**:
+
+- `<command>` -> <expected result>
+
+## Automated Test Cases
+
+### Happy Paths
+
+- **<test name>**: <initial state, action, expected result>
+
+### Edge Cases
+
+- **<test name>**: <boundary or unusual state, action, expected result>
+
+### Negative Paths
+
+- **<test name>**: <invalid action or failure mode, expected result>
+
+### Regression Checks
+
+- **<test name>**: <existing behavior that must remain intact>
+
+## Manual QA Plan
+
+### Setup
+
+- <Environment, account, data, flags, or prerequisites>
+
+### Steps
+
+1. <Manual step>
+
+   **Expected**: <observable result>
+
+### Exit Criteria
+
+- <Condition that must be true before release or handoff>
+
+## Validation Commands
+
+- `<command>` -> <what it proves>
+- `<command>` -> <what it proves>
+
+## Rollout, Observability, and Reversal
+
+- **Rollout**: <feature flag, migration order, staged deployment, communication>
+- **Observability**: <logs, metrics, dashboards, alerts, or manual signals>
+- **Reversal**: <rollback, flag disablement, data recovery, or mitigation>
+
+## Risks and Mitigations
+
+- **Risk**: <implementation or delivery risk>
+  **Mitigation**: <how to reduce or detect it>
+
+## Open Questions
+
+- [NEEDS CLARIFICATION: <question>]

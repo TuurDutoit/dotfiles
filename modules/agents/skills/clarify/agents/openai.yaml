@@ -1,0 +1,6 @@
+interface:
+  display_name: "Clarify"
+  short_description: "Clarify problem statements"
+  default_prompt: "Use $clarify to interview me and write PROBLEM.md for this initiative."
+policy:
+  allow_implicit_invocation: true

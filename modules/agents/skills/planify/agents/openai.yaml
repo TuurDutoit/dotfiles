@@ -1,0 +1,6 @@
+interface:
+  display_name: "Planify"
+  short_description: "Turn specs into implementation plans"
+  default_prompt: "Use $planify to turn this SPEC.md into an implementation PLAN.md."
+policy:
+  allow_implicit_invocation: true

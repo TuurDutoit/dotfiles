@@ -1,81 +1,102 @@
 ---
 name: specify
-description: Use when turning a rough product, feature, workflow, or initiative idea into a clarified WHAT/WHY PRD or spec document, especially when the user asks to interview, grill, clarify requirements, specify, write a PRD, define scope, or create an initiative spec before planning or implementation.
+description: Use after a problem statement is clear, or when a user asks to brainstorm/refine a feature, fix, workflow, product direction, PRD, or initiative spec before implementation planning. Produces SPEC.md focused on WHAT and WHY, user experience, requirements, acceptance criteria, edge cases, product tradeoffs, and QA validation; avoids code, classes, functions, task breakdowns, and implementation plans.
 ---
 
 # Specify
 
-Turn an ambiguous initiative idea into a reviewed PRD by interviewing the user, resolving material ambiguities, comparing product directions, and writing `SPEC.md`.
+Turn a clear problem into a selected, reviewed product specification in `SPEC.md`.
 
-The PRD is exclusively about **WHAT** should exist and **WHY** it matters. Do not design implementation details, architecture, internal APIs, schemas, task breakdowns, technical plans, or delivery steps. Capture implementation constraints only when they materially affect product scope, user behavior, compliance, dependencies, or success criteria.
+The spec is about **WHAT** should exist and **WHY** it matters. It may include technical constraints that shape the user experience or product contract, such as data concepts, API behavior visible to consumers, config requirements, permissions, compliance, or integration expectations. It must not include code, classes, functions, file paths, implementation tasks, internal architecture, or delivery sequencing.
+
+If the problem is not clear enough to specify, use `clarify` first and produce `PROBLEM.md`.
+
+## Inputs
+
+Prefer these inputs in order:
+
+1. A `PROBLEM.md` from `clarify`.
+2. A user-provided problem statement with enough context to identify affected users, current pain, scope, and success signals.
+3. Existing tickets, docs, meeting notes, support reports, logs, or screenshots that clarify the problem.
+
+If an existing initiative directory contains `PROBLEM.md`, save `SPEC.md` next to it unless repository conventions say otherwise.
+
+If the user does not provide a path, search likely repository and Obsidian initiative locations for recent `PROBLEM.md` files. Prefer the one whose title or source notes match the current conversation. If multiple plausible files exist, ask the user which path to use before writing.
 
 ## Output Location
 
 Before choosing the destination, inspect the active repository or workspace:
 
 1. Read repository instructions such as `AGENTS.md`, `CLAUDE.md`, `.agents/**`, `.codex/**`, and README files for spec or plan storage conventions.
-2. Look for existing spec or plan directories such as `docs/specs`, `docs/plans`, `docs/superpowers/specs`, `.agents/specs`, `.agents/plans`, `.claude/specs`, `.codex/specs`, `specs`, or similar names.
-3. If repository conventions or existing files show where specs/plans live, create a new initiative directory there and save `SPEC.md` in it.
-4. Otherwise, save the PRD in Obsidian:
+2. Look for existing initiative/spec/plan directories such as `docs/specs`, `docs/plans`, `docs/superpowers/specs`, `.agents/specs`, `.agents/plans`, `.claude/specs`, `.codex/specs`, `specs`, or similar names.
+3. If repository conventions or existing files show where specs/plans live, create or reuse an initiative directory there and save `SPEC.md` in it.
+4. Otherwise, save the spec in Obsidian:
 
 ```text
 /Users/tuur/Documents/Obsidian/DataCamp/Agents/Initiatives/<YYYY-MM-DD>-<short-slug>/SPEC.md
 ```
 
-Create a new directory for each initiative unless the repository's convention clearly uses a flat file layout. If filesystem permissions prevent writing to the chosen location, request approval instead of silently choosing another location.
+Create a new directory for each initiative unless an earlier `PROBLEM.md` already established the initiative directory. If filesystem permissions prevent writing to the chosen location, request approval instead of silently choosing another location.
 
 ## Template Selection
 
 Before using the bundled template:
 
-1. If storing the PRD in a repository, look for a repository template first. Check instructions and common paths such as `docs/specs/template.md`, `docs/specs/SPEC.template.md`, `.agents/specs/template.md`, `.github/ISSUE_TEMPLATE`, or nearby existing specs with consistent headings.
-2. If a repository template exists, follow it exactly and adapt only what is needed for a WHAT/WHY PRD.
+1. If storing the spec in a repository, look for a repository template first. Check instructions and common paths such as `docs/specs/template.md`, `docs/specs/SPEC.template.md`, `.agents/specs/template.md`, `.github/ISSUE_TEMPLATE`, or nearby existing specs with consistent headings.
+2. If a repository template exists, follow it exactly and adapt only what is needed for a WHAT/WHY product spec.
 3. If no repository template exists, use `assets/SPEC.md.template`.
-4. If storing the PRD in Obsidian, use `assets/SPEC.md.template`.
+4. If storing the spec in Obsidian, use `assets/SPEC.md.template`.
+5. If a repository template lacks success criteria, manual QA, risks, or source notes, add concise equivalent sections so `planify` receives a complete handoff.
 
 ## Workflow
 
 1. **Gather context**
-   - Restate the user's initial idea in one compact paragraph.
-   - Inspect any provided docs, links, code, tickets, notes, or existing specs before asking questions.
+   - Read `PROBLEM.md` if present and restate the problem in your own words.
+   - Inspect any provided docs, links, code, tickets, notes, screenshots, logs, or existing specs before asking questions.
    - Determine the output location and template using the rules above.
-   - If a question can be answered from available artifacts, answer it yourself and cite the artifact in the PRD.
+   - If a question can be answered from available artifacts, answer it yourself and cite the artifact in `SPEC.md`.
 
-2. **Interview**
+2. **Check readiness**
+   - Verify the problem, users, impact, scope boundary, constraints, and success signals are clear enough.
+   - If a critical problem detail is missing, ask a problem-level question or switch to `clarify`.
+   - Do not brainstorm solutions until the problem framing is stable.
+
+3. **Explore product directions**
+   - Brainstorm 2-3 viable solution directions or scope shapes.
+   - Compare them by user value, scope, risk, learning value, operational impact, and reversibility.
+   - Recommend one direction and explain why.
+   - Ask for approval or correction before writing `SPEC.md`.
+   - Do not compare implementation approaches, frameworks, libraries, storage engines, internal services, classes, functions, or file structures.
+
+4. **Question the spec**
    - Ask exactly one question at a time.
    - Prefer multiple-choice questions with a recommended answer first.
    - Include why the recommendation is best in 1-2 sentences.
    - Accept "yes", "recommended", or "suggested" as choosing your recommendation.
-   - Keep asking until major branches of the decision tree are resolved: users, problem, goals, non-goals, workflows, entities from the user's perspective, permissions as product rules, dependencies, risks, success metrics, rollout expectations, and open questions.
-   - Stop early if the remaining ambiguity would not materially affect scope, user experience, validation, or success criteria.
-   - Redirect implementation answers back to observable product behavior. For example, turn "use Postgres" into "the user needs persistent history across sessions" unless the technology itself is a fixed constraint.
+   - Seek hard issues: edge cases, permissions, negative paths, data ownership as users understand it, lifecycle/state rules, accessibility, localization, privacy, dependencies, rollout, reversibility, and what manual QA must prove.
+   - Stop early when remaining ambiguity would not materially affect user experience, requirements, acceptance criteria, or QA.
 
-3. **Sharpen language**
-   - Build a small shared vocabulary as terms crystallize.
-   - Challenge overloaded or vague terms immediately.
-   - Use concrete scenarios to stress-test fuzzy rules and boundaries.
-   - Capture important trade-offs and hard-to-reverse decisions in the PRD.
+5. **Define QA while specifying**
+   - Write acceptance scenarios for each high-priority user story.
+   - Define manual QA steps that a human can run without reading code.
+   - Include positive paths, negative paths, edge cases, regression checks, expected results, and any setup data or environment assumptions.
+   - Keep QA focused on observable behavior and outcomes, not implementation internals.
 
-4. **Compare product directions**
-   - Before writing the PRD, present 2-3 viable product directions or scope shapes with trade-offs.
-   - Recommend one direction and explain the reasoning in terms of user value, scope, risk, and learnings.
-   - Do not compare implementation approaches, frameworks, libraries, storage engines, services, APIs, or architecture.
-   - Ask for approval or correction before writing `SPEC.md`.
-
-5. **Write the PRD**
+6. **Write `SPEC.md`**
    - Use the selected repository template if one exists; otherwise use `assets/SPEC.md.template`.
-   - Focus on what users need, what the experience must do, what is out of scope, and why these choices matter.
-   - Avoid implementation details unless they are explicit product constraints.
-   - Make requirements testable and unambiguous.
+   - Focus on user value, scope, experience, rules, requirements, success criteria, and validation.
    - Use measurable, technology-agnostic success criteria.
-   - Mark any unresolved critical decision as `[NEEDS CLARIFICATION: question]`, but keep these to zero whenever possible.
+   - Map each relevant `PROBLEM.md` success signal into a spec success criterion or an explicit non-goal.
+   - Include technical details only when they are part of the externally observable contract or hard constraint.
+   - Set `Status` to `Draft` while material questions remain, `Ready for Plan` when approved for `planify`, or `Blocked` when a required decision is missing.
+   - Mark unresolved critical decisions as `[NEEDS CLARIFICATION: question]`, but keep these to zero whenever possible.
 
-6. **Self-review**
+7. **Self-review**
+   - Verify no implementation plan, task list, architecture, code, class/function names, or file paths slipped in.
+   - Verify every requirement is testable and has an acceptance or QA path.
+   - Verify scope and non-goals are clear enough for `planify`.
    - Verify no placeholders, contradictions, unexplained jargon, or vague adjectives remain.
-   - Verify the PRD does not contain architecture, engineering task lists, internal API design, database schema design, framework choices, or other implementation plans.
-   - Check every requirement has an acceptance path or testable outcome.
-   - Check scope and non-goals are clear enough for a later planning step without adding that plan here.
-   - If review finds issues, fix the PRD before reporting completion.
+   - Fix issues before reporting completion.
 
 ## Question Format
 
@@ -100,9 +121,9 @@ For open-ended questions, provide a suggested answer and ask the user to accept 
 
 ## Completion Report
 
-After saving the PRD, report only:
+After saving the spec, report only:
 
 - `SPEC.md` path
-- brief checklist summary
+- brief spec/QA checklist summary
 - remaining `[NEEDS CLARIFICATION]` items, if any
-- recommended next step
+- recommended next step: usually `planify`
