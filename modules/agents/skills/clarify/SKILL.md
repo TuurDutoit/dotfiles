@@ -44,7 +44,8 @@ Before using the bundled template:
 
 2. **Question the problem**
    - Ask exactly one question at a time.
-   - Prefer multiple-choice questions with a recommended answer first.
+   - Start each question with a clear, direct sentence ending in a question mark.
+   - Prefer multiple-choice questions that list concrete options and then state the recommendation.
    - Include why the recommendation is best in 1-2 sentences.
    - Accept "yes", "recommended", or "suggested" as choosing your recommendation.
    - Keep asking until the important parts are clear: affected users, current behavior, desired outcome, impact, frequency, evidence, scope boundary, constraints, urgency, and what would prove the problem is solved.
@@ -78,9 +79,7 @@ Before using the bundled template:
 Use this compact format for most questions:
 
 ```markdown
-**Recommended:** A - <answer>
-
-<one or two sentences explaining why>
+**Question:** <clear question?>
 
 | Option | Answer |
 |--------|--------|
@@ -89,10 +88,14 @@ Use this compact format for most questions:
 | C | <alternative> |
 | Short | Provide a different short answer |
 
+**Recommended:** A - <answer>
+
+<one or two sentences explaining why>
+
 Reply with the option letter, "recommended", or a short custom answer.
 ```
 
-For open-ended questions, provide a suggested answer and ask the user to accept or replace it.
+For open-ended questions, still start with `**Question:** <clear question?>`, then provide a suggested answer and ask the user to accept or replace it.
 
 ## Completion Report
 
