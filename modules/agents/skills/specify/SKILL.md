@@ -7,7 +7,9 @@ description: Use after a problem statement is clear, or when a user asks to brai
 
 Turn a clear problem into a selected, reviewed product specification in `SPEC.md`.
 
-The spec is about **WHAT** should exist and **WHY** it matters. It may include technical constraints that shape the user experience or product contract, such as data concepts, API behavior visible to consumers, config requirements, permissions, compliance, or integration expectations. It must not include code, classes, functions, file paths, implementation tasks, internal architecture, or delivery sequencing.
+The spec is about **WHAT** should exist and **WHY** it matters. It may include technical constraints that shape the user experience or product contract, such as data concepts, API behavior visible to consumers, URI patterns, config requirements, permissions, compliance, or integration expectations. It must not include code, classes, functions, file paths, implementation tasks, internal architecture, or delivery sequencing.
+
+For technical problems, be concrete about the externally visible technical details. Avoid vague labels such as "forward-compatible published resource contract" when a specific product contract is knowable. Instead, write the actual contract shape and an example, such as "Include the contract version in the URI: `/widget/{contentType}/{contractVersion}`."
 
 If the problem is not clear enough to specify, use `clarify` first and produce `PROBLEM.md`.
 
@@ -72,11 +74,9 @@ Before using the bundled template:
    - Ask exactly one question at a time.
    - Start each question with a clear, direct sentence ending in a question mark.
    - Prefer multiple-choice questions with a recommended answer first.
-   - Make options concrete and scenario-shaped. Avoid abstract labels like "strict", "flexible", or "standard" unless each option explains what the user would actually experience.
-   - Include a short example for each option when the question is technical, policy-heavy, or otherwise easy to misread. Keep examples at the product-contract level: user-visible behavior, API/CLI/config behavior, data shape as users or integrators see it, or QA-observable outcomes. Do not use code, classes, functions, or file paths.
    - Include why the recommendation is best in 1-2 sentences.
    - Accept "yes", "recommended", or "suggested" as choosing your recommendation.
-   - Seek hard issues: edge cases, permissions, negative paths, data ownership as users understand it, lifecycle/state rules, accessibility, localization, privacy, dependencies, rollout, reversibility, and what manual QA must prove.
+   - Seek hard issues: edge cases, permissions, negative paths, data ownership as users understand it, lifecycle/state rules, accessibility, localization, privacy, dependencies, rollout, reversibility, externally visible technical contract details, and what manual QA must prove.
    - Stop early when remaining ambiguity would not materially affect user experience, requirements, acceptance criteria, or QA.
 
 5. **Define QA while specifying**
@@ -90,13 +90,15 @@ Before using the bundled template:
    - Focus on user value, scope, experience, rules, requirements, success criteria, and validation.
    - Use measurable, technology-agnostic success criteria.
    - Map each relevant `PROBLEM.md` success signal into a spec success criterion or an explicit non-goal.
-   - Include technical details only when they are part of the externally observable contract or hard constraint.
+   - Include technical details when they are part of the externally observable contract or hard constraint. For APIs, URLs, events, config, permissions, imports/exports, identifiers, schemas, or similar contracts, write the concrete pattern, fields, values, and examples a consumer or QA engineer would need.
+   - Replace vague technical abstractions with plain language. Bad: "forward-compatible published resource contract." Good: "Include the contract version in the URI, e.g. `/widget/{contentType}/{contractVersion}`."
    - Set `Status` to `Draft` while material questions remain, `Ready for Plan` when approved for `planify`, or `Blocked` when a required decision is missing.
    - Mark unresolved critical decisions as `[NEEDS CLARIFICATION: question]`, but keep these to zero whenever possible.
 
 7. **Self-review**
    - Verify no implementation plan, task list, architecture, code, class/function names, or file paths slipped in.
    - Verify every requirement is testable and has an acceptance or QA path.
+   - Verify technical requirements use concrete product-contract language with examples instead of abstract jargon.
    - Verify scope and non-goals are clear enough for `planify`.
    - Verify no placeholders, contradictions, unexplained jargon, or vague adjectives remain.
    - Fix issues before reporting completion.
@@ -114,23 +116,12 @@ Use this compact format for most interview questions:
 
 | Option | Answer |
 |--------|--------|
-| A | <recommended answer with a concrete example when useful> |
-| B | <alternative with a concrete example when useful> |
-| C | <alternative with a concrete example when useful> |
+| A | <recommended answer> |
+| B | <alternative> |
+| C | <alternative> |
 | Short | Provide a different short answer |
 
 Reply with the option letter, "recommended", or a short custom answer.
-```
-
-For technical or abstract questions, prefer this table:
-
-```markdown
-| Option | Answer | Example |
-|--------|--------|---------|
-| A | <recommended concrete choice> | <user-visible/API/config/data/QA example> |
-| B | <alternative concrete choice> | <user-visible/API/config/data/QA example> |
-| C | <alternative concrete choice> | <user-visible/API/config/data/QA example> |
-| Short | Provide a different short answer | <optional example> |
 ```
 
 For open-ended questions, still start with `**Question:** <clear question?>`, then provide a suggested answer and ask the user to accept or replace it.

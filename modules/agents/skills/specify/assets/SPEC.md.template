@@ -80,6 +80,7 @@
 ## Data, Permissions, and External Contracts
 
 - <User-visible data concept, permission rule, API/CLI/config behavior, integration expectation, or compliance constraint. Keep this at the product contract level, not the implementation level.>
+- <For technical contracts, include concrete patterns, fields, values, and examples. Example: `Include the contract version in the URI: /widget/{contentType}/{contractVersion}`.>
 
 ## Dependencies and Constraints
 
