@@ -72,6 +72,8 @@ Before using the bundled template:
    - Ask exactly one question at a time.
    - Start each question with a clear, direct sentence ending in a question mark.
    - Prefer multiple-choice questions with a recommended answer first.
+   - Make options concrete and scenario-shaped. Avoid abstract labels like "strict", "flexible", or "standard" unless each option explains what the user would actually experience.
+   - Include a short example for each option when the question is technical, policy-heavy, or otherwise easy to misread. Keep examples at the product-contract level: user-visible behavior, API/CLI/config behavior, data shape as users or integrators see it, or QA-observable outcomes. Do not use code, classes, functions, or file paths.
    - Include why the recommendation is best in 1-2 sentences.
    - Accept "yes", "recommended", or "suggested" as choosing your recommendation.
    - Seek hard issues: edge cases, permissions, negative paths, data ownership as users understand it, lifecycle/state rules, accessibility, localization, privacy, dependencies, rollout, reversibility, and what manual QA must prove.
@@ -112,12 +114,23 @@ Use this compact format for most interview questions:
 
 | Option | Answer |
 |--------|--------|
-| A | <recommended answer> |
-| B | <alternative> |
-| C | <alternative> |
+| A | <recommended answer with a concrete example when useful> |
+| B | <alternative with a concrete example when useful> |
+| C | <alternative with a concrete example when useful> |
 | Short | Provide a different short answer |
 
 Reply with the option letter, "recommended", or a short custom answer.
+```
+
+For technical or abstract questions, prefer this table:
+
+```markdown
+| Option | Answer | Example |
+|--------|--------|---------|
+| A | <recommended concrete choice> | <user-visible/API/config/data/QA example> |
+| B | <alternative concrete choice> | <user-visible/API/config/data/QA example> |
+| C | <alternative concrete choice> | <user-visible/API/config/data/QA example> |
+| Short | Provide a different short answer | <optional example> |
 ```
 
 For open-ended questions, still start with `**Question:** <clear question?>`, then provide a suggested answer and ask the user to accept or replace it.
