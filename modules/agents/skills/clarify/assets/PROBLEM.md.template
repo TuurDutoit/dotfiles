@@ -5,6 +5,10 @@
 **Owner**: <owner or team>
 **Visual Plan**: <visual-plan URL, export path, or local MDX folder if generated>
 
+## Visual-Plan Components
+
+<Use visual-plan components from the live block catalog while preserving the sections below. Recommended blocks: callout for the one-sentence problem and status, table for current state/impact/evidence summaries, checklist for success signals, diagram only for journeys/evidence/scope relationships that need a visual, and question-form for open questions.>
+
 ## One-Sentence Problem
 
 <One sentence describing the problem, affected users, and why it matters.>

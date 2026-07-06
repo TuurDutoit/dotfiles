@@ -50,8 +50,11 @@ Before using the bundled template:
 
 Use the `visual-plan` skill to generate and review the implementation plan before saving the final Markdown file.
 
+- Load and follow the `visual-plan` skill before authoring `PLAN.md`.
+- Fetch the live visual-plan block catalog first (`get-plan-blocks` or the local `plan blocks` command) and use valid component/block names from that catalog.
 - Treat `visual-plan` as the richer authoring/review surface and `PLAN.md` as the canonical file output.
-- Build the draft plan from the selected repository template or `assets/PLAN.md.template`, then invoke `visual-plan` in document-first mode with that draft as source material.
+- Build the draft plan from the selected repository template or `assets/PLAN.md.template`, preserving the template's general section order.
+- Render the important parts with visual-plan components: use decision callouts for hard-to-reverse choices, file/annotated-code blocks for load-bearing files, diagrams/data-model/API blocks for architecture and contracts, tables for traceability, checklists for phases/tests/QA, tabs for multiple files or states, and a bottom question-form for unresolved questions.
 - Use document-first visual-plan output for backend, API, data, migration, refactor, and architecture plans. Add canvas/prototype surfaces only for UI flows or interaction-heavy implementation plans.
 - After visual-plan review or generation, save the approved/current content to `PLAN.md` in the chosen location.
 - Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.

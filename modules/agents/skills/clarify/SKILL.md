@@ -39,8 +39,11 @@ Before using the bundled template:
 
 Use the `visual-plan` skill to generate and review the problem document before saving the final Markdown file.
 
+- Load and follow the `visual-plan` skill before authoring `PROBLEM.md`.
+- Fetch the live visual-plan block catalog first (`get-plan-blocks` or the local `plan blocks` command) and use valid component/block names from that catalog.
 - Treat `visual-plan` as the richer authoring/review surface and `PROBLEM.md` as the canonical file output.
-- Build the draft document from the selected repository template or `assets/PROBLEM.md.template`, then invoke `visual-plan` in document-first mode with that draft as source material.
+- Build the draft document from the selected repository template or `assets/PROBLEM.md.template`, preserving the template's general section order.
+- Render the important parts with visual-plan components: use callouts for the one-sentence problem and key decision/status, tables for current-state and impact summaries, checklists for success signals, diagrams only when a journey/evidence/scope relationship becomes clearer visually, and a bottom question-form for unresolved questions.
 - Do not add a top canvas by default. Add visual surfaces only when the problem is easier to review as a journey, flow, before/after state, or evidence map.
 - After visual-plan review or generation, save the approved/current content to `PROBLEM.md` in the chosen location.
 - Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.

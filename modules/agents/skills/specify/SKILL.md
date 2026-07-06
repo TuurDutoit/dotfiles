@@ -54,8 +54,11 @@ Before using the bundled template:
 
 Use the `visual-plan` skill to generate and review the spec before saving the final Markdown file.
 
+- Load and follow the `visual-plan` skill before authoring `SPEC.md`.
+- Fetch the live visual-plan block catalog first (`get-plan-blocks` or the local `plan blocks` command) and use valid component/block names from that catalog.
 - Treat `visual-plan` as the richer authoring/review surface and `SPEC.md` as the canonical file output.
-- Build the draft spec from the selected repository template or `assets/SPEC.md.template`, then invoke `visual-plan` in document-first mode with that draft as source material.
+- Build the draft spec from the selected repository template or `assets/SPEC.md.template`, preserving the template's general section order.
+- Render the important parts with visual-plan components: use decision callouts for the selected product direction, columns/tables for alternatives and requirement mapping, diagrams/data-model/API blocks for externally visible technical contracts when useful, checklists for manual QA and rollout criteria, and a bottom question-form for unresolved questions.
 - For UI or product-flow specs, use visual-plan's canvas/prototype surfaces when they help the user review the experience. For API, data, backend, or config specs, keep the plan document-first and use inline diagrams or structured contract blocks where useful.
 - After visual-plan review or generation, save the approved/current content to `SPEC.md` in the chosen location.
 - Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.

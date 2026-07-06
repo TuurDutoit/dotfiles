@@ -7,6 +7,10 @@
 **Problem**: <relative or absolute link to PROBLEM.md if available>
 **Visual Plan**: <visual-plan URL, export path, or local MDX folder if generated>
 
+## Visual-Plan Components
+
+<Use visual-plan components from the live block catalog while preserving the sections below. Recommended blocks: decision callout for hard-to-reverse choices, file/annotated-code blocks for load-bearing files, diagram/data-model/api-endpoint blocks for architecture and contracts, table for spec traceability, checklist for phases/tests/QA, tabs for multiple files or states, and question-form for open questions.>
+
 ## Goal
 
 <One sentence describing what this plan implements.>
