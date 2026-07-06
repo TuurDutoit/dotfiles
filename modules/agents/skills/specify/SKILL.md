@@ -50,6 +50,16 @@ Before using the bundled template:
 4. If storing the spec in Obsidian, use `assets/SPEC.md.template`.
 5. If a repository template lacks success criteria, manual QA, risks, or source notes, add concise equivalent sections so `planify` receives a complete handoff.
 
+## Visual-Plan Document Generation
+
+Use the `visual-plan` skill to generate and review the spec before saving the final Markdown file.
+
+- Treat `visual-plan` as the richer authoring/review surface and `SPEC.md` as the canonical file output.
+- Build the draft spec from the selected repository template or `assets/SPEC.md.template`, then invoke `visual-plan` in document-first mode with that draft as source material.
+- For UI or product-flow specs, use visual-plan's canvas/prototype surfaces when they help the user review the experience. For API, data, backend, or config specs, keep the plan document-first and use inline diagrams or structured contract blocks where useful.
+- After visual-plan review or generation, save the approved/current content to `SPEC.md` in the chosen location.
+- Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.
+
 ## Workflow
 
 1. **Gather context**
@@ -87,6 +97,7 @@ Before using the bundled template:
 
 6. **Write `SPEC.md`**
    - Use the selected repository template if one exists; otherwise use `assets/SPEC.md.template`.
+   - Generate/review the document with `visual-plan` before writing the final Markdown file.
    - Focus on user value, scope, experience, rules, requirements, success criteria, and validation.
    - Use measurable, technology-agnostic success criteria.
    - Map each relevant `PROBLEM.md` success signal into a spec success criterion or an explicit non-goal.
@@ -131,6 +142,7 @@ For open-ended questions, still start with `**Question:** <clear question?>`, th
 After saving the spec, report only:
 
 - `SPEC.md` path
+- visual-plan URL/export/local folder, if generated
 - brief spec/QA checklist summary
 - remaining `[NEEDS CLARIFICATION]` items, if any
 - recommended next step: usually `planify`

@@ -35,6 +35,16 @@ Before using the bundled template:
 3. If a repository template lacks problem framing, evidence, success signals, or open-question sections, add concise equivalent sections rather than dropping the handoff information.
 4. Otherwise, use `assets/PROBLEM.md.template`.
 
+## Visual-Plan Document Generation
+
+Use the `visual-plan` skill to generate and review the problem document before saving the final Markdown file.
+
+- Treat `visual-plan` as the richer authoring/review surface and `PROBLEM.md` as the canonical file output.
+- Build the draft document from the selected repository template or `assets/PROBLEM.md.template`, then invoke `visual-plan` in document-first mode with that draft as source material.
+- Do not add a top canvas by default. Add visual surfaces only when the problem is easier to review as a journey, flow, before/after state, or evidence map.
+- After visual-plan review or generation, save the approved/current content to `PROBLEM.md` in the chosen location.
+- Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.
+
 ## Workflow
 
 1. **Gather context**
@@ -64,6 +74,7 @@ Before using the bundled template:
 
 5. **Write `PROBLEM.md`**
    - Use the selected repository template if one exists; otherwise use `assets/PROBLEM.md.template`.
+   - Generate/review the document with `visual-plan` before writing the final Markdown file.
    - Keep it solution-neutral.
    - Set `Status` to `Draft` while questions remain, `Ready for Spec` when the problem is clear enough for `specify`, or `Blocked` when a required answer is missing.
    - Mark any unresolved critical issue as `[NEEDS CLARIFICATION: question]`, but keep these to zero whenever possible.
@@ -102,6 +113,7 @@ For open-ended questions, still start with `**Question:** <clear question?>`, th
 After saving the problem document, report only:
 
 - `PROBLEM.md` path
+- visual-plan URL/export/local folder, if generated
 - brief readiness checklist summary
 - remaining `[NEEDS CLARIFICATION]` items, if any
 - recommended next step: usually `specify`

@@ -46,6 +46,16 @@ Before using the bundled template:
 3. Otherwise, use `assets/PLAN.md.template`.
 4. If a repository template lacks spec traceability, change surface, test cases, manual QA, or validation commands, add concise equivalent sections so implementation can proceed without rereading the whole conversation.
 
+## Visual-Plan Document Generation
+
+Use the `visual-plan` skill to generate and review the implementation plan before saving the final Markdown file.
+
+- Treat `visual-plan` as the richer authoring/review surface and `PLAN.md` as the canonical file output.
+- Build the draft plan from the selected repository template or `assets/PLAN.md.template`, then invoke `visual-plan` in document-first mode with that draft as source material.
+- Use document-first visual-plan output for backend, API, data, migration, refactor, and architecture plans. Add canvas/prototype surfaces only for UI flows or interaction-heavy implementation plans.
+- After visual-plan review or generation, save the approved/current content to `PLAN.md` in the chosen location.
+- Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.
+
 ## Workflow
 
 1. **Load the spec**
@@ -78,6 +88,7 @@ Before using the bundled template:
 
 6. **Write `PLAN.md`**
    - Use the selected repository template if one exists; otherwise use `assets/PLAN.md.template`.
+   - Generate/review the document with `visual-plan` before writing the final Markdown file.
    - Break work into logical phases that can be implemented and committed independently.
    - Each phase should produce a verifiable state.
    - Mark parallelizable work only when files and dependencies do not conflict.
@@ -95,6 +106,7 @@ Before using the bundled template:
 After saving the plan, report only:
 
 - `PLAN.md` path
+- visual-plan URL/export/local folder, if generated
 - brief coverage summary against `SPEC.md`
 - validation/test commands the implementer should run
 - remaining open questions or risks, if any
