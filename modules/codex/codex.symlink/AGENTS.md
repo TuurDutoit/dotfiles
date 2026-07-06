@@ -77,6 +77,8 @@ Follow these steps for non-trivial tasks:
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
+- When using the `visual-plan` skill, do not run `npx @agent-native/core@latest plan blocks`. Use the cached block catalog at `~/Documents/visual-plan-blocks.md` instead.
+- Other `npx @agent-native/core` commands must be executed outside the sandbox.
 
 ## Jira
 
