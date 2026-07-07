@@ -4,7 +4,7 @@ Tuur's dotfiles live at `/Users/tuur/.dotfiles` and sync through `git@github.com
 
 ## Dotfiles Workflow
 
-Every change under `/Users/tuur/.dotfiles` must end with a commit and push in the same turn. Changes left uncommitted will not sync to other machines.
+Every change under `/Users/tuur/.dotfiles` must end with a commit and push in the same turn. Changes left uncommitted will not sync to other machines. For this project it's fine (and expected) to commit to `master`.
 
 1. Check status with `git -C /Users/tuur/.dotfiles status`.
 2. If status shows pre-existing changes you did not make, pause and ask Tuur whether to commit and push them separately first, skip them, or include them. Do not include unrelated pre-existing changes without explicit approval.

@@ -14,7 +14,7 @@
 
 - Use `gh` CLI for all GitHub operations (PRs, issues, checks, etc.).
 - Write short commit messages using conventional commits (`feat:`, `fix:`, `chore:`, etc.).
-- Never commit or push directly to `main` or `master` — always use feature branches.
+- Never commit or push directly to `main` or `master` — always use feature branches (unless the user says differently, or the project has different rules)
 - Default branch is `master` in most repos. Do not assume `main`.
 - Always commit your work as you go — do not wait until the end. For larger changes, commit each logical step/phase separately. When following a plan, each step gets its own commit.
 - Ensure all checks (linting, types, tests, etc.) pass before committing.
