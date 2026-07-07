@@ -1,0 +1,4 @@
+interface:
+  display_name: "Document Project Vision"
+  short_description: "Create repo vision and strategy docs"
+  default_prompt: "Use $document-project-vision to interview me and write VISION.md for this project."
