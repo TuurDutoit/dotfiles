@@ -77,8 +77,9 @@ Follow these steps for non-trivial tasks:
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
-- When using the `visual-plan` skill, do not run `npx @agent-native/core@latest plan blocks`. Use the cached block catalog at `~/Documents/visual-plan-blocks.md` instead.
-- Other `npx @agent-native/core` commands must be executed outside the sandbox.
+- Replace any `npx @agent-native/core@latest <args>` command with the globally installed `agent-native <args>` command, for example `agent-native plan blocks`.
+- Run `agent-native` commands outside the sandbox.
+- When `clarify`, `specify`, or `planify` use `visual-plan`, the generated `PROBLEM.md`, `SPEC.md`, or `PLAN.md` file is the visual plan source. Serve/check that file with `agent-native`; do not create a separate `plan.mdx` or MDX folder unless the user explicitly asks for a standalone visual-plan artifact.
 
 ## Jira
 

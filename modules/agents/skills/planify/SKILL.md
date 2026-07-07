@@ -48,16 +48,16 @@ Before using the bundled template:
 
 ## Visual-Plan Document Generation
 
-Use the `visual-plan` skill to generate and review the implementation plan before saving the final Markdown file.
+Use the `visual-plan` skill to generate and review `PLAN.md` as the visual plan itself.
 
 - Load and follow the `visual-plan` skill before authoring `PLAN.md`.
-- Fetch the live visual-plan block catalog first (`get-plan-blocks` or the local `plan blocks` command) and use valid component/block names from that catalog.
-- Treat `visual-plan` as the richer authoring/review surface and `PLAN.md` as the canonical file output.
-- Build the draft plan from the selected repository template or `assets/PLAN.md.template`, preserving the template's general section order.
+- Fetch the live visual-plan block catalog first with `get-plan-blocks` or `agent-native plan blocks` and use valid component/block names from that catalog. Do not use `npx @agent-native/core@latest`.
+- Treat `PLAN.md` as the Agent Native MDX source file and the canonical output. Do not create a separate `plan.mdx`, `plans/<slug>/`, MDX folder, or exported copy for this skill.
+- Build the draft plan directly in `PLAN.md` from the selected repository template or `assets/PLAN.md.template`, preserving the template's general section order.
 - Render the important parts with visual-plan components: use decision callouts for hard-to-reverse choices, file/annotated-code blocks for load-bearing files, diagrams/data-model/API blocks for architecture and contracts, tables for traceability, checklists for phases/tests/QA, tabs for multiple files or states, and a bottom question-form for unresolved questions.
 - Use document-first visual-plan output for backend, API, data, migration, refactor, and architecture plans. Add canvas/prototype surfaces only for UI flows or interaction-heavy implementation plans.
-- After visual-plan review or generation, save the approved/current content to `PLAN.md` in the chosen location.
-- Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.
+- Review by serving/checking `PLAN.md` itself with `agent-native` outside the sandbox. Report the local URL from stdout or the sibling `.plan-url` file when available.
+- Treat `.plan-url` as a local token file and do not commit it.
 
 ## Workflow
 
@@ -91,7 +91,7 @@ Use the `visual-plan` skill to generate and review the implementation plan befor
 
 6. **Write `PLAN.md`**
    - Use the selected repository template if one exists; otherwise use `assets/PLAN.md.template`.
-   - Generate/review the document with `visual-plan` before writing the final Markdown file.
+   - Author `PLAN.md` as the visual-plan source and review it with `agent-native` before reporting completion.
    - Break work into logical phases that can be implemented and committed independently.
    - Each phase should produce a verifiable state.
    - Mark parallelizable work only when files and dependencies do not conflict.
@@ -109,7 +109,7 @@ Use the `visual-plan` skill to generate and review the implementation plan befor
 After saving the plan, report only:
 
 - `PLAN.md` path
-- visual-plan URL/export/local folder, if generated
+- agent-native local URL, if served
 - brief coverage summary against `SPEC.md`
 - validation/test commands the implementer should run
 - remaining open questions or risks, if any

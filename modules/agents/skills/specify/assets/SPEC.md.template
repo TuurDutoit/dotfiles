@@ -4,11 +4,11 @@
 **Status**: Draft | Ready for Plan | Blocked
 **Owner**: <owner or team>
 **Problem**: <relative or absolute link to PROBLEM.md if available>
-**Visual Plan**: <visual-plan URL, export path, or local MDX folder if generated>
+**Visual Plan Source**: This file (`SPEC.md`)
 
 ## Visual-Plan Components
 
-<Use visual-plan components from the live block catalog while preserving the sections below. Recommended blocks: decision callout for the selected product direction, columns or table for alternatives, diagram/data-model/api-endpoint blocks for external contracts when useful, checklist for manual QA and rollout criteria, and question-form for open questions.>
+<Use Agent Native visual-plan components directly in this file while preserving the sections below. Recommended blocks: decision callout for the selected product direction, columns or table for alternatives, diagram/data-model/api-endpoint blocks for external contracts when useful, checklist for manual QA and rollout criteria, and question-form for open questions.>
 
 ## Summary
 

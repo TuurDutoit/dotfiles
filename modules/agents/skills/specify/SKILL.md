@@ -52,16 +52,16 @@ Before using the bundled template:
 
 ## Visual-Plan Document Generation
 
-Use the `visual-plan` skill to generate and review the spec before saving the final Markdown file.
+Use the `visual-plan` skill to generate and review `SPEC.md` as the visual plan itself.
 
 - Load and follow the `visual-plan` skill before authoring `SPEC.md`.
-- Fetch the live visual-plan block catalog first (`get-plan-blocks` or the local `plan blocks` command) and use valid component/block names from that catalog.
-- Treat `visual-plan` as the richer authoring/review surface and `SPEC.md` as the canonical file output.
-- Build the draft spec from the selected repository template or `assets/SPEC.md.template`, preserving the template's general section order.
+- Fetch the live visual-plan block catalog first with `get-plan-blocks` or `agent-native plan blocks` and use valid component/block names from that catalog. Do not use `npx @agent-native/core@latest`.
+- Treat `SPEC.md` as the Agent Native MDX source file and the canonical output. Do not create a separate `plan.mdx`, `plans/<slug>/`, MDX folder, or exported copy for this skill.
+- Build the draft spec directly in `SPEC.md` from the selected repository template or `assets/SPEC.md.template`, preserving the template's general section order.
 - Render the important parts with visual-plan components: use decision callouts for the selected product direction, columns/tables for alternatives and requirement mapping, diagrams/data-model/API blocks for externally visible technical contracts when useful, checklists for manual QA and rollout criteria, and a bottom question-form for unresolved questions.
 - For UI or product-flow specs, use visual-plan's canvas/prototype surfaces when they help the user review the experience. For API, data, backend, or config specs, keep the plan document-first and use inline diagrams or structured contract blocks where useful.
-- After visual-plan review or generation, save the approved/current content to `SPEC.md` in the chosen location.
-- Record the visual-plan URL, export, or local MDX folder in the template's `Visual Plan` field when one exists. Do not commit `.plan-url` token files.
+- Review by serving/checking `SPEC.md` itself with `agent-native` outside the sandbox. Report the local URL from stdout or the sibling `.plan-url` file when available.
+- Treat `.plan-url` as a local token file and do not commit it.
 
 ## Workflow
 
@@ -100,7 +100,7 @@ Use the `visual-plan` skill to generate and review the spec before saving the fi
 
 6. **Write `SPEC.md`**
    - Use the selected repository template if one exists; otherwise use `assets/SPEC.md.template`.
-   - Generate/review the document with `visual-plan` before writing the final Markdown file.
+   - Author `SPEC.md` as the visual-plan source and review it with `agent-native` before reporting completion.
    - Focus on user value, scope, experience, rules, requirements, success criteria, and validation.
    - Use measurable, technology-agnostic success criteria.
    - Map each relevant `PROBLEM.md` success signal into a spec success criterion or an explicit non-goal.
@@ -145,7 +145,7 @@ For open-ended questions, still start with `**Question:** <clear question?>`, th
 After saving the spec, report only:
 
 - `SPEC.md` path
-- visual-plan URL/export/local folder, if generated
+- agent-native local URL, if served
 - brief spec/QA checklist summary
 - remaining `[NEEDS CLARIFICATION]` items, if any
 - recommended next step: usually `planify`

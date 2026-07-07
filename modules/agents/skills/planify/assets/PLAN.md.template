@@ -5,11 +5,11 @@
 **Owner**: <owner or team>
 **Spec**: <relative or absolute link to SPEC.md>
 **Problem**: <relative or absolute link to PROBLEM.md if available>
-**Visual Plan**: <visual-plan URL, export path, or local MDX folder if generated>
+**Visual Plan Source**: This file (`PLAN.md`)
 
 ## Visual-Plan Components
 
-<Use visual-plan components from the live block catalog while preserving the sections below. Recommended blocks: decision callout for hard-to-reverse choices, file/annotated-code blocks for load-bearing files, diagram/data-model/api-endpoint blocks for architecture and contracts, table for spec traceability, checklist for phases/tests/QA, tabs for multiple files or states, and question-form for open questions.>
+<Use Agent Native visual-plan components directly in this file while preserving the sections below. Recommended blocks: decision callout for hard-to-reverse choices, file/annotated-code blocks for load-bearing files, diagram/data-model/api-endpoint blocks for architecture and contracts, table for spec traceability, checklist for phases/tests/QA, tabs for multiple files or states, and question-form for open questions.>
 
 ## Goal
 
