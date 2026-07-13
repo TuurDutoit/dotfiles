@@ -13,6 +13,10 @@
 
 - Use the `$coding-workflow-quality` skill when planning, implementing, testing, reviewing, or otherwise modifying code.
 
+## Running Commands
+
+- Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
+
 ## Jira
 
 - Default to project `LX` (Learner Experience) when creating Jira tickets, unless told otherwise.

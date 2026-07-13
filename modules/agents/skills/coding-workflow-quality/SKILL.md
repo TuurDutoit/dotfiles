@@ -42,7 +42,3 @@ Follow these steps for non-trivial tasks:
   3. In tests, use `fromPartial` from `@total-typescript/shoehorn` if available.
   4. Only use a cast as a last resort.
 - Don't invent field names (e.g. in API or DB schemas). You have to confirm the exact names (e.g. from existing types or an API call). If you can't find a reliable source, you have to ask me.
-
-## Running Commands
-
-- Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
