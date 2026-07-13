@@ -2,20 +2,19 @@
 
 ## Pointers
 
-- My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
-- When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
-
-## Git & GitHub
-
 - Use the `$git-github-workflow` skill for all Git, GitHub, and pull request work.
-
-## Coding Workflow & Quality
-
 - Use the `$coding-workflow-quality` skill when planning, implementing, testing, reviewing, or otherwise modifying code.
+- My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
+  - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
+
+## General
+
+- When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
 
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
+- Run Yarn, npm and Just scripts outside the sandbox
 
 ## Jira
 
