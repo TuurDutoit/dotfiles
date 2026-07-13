@@ -75,3 +75,5 @@ cask "codex-app"
 cask "chatgpt"
 brew 'mobile-dev-inc/tap/maestro'# Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
+# Modern diagram scripting language that turns text to diagrams
+brew "d2"

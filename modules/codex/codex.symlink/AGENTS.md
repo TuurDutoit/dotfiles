@@ -1,10 +1,5 @@
 # Global Rules
 
-## Startup
-
-- Before starting any work, always check if you are running in Orca first: run `echo $ORCA_APP_VERSION`. If it prints a version number, you are running in Orca. If it prints nothing, you are not.
-- If you are running in Orca, you should _always_ use the orca-cli and orchestration skills to create worktrees. Never make changes in the main repos! (unless the user specifically asks for that)
-
 ## Pointers
 
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
@@ -78,6 +73,7 @@ Follow these steps for non-trivial tasks:
   2. Use a type annotation (`const myVal: Type = something`).
   3. In tests, use `fromPartial` from `@total-typescript/shoehorn` if available.
   4. Only use a cast as a last resort.
+- Don't invent field names (e.g. in API or DB schemas). You have to confirm the exact names (e.g. from existing types or an API call). If you can't find a reliable source, you have to ask me.
 
 ## Running Commands
 
