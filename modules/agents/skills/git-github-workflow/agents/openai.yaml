@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git & GitHub Workflow"
+  short_description: "Handle GitHub and pull-request workflows"
+  default_prompt: "Use $git-github-workflow to safely manage this repository and its pull request."

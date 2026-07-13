@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coding Workflow & Quality"
+  short_description: "Follow the coding workflow and quality rules"
+  default_prompt: "Use $coding-workflow-quality to implement this change under the required engineering workflow."
