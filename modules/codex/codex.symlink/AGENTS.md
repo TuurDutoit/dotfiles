@@ -15,6 +15,7 @@
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
 - Run Yarn, npm and Just scripts outside the sandbox
+- Run the coderabbit CLI outside the sandbox
 
 ## Jira
 
