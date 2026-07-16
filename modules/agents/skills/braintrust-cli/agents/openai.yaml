@@ -1,0 +1,4 @@
+interface:
+  display_name: "Braintrust CLI"
+  short_description: "Operate Braintrust via the bt CLI"
+  default_prompt: "Use $braintrust-cli to inspect my Braintrust project and run the needed bt command."
