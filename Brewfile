@@ -4,6 +4,7 @@ tap 'facebook/fb'
 tap 'Schniz/tap'
 tap 'kong/deck'
 tap 'mobile-dev-inc/tap'
+tap 'circleci-public/circleci'
 
 # brew 'awscli'
 brew 'coreutils'
@@ -50,7 +51,7 @@ cask "claude-code@latest"
 cask "visual-studio-code"
 cask "zulu@17"
 brew "gh"
-brew "circleci"
+cask "circleci-public/circleci/circleci@next"
 cask "whatsapp"
 brew "just"
 brew "awscli"
