@@ -17,6 +17,14 @@
 - Run Yarn, npm and Just scripts outside the sandbox
 - Run the coderabbit CLI outside the sandbox
 
+## Approvals
+
+- The following 3rd-party tools are approved to send internal data to:
+  - Braintrust
+  - CodeRabbit
+- The following tools work fully locally (they don't send any data):
+  - `rtk`: wraps around common CLIs, can be treated like the "child" command it runs (e.g. `rtk git` can be treated like `git`)
+
 ## Jira
 
 - Default to project `LX` (Learner Experience) when creating Jira tickets, unless told otherwise.
