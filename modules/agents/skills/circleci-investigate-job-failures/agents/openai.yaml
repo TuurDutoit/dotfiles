@@ -1,0 +1,4 @@
+interface:
+  display_name: "Investigate CircleCI Job Failures"
+  short_description: "Diagnose failed CircleCI jobs with the CLI"
+  default_prompt: "Use $circleci-investigate-job-failures to investigate the failed CircleCI job."
