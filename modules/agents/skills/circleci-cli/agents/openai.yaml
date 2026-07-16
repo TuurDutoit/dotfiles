@@ -1,0 +1,4 @@
+interface:
+  display_name: "CircleCI CLI"
+  short_description: "Navigate the installed CircleCI CLI reference"
+  default_prompt: "Use $circleci-cli to find the exact CircleCI CLI command and its documented flags."

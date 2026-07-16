@@ -1,0 +1,94 @@
+<!-- GENERATED FILE — do not edit.
+Source: `circleci --help` from circleci 1.0.44892-pre (7ef363c302e4).
+Refresh: `python3 scripts/generate_reference.py`
+-->
+
+# CircleCI CLI
+
+Work with CircleCI from the command line.
+
+## Usage
+
+`circleci [flags]`
+
+## CI Commands
+
+| Command      | Description                                      |
+| ------------ | ------------------------------------------------ |
+| `artifact`   | List and download a job's artifact files         |
+| `config`     | Generate, validate, process and pack config YAML |
+| `job`        | Inspect a job's details, output and artifacts    |
+| `pipeline`   | Define what will happen in a run                 |
+| `run`        | Trigger, watch and cancel CI runs                |
+| `testresult` | Inspect test results for a job                   |
+| `workflow`   | Inspect, rerun and cancel workflows (job graphs) |
+
+## Management Commands
+
+| Command          | Description                                            |
+| ---------------- | ------------------------------------------------------ |
+| `certificate`    | Manage iOS code signing certificates                   |
+| `context`        | Manage secret env vars shared across pipelines         |
+| `deploy`         | Track released components and versions                 |
+| `dlc`            | Purge a project's Docker layer cache (DLC)             |
+| `envvar`         | List, set and delete a project's environment variables |
+| `namespace`      | Manage the org namespace orbs publish under            |
+| `orb`            | Create, publish and inspect orbs (reusable config)     |
+| `org`            | Manage CircleCI organizations                          |
+| `policy`         | Govern config with Rego security policies              |
+| `project`        | List, follow and configure CircleCI projects           |
+| `runner`         | Manage self-hosted runners                             |
+| `signing-config` | Manage iOS signing configs                             |
+
+## User Commands
+
+| Command      | Description                                             |
+| ------------ | ------------------------------------------------------- |
+| `auth`       | Log in, sign up and check your CircleCI identity        |
+| `completion` | Install, remove or print shell completions              |
+| `mcp`        | Run the CLI as an MCP server for AI tools               |
+| `my`         | Show resources for the authenticated user               |
+| `onboard`    | Guided onboarding: scan, test, generate config, sign up |
+| `setting`    | Configure the CLI itself (token, host, defaults)        |
+
+## Extension Commands
+
+| Command     | Description                    |
+| ----------- | ------------------------------ |
+| `extension` | Manage CLI extensions          |
+| `testsuite` | Extension (circleci-testsuite) |
+
+## Additional Commands
+
+| Command   | Description                         |
+| --------- | ----------------------------------- |
+| `api`     | Call the CircleCI REST API directly |
+| `version` | Print version information           |
+
+## Help Topics
+
+| Topic             | Description                                             |
+| ----------------- | ------------------------------------------------------- |
+| `environment`     | Environment variables that can be used with circleci    |
+| `formatting`      | Formatting options for JSON data exported from circleci |
+| `getting-started` | Install, authenticate, and start using circleci         |
+| `reference`       | A comprehensive reference of all circleci commands      |
+| `telemetry`       | Information about telemetry in circleci                 |
+
+## Flags
+
+| Flag                  | Description                                                  |
+| --------------------- | ------------------------------------------------------------ |
+| `-c, --config string` | Path to config file (default: ~/.config/circleci/config.yml) |
+| `--debug`             | Enable debug logging                                         |
+| `-h, --help`          | help for circleci                                            |
+| `--no-color`          | Disable ANSI color output (same as setting NO_COLOR)         |
+| `-q, --quiet`         | Suppress informational output. Data on stdout is unaffected  |
+| `-v, --version`       | version for circleci                                         |
+
+## Learn More
+
+- Use `circleci <command> <subcommand> --help` for more information about a command.
+- Read the manual at <https://cli.circleci.com/reference/>
+- Support at <https://github.com/CircleCI-Public/circleci-cli/issues>
+
