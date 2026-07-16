@@ -4,6 +4,9 @@
 
 - Use the `$git-github-workflow` skill for all Git, GitHub, and pull request work.
 - Use the `$coding-workflow-quality` skill when planning, implementing, testing, reviewing, or otherwise modifying code.
+- Use the `$circleci-investigate-job-failures` to investigate CircleCI failures
+- Use the `circleci` CLI to interact with CircleCI (reference: `$circleci-cli` skill)
+- Use the `bt` CLI to interact with Braintrust (reference: `$braintrust-cli` skill)
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
   - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
 
