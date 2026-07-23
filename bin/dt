@@ -98,6 +98,7 @@ setup os
 setup build
 setup java
 setup node
+setup agents
 setup ios
 setup claude
 setup codex
