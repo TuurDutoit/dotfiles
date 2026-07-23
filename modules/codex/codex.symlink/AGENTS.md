@@ -23,6 +23,7 @@
 ## Approvals
 
 - The following 3rd-party tools are approved to send internal data to:
+  - Slack
   - Braintrust
   - CodeRabbit
 - The following tools work fully locally (they don't send any data):
