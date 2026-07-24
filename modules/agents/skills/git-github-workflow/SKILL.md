@@ -19,6 +19,12 @@ description: Use when working with Git, GitHub, commits, branches, pull requests
 - When pushing changes to a branch that has an open PR, update the PR title and description to reflect the latest state of the changes. If there are existing review comments that have been addressed, reply to them noting they've been resolved.
 - Never use `gh pr checks <num> --watch` — it blocks the session until CI completes. Watch checks in the background instead (e.g. via `Monitor`, or `gh pr checks` polling without `--watch`).
 
+### Non-interactive rebases
+
+- In terminals without a usable editor, run rebases with `GIT_EDITOR=true` to accept Git's existing commit messages: `GIT_EDITOR=true git rebase <upstream>`.
+- When continuing after conflict resolution in such a terminal, use `GIT_EDITOR=true git rebase --continue`.
+- For interactive rebases, prevent the todo-list editor from opening as well: `GIT_SEQUENCE_EDITOR=: GIT_EDITOR=true git rebase -i <upstream>`.
+
 ## Pull Request Descriptions
 
 Stay within the repo's PR template if there is one. Otherwise, structure the description as:
