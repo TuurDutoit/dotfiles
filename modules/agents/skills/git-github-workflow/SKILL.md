@@ -31,6 +31,7 @@ Stay within the repo's PR template if there is one. Otherwise, structure the des
 
 - **What it does**:
   - High-level goal: what problem this solves or feature it implements (1-2 sentences).
+  - Why: explain why this change is needed and the impact it is intended to have.
   - Approach: high-level rundown of the chosen approach (1-3 sentences/bullets). Briefly note tradeoffs if you picked between options.
   - Highlights: call out changes that could affect external services — API changes, DB schema changes, new env vars, new dependencies.
   - Don't list changed files or minor details. Reviewers want a quick overview and the riskiest changes, not a changelog.
