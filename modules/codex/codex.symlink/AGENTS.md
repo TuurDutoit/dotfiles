@@ -14,6 +14,13 @@
 
 - When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
 
+## Continuous Improvement
+
+- After completing a task, briefly reflect on how the work went and whether anything should be documented or updated.
+- Look for durable learnings: unexpected friction, hard-to-find information, confusing behavior, repeated user steering, important architectural decisions, or repetitive project-wide changes.
+- When a learning would help future work, update the most appropriate durable documentation (for example, the README, `AGENTS.md`, a skill, or another relevant doc) as part of the task. Keep guidance specific, concise, and scoped to where it applies.
+- Mention relevant documentation updates or observations in the handoff. Do not add speculative, one-off, or project-specific rules to global instructions.
+
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.

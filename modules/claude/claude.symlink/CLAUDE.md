@@ -103,9 +103,11 @@ Examples:
 
 ## Self-Improvement
 
-- After completing a task, briefly reflect: were there unexpected problems, anything surprising, or anything that could still be improved? Share relevant observations with the user.
-- When corrected or when discovering an implicit rule during work, consider adding it to `~/.claude/CLAUDE.md`.
-- Only add rules that are general enough to apply across most projects.
+- After completing a task, briefly reflect on how the work went and whether anything should be documented or updated. Share relevant observations with the user.
+- Look for durable learnings: unexpected friction, hard-to-find information, confusing behavior, repeated user steering, important architectural decisions, or repetitive project-wide changes.
+- When a learning would help future work, update the most appropriate durable documentation (for example, the README, `AGENTS.md`, a skill, or another relevant doc) as part of the task. Keep guidance specific, concise, and scoped to where it applies.
+- When corrected or when discovering an implicit rule during work, consider adding it to `~/.claude/CLAUDE.md` only when it is general enough to apply across most projects.
+- Do not add speculative, one-off, or project-specific rules to global instructions.
 - Keep this file under 200 lines.
 - Before restructuring or removing existing rules, ask for confirmation.
 
