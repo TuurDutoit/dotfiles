@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, realpathSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import why from '../bin/yarn-why';
+
+const scriptPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'yarn-why');
 
 function fixture(files) {
   const directory = mkdtempSync(path.join(os.tmpdir(), 'yarn-why-'));
@@ -13,6 +17,10 @@ function fixture(files) {
     writeFileSync(target, contents);
   }
   return directory;
+}
+
+function runWhy(arguments_, cwd) {
+  return spawnSync(process.execPath, [scriptPath, ...arguments_], { cwd, encoding: 'utf8' });
 }
 
 test('parses Yarn v1 and follows exact descriptors to a root manifest', (t) => {
@@ -65,4 +73,53 @@ test('includes v1 optional dependencies in reverse dependency paths', (t) => {
   const output = why.renderWhy(path.join(directory, 'yarn.lock'), why.parseQuery('leaf'));
   assert.match(output, /top@1\.0\.0 \(requires leaf@\^1\)/);
   assert.match(output, /app \(package\.json dependencies → top@\^1\)/);
+});
+
+test('accepts lockfile flags, retains positional compatibility, and prints the absolute path', (t) => {
+  const directory = fixture({
+    'yarn.lock': '# yarn lockfile v1\n\nleaf@^1:\n  version "1.0.0"\n',
+  });
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const lockfile = path.join(directory, 'yarn.lock');
+
+  for (const arguments_ of [
+    ['--lockfile', lockfile, 'leaf'],
+    ['-f', lockfile, 'leaf'],
+    [lockfile, 'leaf'],
+  ]) {
+    const result = runWhy(arguments_, directory);
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, new RegExp(`^Lockfile: ${lockfile.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\n`));
+    assert.match(result.stdout, /Why leaf is installed:/);
+  }
+});
+
+test('discovers the nearest parent yarn.lock when no lockfile is passed', (t) => {
+  const directory = fixture({
+    'yarn.lock': '# yarn lockfile v1\n\nleaf@^1:\n  version "1.0.0"\n',
+    'nested/deeper/.keep': '',
+  });
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+
+  const result = runWhy(['leaf'], path.join(directory, 'nested', 'deeper'));
+  assert.equal(result.status, 0, result.stderr);
+  const printedLockfile = result.stdout.match(/^Lockfile: (.*)$/m)?.[1];
+  assert.equal(realpathSync(printedLockfile), realpathSync(path.join(directory, 'yarn.lock')));
+});
+
+test('reports malformed flags and a missing discovered lockfile clearly', (t) => {
+  const directory = fixture({});
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+
+  const unknownFlag = runWhy(['--unknown', 'leaf'], directory);
+  assert.equal(unknownFlag.status, 1);
+  assert.match(unknownFlag.stderr, /Unknown option: --unknown/);
+
+  const missingFlagValue = runWhy(['-f'], directory);
+  assert.equal(missingFlagValue.status, 1);
+  assert.match(missingFlagValue.stderr, /Missing lockfile path after -f/);
+
+  const missingLockfile = runWhy(['leaf'], directory);
+  assert.equal(missingLockfile.status, 1);
+  assert.match(missingLockfile.stderr, /Could not find yarn\.lock in .* or its parent directories/);
 });
