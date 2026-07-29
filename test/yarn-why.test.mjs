@@ -52,9 +52,17 @@ test('supports exact, prefix, wildcard, caret, tilde, comparator, and OR version
   assert.equal(match('1.2.3', '>=1.2 <2'), true);
   assert.equal(match('2.0.0', '^1.2.3 || ^2.0.0'), true);
   assert.equal(match('2.0.0', '~1.2.0'), false);
+  assert.equal(match('2.3.9', '1.2 - 2.3'), true);
+  assert.equal(match('2.4.0', '1.2 - 2.3'), false);
 });
 
-test('includes v1 optional dependencies in reverse dependency paths', () => {
-  const lock = why.parseLockfile(`# yarn lockfile v1\n\nleaf@^1:\n  version "1.0.0"\n\ntop@^1:\n  version "1.0.0"\n  optionalDependencies:\n    leaf "^1"\n`);
-  assert.equal(lock.entries[1].dependencies[0].descriptor, 'leaf@^1');
+test('includes v1 optional dependencies in reverse dependency paths', (t) => {
+  const directory = fixture({
+    'package.json': JSON.stringify({ name: 'app', dependencies: { top: '^1' } }),
+    'yarn.lock': `# yarn lockfile v1\n\nleaf@^1:\n  version "1.0.0"\n\ntop@^1:\n  version "1.0.0"\n  optionalDependencies:\n    leaf "^1"\n`,
+  });
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = why.renderWhy(path.join(directory, 'yarn.lock'), why.parseQuery('leaf'));
+  assert.match(output, /top@1\.0\.0 \(requires leaf@\^1\)/);
+  assert.match(output, /app \(package\.json dependencies → top@\^1\)/);
 });

@@ -187,7 +187,18 @@ function testSimpleRange(version, expression) {
   const value = expression.trim();
   if (!value || value === '*' || /^x$/i.test(value)) return true;
   const hyphen = /^(\S+)\s+-\s+(\S+)$/.exec(value);
-  if (hyphen) return testSimpleRange(version, `>=${hyphen[1]} <${hyphen[2]}`) || compareVersions(version, rangeBounds(hyphen[2]).lower) === 0;
+  if (hyphen) {
+    const lowerBounds = rangeBounds(hyphen[1]);
+    const upperBounds = rangeBounds(hyphen[2]);
+    if (!lowerBounds?.lower || !upperBounds) return false;
+    if (!upperBounds.lower) return compareVersions(version, lowerBounds.lower) >= 0;
+    if (upperBounds.exact) {
+      return compareVersions(version, lowerBounds.lower) >= 0
+        && compareVersions(version, upperBounds.lower) <= 0;
+    }
+    return compareVersions(version, lowerBounds.lower) >= 0
+      && compareVersions(version, upperBounds.upper) < 0;
+  }
   const comparatorTokens = value.split(/\s+/).filter(Boolean);
   if (comparatorTokens.length > 1) return comparatorTokens.every((token) => testSimpleRange(version, token));
   const caretOrTilde = /^([~^])(.*)$/.exec(value);
