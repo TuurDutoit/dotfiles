@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import test from 'node:test';
+import why from '../bin/yarn-why';
+
+function fixture(files) {
+  const directory = mkdtempSync(path.join(os.tmpdir(), 'yarn-why-'));
+  for (const [file, contents] of Object.entries(files)) {
+    const target = path.join(directory, file);
+    mkdirSync(path.dirname(target), { recursive: true });
+    writeFileSync(target, contents);
+  }
+  return directory;
+}
+
+test('parses Yarn v1 and follows exact descriptors to a root manifest', (t) => {
+  const directory = fixture({
+    'package.json': JSON.stringify({ name: 'app', dependencies: { top: '^1.0.0' } }),
+    'yarn.lock': `# yarn lockfile v1\n\nleaf@^1.0.0:\n  version "1.2.0"\n\nmid@^1.0.0:\n  version "1.0.0"\n  dependencies:\n    leaf "^1.0.0"\n\ntop@^1.0.0:\n  version "1.0.0"\n  dependencies:\n    mid "^1.0.0"\n`,
+  });
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = why.renderWhy(path.join(directory, 'yarn.lock'), why.parseQuery('leaf'));
+  assert.match(output, /leaf@1\.2\.0/);
+  assert.match(output, /mid@1\.0\.0 \(requires leaf@\^1\.0\.0\)/);
+  assert.match(output, /top@1\.0\.0 \(requires mid@\^1\.0\.0\)/);
+  assert.match(output, /app \(package\.json dependencies → top@\^1\.0\.0\)/);
+});
+
+test('parses Berry descriptors, aliases, workspace roots, and cycles', (t) => {
+  const directory = fixture({
+    'package.json': JSON.stringify({ name: 'repo', workspaces: ['packages/**'] }),
+    'packages/web/package.json': JSON.stringify({ name: 'web', devDependencies: { alias: 'npm:leaf@^1.0.0' } }),
+    'yarn.lock': `__metadata:\n  version: 10\n\n"alias@npm:leaf@^1.0.0":\n  version: 1.4.0\n  resolution: "leaf@npm:1.4.0"\n  dependencies:\n    cycle: "npm:^1.0.0"\n\n"cycle@npm:^1.0.0":\n  version: 1.0.0\n  resolution: "cycle@npm:1.0.0"\n  dependencies:\n    alias: "npm:leaf@^1.0.0"\n`,
+  });
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = why.renderWhy(path.join(directory, 'yarn.lock'), why.parseQuery('leaf@^1'));
+  assert.match(output, /alias@1\.4\.0/);
+  assert.match(output, /cycle@1\.0\.0 \(requires alias@npm:leaf@\^1\.0\.0\)/);
+  assert.match(output, /cycle back to alias@1\.4\.0/);
+  assert.match(output, /web \(package\.json devDependencies → alias@npm:leaf@\^1\.0\.0\)/);
+});
+
+test('supports exact, prefix, wildcard, caret, tilde, comparator, and OR version filters', () => {
+  const match = why.versionMatches;
+  assert.equal(match('1.2.3', '1.2.3'), true);
+  assert.equal(match('1.2.3', '1.2'), true);
+  assert.equal(match('1.2.3', '1.2.x'), true);
+  assert.equal(match('1.2.3', '^1.0.0'), true);
+  assert.equal(match('1.2.3', '~1.2.0'), true);
+  assert.equal(match('1.2.3', '>=1.2 <2'), true);
+  assert.equal(match('2.0.0', '^1.2.3 || ^2.0.0'), true);
+  assert.equal(match('2.0.0', '~1.2.0'), false);
+});
+
+test('includes v1 optional dependencies in reverse dependency paths', () => {
+  const lock = why.parseLockfile(`# yarn lockfile v1\n\nleaf@^1:\n  version "1.0.0"\n\ntop@^1:\n  version "1.0.0"\n  optionalDependencies:\n    leaf "^1"\n`);
+  assert.equal(lock.entries[1].dependencies[0].descriptor, 'leaf@^1');
+});

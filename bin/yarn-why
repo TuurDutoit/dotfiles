@@ -1,0 +1,430 @@
+#!/usr/bin/env node
+
+/**
+ * Explain why a package is present in a Yarn v1 or Berry lockfile.
+ * This deliberately parses only the small, regular subset of YAML emitted by
+ * Yarn, so the command has no runtime dependencies.
+ */
+const fs = require('node:fs');
+const path = require('node:path');
+
+function unquote(value) {
+  const trimmed = value.trim();
+  if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      return trimmed.slice(1, -1);
+    }
+  }
+  return trimmed;
+}
+
+function splitOutsideQuotes(value, separator = ',') {
+  const parts = [];
+  let current = '';
+  let quoted = false;
+  let escaped = false;
+  for (const character of value) {
+    if (escaped) {
+      current += character;
+      escaped = false;
+    } else if (character === '\\') {
+      current += character;
+      escaped = true;
+    } else if (character === '"') {
+      current += character;
+      quoted = !quoted;
+    } else if (character === separator && !quoted) {
+      parts.push(current.trim());
+      current = '';
+    } else {
+      current += character;
+    }
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
+function splitDescriptor(descriptor) {
+  const value = unquote(descriptor);
+  const separator = value.startsWith('@') ? value.indexOf('@', 1) : value.indexOf('@');
+  return separator === -1
+    ? { name: value, reference: '' }
+    : { name: value.slice(0, separator), reference: value.slice(separator + 1) };
+}
+
+function descriptorFor(name, reference) {
+  return `${name}@${reference}`;
+}
+
+function parseDependencyLine(line, format) {
+  const value = line.trim();
+  if (format === 'berry') {
+    const separator = value.indexOf(':');
+    if (separator === -1) return null;
+    return { name: unquote(value.slice(0, separator)), reference: unquote(value.slice(separator + 1)) };
+  }
+  const match = /^("(?:[^"\\]|\\.)*"|\S+)\s+("(?:[^"\\]|\\.)*"|\S+)\s*$/.exec(value);
+  return match ? { name: unquote(match[1]), reference: unquote(match[2]) } : null;
+}
+
+function parseLockfile(text) {
+  const format = /^# yarn lockfile v1\b/m.test(text) ? 'v1' : 'berry';
+  const entries = [];
+  let entry = null;
+  let inDependencies = false;
+
+  function finishEntry() {
+    if (entry && entry.version !== undefined) entries.push(entry);
+    entry = null;
+    inDependencies = false;
+  }
+
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim() || line.trimStart().startsWith('#')) continue;
+    if (!line.startsWith(' ') && line.endsWith(':')) {
+      finishEntry();
+      const key = line.slice(0, -1).trim();
+      if (key === '__metadata') continue;
+      entry = {
+        id: `${format}:${entries.length}`,
+        descriptors: splitOutsideQuotes(key).map(unquote).sort(),
+        dependencies: [],
+        version: undefined,
+      };
+      continue;
+    }
+    if (!entry) continue;
+    const indent = line.length - line.trimStart().length;
+    const value = line.trim();
+    if (indent === 2 && (value === 'dependencies:' || value === 'optionalDependencies:' || value === 'dependenciesMeta:')) {
+      inDependencies = value === 'dependencies:' || value === 'optionalDependencies:';
+      continue;
+    }
+    if (indent === 2) {
+      inDependencies = false;
+      const versionMatch = format === 'v1'
+        ? /^version\s+(.*)$/.exec(value)
+        : /^version:\s*(.*)$/.exec(value);
+      if (versionMatch) entry.version = unquote(versionMatch[1]);
+      const resolutionMatch = /^resolution:\s*(.*)$/.exec(value);
+      if (resolutionMatch) entry.resolution = unquote(resolutionMatch[1]);
+      continue;
+    }
+    if (indent >= 4 && inDependencies) {
+      const dependency = parseDependencyLine(line, format);
+      if (dependency) entry.dependencies.push({
+        ...dependency,
+        descriptor: descriptorFor(dependency.name, dependency.reference),
+      });
+    }
+  }
+  finishEntry();
+  return { format, entries };
+}
+
+function parseQuery(value, separateVersion) {
+  if (separateVersion) return { name: value, range: separateVersion };
+  const split = splitDescriptor(value);
+  return split.reference ? { name: split.name, range: split.reference } : { name: value, range: null };
+}
+
+function parseVersion(value) {
+  const match = /^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(value);
+  if (!match) return null;
+  return {
+    major: Number(match[1]),
+    minor: Number(match[2] || 0),
+    patch: Number(match[3] || 0),
+    prerelease: match[4] || '',
+  };
+}
+
+function compareVersions(left, right) {
+  for (const key of ['major', 'minor', 'patch']) {
+    if (left[key] !== right[key]) return left[key] < right[key] ? -1 : 1;
+  }
+  if (left.prerelease === right.prerelease) return 0;
+  if (!left.prerelease) return 1;
+  if (!right.prerelease) return -1;
+  const leftParts = left.prerelease.split('.');
+  const rightParts = right.prerelease.split('.');
+  for (let index = 0; index < Math.max(leftParts.length, rightParts.length); index += 1) {
+    if (leftParts[index] === undefined) return -1;
+    if (rightParts[index] === undefined) return 1;
+    if (leftParts[index] === rightParts[index]) continue;
+    const leftNumber = /^\d+$/.test(leftParts[index]);
+    const rightNumber = /^\d+$/.test(rightParts[index]);
+    if (leftNumber && rightNumber) return Number(leftParts[index]) < Number(rightParts[index]) ? -1 : 1;
+    if (leftNumber) return -1;
+    if (rightNumber) return 1;
+    return leftParts[index] < rightParts[index] ? -1 : 1;
+  }
+  return 0;
+}
+
+function rangeBounds(value) {
+  const cleaned = value.trim().replace(/^v/, '');
+  const match = /^(\d+|x|X|\*)(?:\.(\d+|x|X|\*))?(?:\.(\d+|x|X|\*))?(?:-([0-9A-Za-z.-]+))?$/.exec(cleaned);
+  if (!match) return null;
+  const raw = [match[1], match[2], match[3]];
+  const wildcard = raw.findIndex((part) => !part || /^(x|\*)$/i.test(part));
+  const count = wildcard === -1 ? 3 : wildcard;
+  if (count === 0) return { lower: null, upper: null, exact: false };
+  const lower = {
+    major: Number(raw[0]), minor: count > 1 ? Number(raw[1]) : 0, patch: count > 2 ? Number(raw[2]) : 0, prerelease: match[4] || '',
+  };
+  if (count === 3 && wildcard === -1) return { lower, upper: lower, exact: true };
+  const upper = { ...lower, prerelease: '' };
+  if (count === 1) upper.major += 1;
+  else if (count === 2) upper.minor += 1;
+  else upper.patch += 1;
+  return { lower, upper, exact: false };
+}
+
+function testSimpleRange(version, expression) {
+  const value = expression.trim();
+  if (!value || value === '*' || /^x$/i.test(value)) return true;
+  const hyphen = /^(\S+)\s+-\s+(\S+)$/.exec(value);
+  if (hyphen) return testSimpleRange(version, `>=${hyphen[1]} <${hyphen[2]}`) || compareVersions(version, rangeBounds(hyphen[2]).lower) === 0;
+  const comparatorTokens = value.split(/\s+/).filter(Boolean);
+  if (comparatorTokens.length > 1) return comparatorTokens.every((token) => testSimpleRange(version, token));
+  const caretOrTilde = /^([~^])(.*)$/.exec(value);
+  if (caretOrTilde) {
+    const bounds = rangeBounds(caretOrTilde[2]);
+    if (!bounds || !bounds.lower) return false;
+    const upper = { ...bounds.lower, prerelease: '' };
+    if (caretOrTilde[1] === '~') {
+      if (caretOrTilde[2].split('.').length < 2) upper.major += 1;
+      else upper.minor += 1;
+    } else if (bounds.lower.major > 0) upper.major += 1;
+    else if (bounds.lower.minor > 0) upper.minor += 1;
+    else upper.patch += 1;
+    return compareVersions(version, bounds.lower) >= 0 && compareVersions(version, upper) < 0;
+  }
+  const comparator = /^(<=|>=|<|>|=)?\s*(.*)$/.exec(value);
+  const bounds = rangeBounds(comparator[2]);
+  if (!bounds) return false;
+  const comparison = bounds.lower ? compareVersions(version, bounds.lower) : 0;
+  if (comparator[1] === '>=') return comparison >= 0;
+  if (comparator[1] === '>') return comparison > 0;
+  if (comparator[1] === '<=') return bounds.upper ? compareVersions(version, bounds.upper) <= 0 : true;
+  if (comparator[1] === '<') return bounds.lower ? comparison < 0 : false;
+  if (bounds.exact) return comparison === 0;
+  return (!bounds.lower || comparison >= 0) && (!bounds.upper || compareVersions(version, bounds.upper) < 0);
+}
+
+function versionMatches(version, range) {
+  if (!range) return true;
+  const parsed = parseVersion(version);
+  if (!parsed) return version === range;
+  return range.split('||').some((part) => testSimpleRange(parsed, part));
+}
+
+function workspacePatternMatches(relativeDirectory, pattern) {
+  let expression = '^';
+  for (let index = 0; index < pattern.length; index += 1) {
+    if (pattern[index] === '*') {
+      if (pattern[index + 1] === '*') {
+        expression += '.*';
+        index += 1;
+      } else {
+        expression += '[^/]*';
+      }
+    } else {
+      expression += /[.+^${}()|[\]\\]/.test(pattern[index]) ? `\\${pattern[index]}` : pattern[index];
+    }
+  }
+  return new RegExp(`${expression}$`).test(relativeDirectory);
+}
+
+function workspaceManifestPaths(rootDirectory) {
+  const rootManifest = path.join(rootDirectory, 'package.json');
+  if (!fs.existsSync(rootManifest)) return [];
+  const result = [rootManifest];
+  const pending = [rootManifest];
+  const seen = new Set(result);
+  while (pending.length) {
+    const manifestPath = pending.pop();
+    let manifest;
+    try { manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); } catch { continue; }
+    const workspaceSetting = manifest.workspaces;
+    const patterns = Array.isArray(workspaceSetting) ? workspaceSetting
+      : Array.isArray(workspaceSetting?.packages) ? workspaceSetting.packages : [];
+    if (!patterns.length) continue;
+    const manifestDirectory = path.dirname(manifestPath);
+    const directories = [];
+    function visit(directory) {
+      for (const item of fs.readdirSync(directory, { withFileTypes: true })) {
+        if (!item.isDirectory() || ['node_modules', '.git', '.yarn', '.next'].includes(item.name)) continue;
+        const child = path.join(directory, item.name);
+        directories.push(child);
+        visit(child);
+      }
+    }
+    visit(manifestDirectory);
+    for (const directory of directories) {
+      const relative = path.relative(manifestDirectory, directory).split(path.sep).join('/');
+      const included = patterns.some((pattern) => !pattern.startsWith('!') && workspacePatternMatches(relative, pattern));
+      const excluded = patterns.some((pattern) => pattern.startsWith('!') && workspacePatternMatches(relative, pattern.slice(1)));
+      const candidate = path.join(directory, 'package.json');
+      if (included && !excluded && fs.existsSync(candidate) && !seen.has(candidate)) {
+        seen.add(candidate);
+        result.push(candidate);
+        pending.push(candidate);
+      }
+    }
+  }
+  return result.sort();
+}
+
+function manifestRoots(lockPath) {
+  const rootDirectory = path.dirname(path.resolve(lockPath));
+  const dependencies = [];
+  const workspaces = [];
+  for (const manifestPath of workspaceManifestPaths(rootDirectory)) {
+    let manifest;
+    try { manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); } catch { continue; }
+    const label = manifest.name || path.relative(rootDirectory, path.dirname(manifestPath)) || 'root';
+    workspaces.push({ label, name: manifest.name, manifestPath });
+    for (const section of ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies']) {
+      for (const [name, reference] of Object.entries(manifest[section] || {})) {
+        const descriptors = [descriptorFor(name, reference)];
+        if (!/^[a-z]+:/.test(reference)) descriptors.push(descriptorFor(name, `npm:${reference}`));
+        dependencies.push({ label, section, name, reference, descriptors });
+      }
+    }
+  }
+  return { dependencies, workspaces };
+}
+
+function entryNames(entry) {
+  const names = new Set(entry.descriptors.map((descriptor) => splitDescriptor(descriptor).name));
+  if (entry.resolution) names.add(splitDescriptor(entry.resolution).name);
+  return names;
+}
+
+function entryLabel(entry) {
+  const descriptor = entry.descriptors[0] || entry.resolution || 'unknown';
+  return `${splitDescriptor(descriptor).name}@${entry.version}`;
+}
+
+function buildWhy(lockPath, query) {
+  const lock = parseLockfile(fs.readFileSync(lockPath, 'utf8'));
+  const descriptors = new Map();
+  for (const entry of lock.entries) {
+    for (const descriptor of entry.descriptors) descriptors.set(descriptor, entry);
+  }
+  const parents = new Map();
+  for (const entry of lock.entries) {
+    for (const dependency of entry.dependencies) {
+      if (!descriptors.has(dependency.descriptor)) continue;
+      const list = parents.get(dependency.descriptor) || [];
+      list.push({ entry, dependency });
+      parents.set(dependency.descriptor, list);
+    }
+  }
+  const rootsByDescriptor = new Map();
+  const manifestData = manifestRoots(lockPath);
+  for (const root of manifestData.dependencies) {
+    for (const descriptor of root.descriptors) {
+      const list = rootsByDescriptor.get(descriptor) || [];
+      list.push(root);
+      rootsByDescriptor.set(descriptor, list);
+    }
+  }
+  const targets = lock.entries.filter((entry) => entryNames(entry).has(query.name) && versionMatches(entry.version, query.range))
+    .sort((left, right) => entryLabel(left).localeCompare(entryLabel(right)));
+  const workspacesByName = new Map();
+  for (const workspace of manifestData.workspaces) {
+    if (!workspace.name) continue;
+    const list = workspacesByName.get(workspace.name) || [];
+    list.push(workspace);
+    workspacesByName.set(workspace.name, list);
+  }
+  return { lock, targets, parents, rootsByDescriptor, workspacesByName };
+}
+
+function renderWhy(lockPath, query) {
+  const result = buildWhy(lockPath, query);
+  if (!result.targets.length) return `No installed versions of ${query.name}${query.range ? ` matching ${query.range}` : ''} were found.`;
+  const lines = [`Why ${query.name}${query.range ? ` (${query.range})` : ''} is installed:`];
+  function childrenFor(entry) {
+    const packageParents = new Map();
+    const rootParents = new Map();
+    for (const descriptor of entry.descriptors) {
+      for (const parent of result.parents.get(descriptor) || []) {
+        const key = `${parent.entry.id}\0${parent.dependency.descriptor}`;
+        packageParents.set(key, parent);
+      }
+      for (const root of result.rootsByDescriptor.get(descriptor) || []) {
+        rootParents.set(`${root.label}\0${root.section}\0${root.name}\0${root.reference}`, root);
+      }
+    }
+    for (const descriptor of entry.descriptors) {
+      const parsed = splitDescriptor(descriptor);
+      if (!parsed.reference.startsWith('workspace:')) continue;
+      for (const workspace of result.workspacesByName.get(parsed.name) || []) {
+        rootParents.set(`${workspace.label}\0workspace`, { ...workspace, section: 'workspace', name: parsed.name, reference: parsed.reference });
+      }
+    }
+    return [
+      ...[...packageParents.values()].sort((left, right) => entryLabel(left.entry).localeCompare(entryLabel(right.entry)) || left.dependency.descriptor.localeCompare(right.dependency.descriptor)).map((value) => ({ type: 'package', ...value })),
+      ...[...rootParents.values()].sort((left, right) => left.label.localeCompare(right.label) || left.section.localeCompare(right.section)).map((value) => ({ type: 'root', root: value })),
+    ];
+  }
+  function printEntry(entry, prefix, active) {
+    const children = childrenFor(entry);
+    if (!children.length) {
+      lines.push(`${prefix}└─ no package.json root matched this path`);
+      return;
+    }
+    children.forEach((child, index) => {
+      const last = index === children.length - 1;
+      const branch = last ? '└─ ' : '├─ ';
+      const continuation = `${prefix}${last ? '   ' : '│  '}`;
+      if (child.type === 'root') {
+        lines.push(`${prefix}${branch}${child.root.label} (package.json ${child.root.section} → ${child.root.name}@${child.root.reference})`);
+      } else {
+        const label = entryLabel(child.entry);
+        lines.push(`${prefix}${branch}${label} (requires ${child.dependency.descriptor})`);
+        if (active.has(child.entry.id)) {
+          lines.push(`${continuation}└─ cycle back to ${label}`);
+        } else {
+          const next = new Set(active);
+          next.add(child.entry.id);
+          printEntry(child.entry, continuation, next);
+        }
+      }
+    });
+  }
+  result.targets.forEach((entry, index) => {
+    if (index) lines.push('');
+    lines.push(entryLabel(entry));
+    printEntry(entry, '', new Set([entry.id]));
+  });
+  return lines.join('\n');
+}
+
+function usage() {
+  return 'Usage: yarn-why <path/to/yarn.lock> <package[@version-or-range]> [version-or-range]';
+}
+
+function main(arguments_) {
+  const [lockPath, packageArgument, separateVersion] = arguments_;
+  if (!lockPath || !packageArgument || arguments_.length > 3) {
+    console.error(usage());
+    return 1;
+  }
+  if (!fs.existsSync(lockPath)) {
+    console.error(`Lockfile not found: ${lockPath}`);
+    return 1;
+  }
+  console.log(renderWhy(lockPath, parseQuery(packageArgument, separateVersion)));
+  return 0;
+}
+
+if (require.main === module) process.exitCode = main(process.argv.slice(2));
+
+module.exports = { buildWhy, parseLockfile, parseQuery, renderWhy, versionMatches };
