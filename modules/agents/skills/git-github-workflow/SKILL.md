@@ -6,6 +6,7 @@ description: Use when working with Git, GitHub, commits, branches, pull requests
 ## Git & GitHub
 
 - Use `gh` CLI for all GitHub operations (PRs, issues, checks, etc.).
+- In Codex's non-interactive shell, `rtk` may only be available through the login-shell configuration. Invoke repository commands as `zsh -lic 'rtk ...'` rather than bypassing the wrapper.
 - Write short commit messages using conventional commits (`feat:`, `fix:`, `chore:`, etc.).
 - Never commit or push directly to `main` or `master` — always use feature branches (unless the user says differently, or the project has different rules)
 - Default branch is `master` in most repos. Do not assume `main`.
