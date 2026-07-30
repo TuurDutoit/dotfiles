@@ -1,0 +1,13 @@
+export type Actor = { kind: "human" | "agent"; id: string; displayName: string; client?: "codex" | "claude-code" | "other" };
+export type BlockType = "overview" | "architecture" | "file-map" | "timeline" | "decision" | "risks" | "code" | "api-schema" | "notes";
+export type Block = { id: string; type: BlockType; title: string; content: string; props: Record<string, unknown>; order: number; revision: number; createdAt: string; updatedAt: string; author: Actor };
+export type AnchorKind = "block" | "diagram-node" | "file-row" | "milestone" | "decision-option" | "risk" | "code-item";
+export type Anchor = { blockId: string; targetKind: AnchorKind; targetId?: string };
+export type Message = { id: string; body: string; author: Actor; createdAt: string };
+export type CommentThread = { id: string; anchor: Anchor; status: "open" | "resolved" | "orphaned"; createdBy: Actor; createdAt: string; resolvedAt?: string; resolvedBy?: Actor; messages: Message[] };
+export type Conflict = { id: string; at: string; expectedRevision: number; currentRevision: number; touchedBlockIds: string[]; reason: string; actor: Actor };
+export type WorkspaceDocument = { id: string; title: string; revision: number; status: "active" | "needs_reconcile" | "archived"; blocks: Block[]; updatedAt: string; lastEditedBy: Actor; conflicts: Conflict[] };
+export type RevisionEvent = { revision: number; at: string; actor: Actor; summary?: string; touchedBlockIds: string[]; operation: string };
+export type Snapshot = { document: WorkspaceDocument; comments: CommentThread[]; revisions: RevisionEvent[]; uiState: Record<string, unknown> };
+export type UpdateBlockOperation = { op: "updateBlock"; blockId: string; expectedBlockRevision: number; changes: { title?: string; content?: string; props?: Record<string, unknown> } };
+export type PatchRequest = { expectedRevision: number; actor: Actor; operations: UpdateBlockOperation[]; summary?: string };

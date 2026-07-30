@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Keep the caller's repository as the default Visual Workspace location while
+# running the package command from its installed dotfiles directory.
+caller_dir="$PWD"
+script_path="${BASH_SOURCE[0]}"
+while [[ -L "$script_path" ]]; do
+  link_dir="$(cd -P "$(dirname "$script_path")" && pwd)"
+  link_target="$(readlink "$script_path")"
+  if [[ "$link_target" == /* ]]; then
+    script_path="$link_target"
+  else
+    script_path="$link_dir/$link_target"
+  fi
+done
+script_dir="$(cd -P "$(dirname "$script_path")" && pwd)"
+project_dir="$(cd "$script_dir/.." && pwd)"
+
+has_workspace=0
+for argument in "$@"; do
+  if [[ "$argument" == "--workspace" ]]; then
+    has_workspace=1
+    break
+  fi
+done
+
+cd "$project_dir"
+if [[ "$has_workspace" == "1" ]]; then
+  exec npm run --silent cli -- "$@"
+fi
+
+exec npm run --silent cli -- "$@" --workspace "$caller_dir"
