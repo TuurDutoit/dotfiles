@@ -30,13 +30,16 @@ description: Use when working with Git, GitHub, commits, branches, pull requests
 
 Stay within the repo's PR template if there is one. Otherwise, structure the description as:
 
-- **What it does**:
-  - High-level goal: what problem this solves or feature it implements (1-2 sentences).
-  - Why: explain why this change is needed and the impact it is intended to have.
+- **Goal** - explain the _why_ and _what_:
+  - What the PR is trying to achieve: what problem it solves or what feature it implements (1-2 sentences).
+  - Focus on user experience changes or explaining the problem being solved. Avoid implementation details.
+- **Approach** - explain the _how_:
   - Approach: high-level rundown of the chosen approach (1-3 sentences/bullets). Briefly note tradeoffs if you picked between options.
-  - Highlights: call out changes that could affect external services — API changes, DB schema changes, new env vars, new dependencies.
-  - Don't list changed files or minor details. Reviewers want a quick overview and the riskiest changes, not a changelog.
+  - High-level overview of the changes made, without going into implementation details (1-3 sentences/bullets). Avoid listing files or minor details.
+- **Highlights**:
+  - Call out changes that could affect external services — API changes, DB schema changes, new env vars, new dependencies.
+  - If there are none, just say so.
 - **How to test**:
   - QA plan: positive cases, negative cases, and existing functionality to regression-check.
   - Test instructions: minimal setup needed to run the test environment.
-  - Keep it brief. "The unit tests cover this" is a valid test plan when true.
+  - Keep it brief.
