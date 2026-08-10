@@ -28,18 +28,37 @@ description: Use when working with Git, GitHub, commits, branches, pull requests
 
 ## Pull Request Descriptions
 
-Stay within the repo's PR template if there is one. Otherwise, structure the description as:
+Stay within the repo's PR template if there is one. Otherwise, use this concise, reviewer-focused structure. It should help reviewers understand the intent, evaluate the implementation, and verify the result; avoid file-by-file changelogs and minor details.
 
-- **Goal** - explain the _why_ and _what_:
-  - What the PR is trying to achieve: what problem it solves or what feature it implements (1-2 sentences).
-  - Focus on user experience changes or explaining the problem being solved. Avoid implementation details.
-- **Approach** - explain the _how_:
-  - Approach: high-level rundown of the chosen approach (1-3 sentences/bullets). Briefly note tradeoffs if you picked between options.
-  - High-level overview of the changes made, without going into implementation details (1-3 sentences/bullets). Avoid listing files or minor details.
-- **Highlights**:
-  - Call out changes that could affect external services — API changes, DB schema changes, new env vars, new dependencies.
-  - If there are none, just say so.
-- **How to test**:
-  - QA plan: positive cases, negative cases, and existing functionality to regression-check.
-  - Test instructions: minimal setup needed to run the test environment.
-  - Keep it brief.
+```md
+## Summary
+What changed and why.
+
+## Context
+Relevant background, issue link, or problem being solved.
+
+## Changes
+Briefly describe the main implementation changes. Call out external-service impact here, including API changes, database schema changes, new environment variables, or dependencies. State when there is no such impact.
+
+## Testing
+Explain how it was tested:
+- Automated tests run
+- Manual verification
+- Any tests not run, and why
+
+Include practical instructions for reviewers to test the app themselves, including the minimum setup and positive, negative, and regression cases to check.
+
+## Screenshots or recordings
+Include these for UI changes.
+
+## Risks and rollout
+Mention migrations, feature flags, backward compatibility, monitoring, or rollback considerations.
+
+## Checklist
+- [ ] Tests pass
+- [ ] Changes verified
+- [ ] Documentation updated, if needed
+- [ ] Analytics or monitoring added, if needed
+- [ ] Breaking changes called out
+- [ ] Reviewers have the necessary context
+```
