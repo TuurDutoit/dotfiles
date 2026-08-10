@@ -32,13 +32,15 @@ Stay within the repo's PR template if there is one. Otherwise, use this concise,
 
 ```md
 ## Summary
-What changed and why.
+What changed and why. In one or two sentences, describe the user experience change or problem being solved; avoid implementation details.
 
 ## Context
 Relevant background, issue link, or problem being solved.
 
 ## Changes
-Briefly describe the main implementation changes. Call out external-service impact here, including API changes, database schema changes, new environment variables, or dependencies. State when there is no such impact.
+Briefly describe the main implementation changes in one to three sentences or bullets. Give a high-level overview of the approach and any meaningful tradeoffs; do not list files or minor details.
+
+Call out external-service impact here, including API changes, database schema changes, new environment variables, or dependencies. State when there is no such impact.
 
 ## Testing
 Explain how it was tested:
@@ -46,7 +48,7 @@ Explain how it was tested:
 - Manual verification
 - Any tests not run, and why
 
-Include practical instructions for reviewers to test the app themselves, including the minimum setup and positive, negative, and regression cases to check.
+Explain how reviewers can test the app for themselves. Keep it brief, including the minimum setup and a QA plan covering positive, negative, and regression cases.
 
 ## Screenshots or recordings
 Include these for UI changes.
@@ -54,7 +56,7 @@ Include these for UI changes.
 ## Risks and rollout
 Mention migrations, feature flags, backward compatibility, monitoring, or rollback considerations.
 
-## Checklist
+## Checklist:
 - [ ] Tests pass
 - [ ] Changes verified
 - [ ] Documentation updated, if needed
