@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage DataLab Large Events"
+  short_description: "Plan and operate capacity for large DataLab events"
+  default_prompt: "Use $manage-datalab-large-events to plan this DataLab event, show assumptions and exact approval-gated changes, and apply only after I approve."
