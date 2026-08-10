@@ -13,6 +13,8 @@
 ## General
 
 - When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
+- Keep changes simple, elegant, and well integrated with the existing code. Prefer the smallest coherent solution over new abstractions or complexity.
+- Before implementing a feature, consider whether a focused refactor of the affected code would make the change clearer or simpler. When it would, do that refactor first; avoid speculative refactors unrelated to the feature.
 
 ## Continuous Improvement
 
