@@ -10,8 +10,6 @@ Audited on 2026-08-10:
 - `datacamp/collab-and-tooling`: `8d086b08e39b0860eb964638615f58e633a4e7fe`
 - [LX Live Ops Tracker](https://docs.google.com/document/d/13wgbJEdxbwIRDO4WBdlq_nxkMsWW8D4FPaQKRkxTPgc/edit?tab=t.euqefxnk29c2), last modified 2026-07-15 when audited
 - [Overprovision pods](https://datacamp.atlassian.net/wiki/spaces/PRODENG/pages/3902079001/Overprovision+pods)
-- [Code-Alongs in DataLab](https://datacamp.atlassian.net/wiki/spaces/PRODENG/pages/3482255375/Code-Alongs+in+DataLab)
-- [DataLab Manual Processes](https://datacamp.atlassian.net/wiki/spaces/PRODENG/pages/2007367689/DataLab+Manual+Processes), including the same-IP/Cloudflare section
 - [INC-315: DataLab sessions failing to start](https://datacamp.atlassian.net/wiki/spaces/PRODENG/pages/3696263188/INC-315+DataLab+sessions+failing+to+start)
 - [INC-365: DataLab degraded performance](https://datacamp.atlassian.net/wiki/spaces/PRODENG/pages/4037804041/INC-365+DataLab+degraded+performance)
 - [LX-8181: Admin-managed workspace events](https://datacamp.atlassian.net/browse/LX-8181)
@@ -30,10 +28,9 @@ In `kubernetes-multiplexer`, re-check:
 In `collab-and-tooling`, re-check:
 
 - `apps/frontend/src/admin/workspaceEvents/` for fields, validation, sync status, and hidden buffer;
-- `apps/api/src/workspaceEvent/` for CRUD, active-event queries, buffering, and mux synchronization;
+- `apps/api/src/workspaceEvent/` for event creation/editing, active-event queries, buffering, and mux synchronization;
 - `apps/api/src/jwt/CreateSessionJwt.ts` for entitlement/group routing and `datacamp-teams` behavior;
-- `libs/shared/domain/src/domains/workspace/domain.ts` for language-to-editor mapping;
-- `apps/frontend/src/admin/codeAlongTemplates/`, `apps/api/src/codeAlongTemplate/`, and the `live_training_template` migration for registration behavior.
+- `libs/shared/domain/src/domains/workspace/domain.ts` for language-to-editor mapping.
 
 ## Conflicts that must remain visible
 

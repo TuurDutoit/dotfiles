@@ -1,15 +1,15 @@
 ---
 name: manage-datalab-large-events
-description: Plan, prepare, operate, verify, and unwind capacity for large DataCamp DataLab live trainings, webinars, code-alongs, and company events on the Kubernetes multiplexer. Use when an event may create a burst of concurrent DataLab workspaces or document copies, when creating or changing Workspace Events, registering code-along templates, pre-scaling language shards or the Yjs content syncer, investigating overlapping events, or restoring temporary capacity afterward.
+description: Plan, prepare, operate, verify, and unwind capacity for DataCamp DataLab Workspace Events on the Kubernetes multiplexer. Use when creating or correcting a Workspace Event, sizing additive session-pool floors, pre-scaling language shards or the Yjs content syncer, investigating overlapping events, monitoring event capacity, or restoring temporary cluster overrides afterward.
 ---
 
-# Manage DataLab Large Events
+# Manage DataLab Workspace Event Capacity
 
 Use this skill to turn event demand into a reviewable capacity plan, apply only approved changes, and restore every temporary override from a captured baseline. Treat the Workspace Events dashboard, multiplexer pool configuration, overprovision deployments, and Yjs content-syncer HPA as distinct controls.
 
 ## Safety contract
 
-- Start in planning mode. Do not create, edit, or delete a Workspace Event; register a code-along template; run a mutating cluster operation; or scale down without explicit user approval for that action and target environment.
+- Start in planning mode. Do not create or edit a Workspace Event, run a mutating cluster operation, or scale down without explicit user approval for that action and target environment.
 - Confirm the production target and current state immediately before every write. Never infer live values from repository defaults or historical documents.
 - Never write directly to `POST /admin/pool-events`. It replaces the complete event list and is reserved for the dashboard sync service.
 - Never invent a ConfigMap bootstrap, raw `kubectl patch`, or node/autoscaler change. Use the current repository's `scripts/cluster_operations.sh` for documented runtime cluster changes.
@@ -36,8 +36,8 @@ Read [intake-and-sizing.md](references/intake-and-sizing.md). At minimum establi
 - expected peak concurrency and confidence/range, not only registrations;
 - DataLab entitlement and whether workspaces are group-owned;
 - exact owning group slug for paying-group routing;
-- source workbook, copy path, language, and runtime configuration;
-- overlap with other events, deploys, maintenance, or same-IP company traffic.
+- language and runtime configuration, plus expected workbook copy/open behavior when it could load the content syncer;
+- overlap with other events, deploys, or maintenance.
 
 For non-contiguous training dates, plan one Workspace Event row per continuous session window. Never stretch one row across idle days: its hidden buffer would keep routing and pool floors active for the entire gap. Recalculate overlaps and obtain approval for every row.
 
@@ -54,8 +54,6 @@ Do not use participant count alone to select controls. Produce a short decision 
 - Workspace Event for paying, group-owned traffic that should use `collab-medium-events` or another explicit runtime;
 - language-shard overprovisioning for a burst concentrated on one editor/language shard;
 - Yjs content-syncer pre-scaling for a burst of workbook opens/copies or a source containing many files;
-- code-along template registration when users will copy from an approved source template;
-- Infrastructure coordination when many participants may originate from a small set of IP addresses.
 
 The process documentation contains conflicting historical thresholds (`>25` versus `>50`, with counterexamples below both). Treat them as prompts for review, not policy. Prefer measured concurrency, entitlement/routing behavior, current overlap, and an operator-approved risk margin.
 
@@ -80,7 +78,7 @@ Before any write, present:
 - assumptions and unresolved uncertainties;
 - the unbuffered and effective buffered UTC/local windows;
 - exact dashboard row values and resulting effective pool floors;
-- source-workbook and code-along registration status;
+- source-workload assessment and representative copy/open result when Yjs scaling is relevant;
 - every proposed shard/HPA before and after value;
 - verification gates, owner, rollback trigger, and exact captured rollback values;
 - timing that allows the cluster to reach steady state before attendee traffic.
@@ -101,23 +99,22 @@ Follow [verification-and-rollback.md](references/verification-and-rollback.md). 
 - effective pool transitions equal the approved additive calculation;
 - overprovision and Yjs HPA settings read back exactly;
 - desired replicas are ready, with no unexplained pending pods;
-- a representative source-workbook copy and session start succeed;
+- a representative session start succeeds and, when Yjs scaling is relevant, the attendee copy/open test succeeds;
 - the event owner knows the escalation path.
 
 During the event, monitor warm/starting/total session capacity for the affected pool, pending pods and nodes, and Yjs content-syncer demand and health. Do not claim a made-up dashboard or alert name; use the team's current observability links.
 
 ### 7. Unwind deliberately
 
-Workspace Event contributions expire automatically after `end + 120 minutes`. Delete or shorten a row only with explicit approval, then wait for `Synced` and verify removal. Manual shard/HPA changes do not roll back automatically: restore the captured live values, not a repository or historical “default.” Lowering an HPA maximum below current replicas can terminate pods; confirm load is safe first.
+Workspace Event routing and pool contributions become inactive automatically after `end + 120 minutes`; the dashboard row remains as the historical record. Manual shard/HPA changes do not roll back automatically: restore the captured live values, not a repository or historical “default.” Lowering an HPA maximum below current replicas can terminate pods; confirm load is safe first.
 
-Close with actual rollback values, timestamps, remaining anomalies, and whether all temporary capacity has been removed.
+Close with actual rollback values, timestamps, remaining anomalies, and whether all temporary cluster overrides have been restored.
 
 ## Reference routing
 
 - System behavior, mappings, and control boundaries: [system-architecture.md](references/system-architecture.md)
 - Intake, decision trees, formulas, and heuristic caveats: [intake-and-sizing.md](references/intake-and-sizing.md)
-- Workspace Events and code-along admin procedures: [workspace-events-dashboard.md](references/workspace-events-dashboard.md)
-- Detailed source-workbook validation and code-along registration: [code-along-source.md](references/code-along-source.md)
+- Workspace Event capacity configuration: [workspace-events-dashboard.md](references/workspace-events-dashboard.md)
 - Runtime shard and content-syncer operations: [cluster-scaling.md](references/cluster-scaling.md)
 - Preflight, monitoring, rollback, and incident boundaries: [verification-and-rollback.md](references/verification-and-rollback.md)
 - Evidence, revision pins, links, and known contradictions: [source-register.md](references/source-register.md)

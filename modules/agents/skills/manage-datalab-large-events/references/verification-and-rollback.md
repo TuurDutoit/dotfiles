@@ -10,7 +10,7 @@ An event is ready only when both control planes agree: the collab dashboard row 
 4. Remember that the dashboard silently expands the configured start and end by 120 minutes on both sides. Routing and pool contribution should be verified against this effective window, not only the displayed event time.
 5. From the fresh `kubernetes-multiplexer` checkout recorded in the plan, run `./scripts/cluster_operations.sh` and select **View current state**. Confirm the selected context is workspace production, the approved shard's desired replicas are ready/available, and the content-syncer HPA min/max plus ready pods match the plan.
 6. Check for pending overprovision pods, unhealthy nodes, deployment activity, session-start errors, and content-syncer memory pressure in the team's current production observability. Stop preparation and escalate if the supposed headroom is not schedulable.
-7. From a disposable attendee-like account, copy the actual registered source workbook, open it, start the expected language/runtime, and execute a small cell. Do not use the organizer's already-warm source workspace as the test.
+7. When copy/open load is part of the Yjs capacity assessment, use a disposable attendee-like account to copy the actual source through the attendee path, open it, start the expected language/runtime, and execute a small cell. Do not use the organizer's already-warm source workspace as the test.
 
 For paying group-owned workspaces, verify the workspace is owned by the exact event group. Event routing does not apply to user-owned subscriber workspaces or non-paying group workspaces. If two buffered events for the same group overlap with different runtime configs, stop: current routing selects an earliest-start match, so the result is unsafe to infer.
 
@@ -73,11 +73,10 @@ If capacity depletes or users cannot start sessions, declare/escalate through th
 
 The configured dashboard end is not the effective end: the hidden post-buffer keeps routing and pool contribution active for another 120 minutes.
 
-1. **Was the event cancelled before it began?** Delete the dashboard row, wait for **Synced** removal, verify other events remain, then consider cluster rollback.
-2. **Did the event finish normally?** Prefer automatic expiry at `configured end + 120 minutes`. Do not delete early while late attendees or copied workspaces may still start sessions.
-3. **Does another current/upcoming event need any changed shard or HPA capacity?** If yes, retain the maximum approved requirement and record the new owner/rollback time. Never restore a resource just because one event ended.
-4. **Has a deploy or another operator changed the resource since baseline capture?** If yes, stop and reconcile with the current owner. Do not overwrite newer intent with the old baseline.
-5. **Otherwise**, restore only the runtime changes made for this event to the captured live baseline.
+1. **Has the effective buffered window elapsed?** The dashboard row remains as the historical record; its routing and pool contribution become inactive automatically at `configured end + 120 minutes`.
+2. **Does another current/upcoming event need any changed shard or HPA capacity?** If yes, retain the maximum approved requirement and record the new owner/rollback time. Never restore a resource just because one event ended.
+3. **Has a deploy or another operator changed the resource since baseline capture?** If yes, stop and reconcile with the current owner. Do not overwrite newer intent with the old baseline.
+4. **Otherwise**, restore only the runtime changes made for this event to the captured live baseline.
 
 ## Restore safely
 
@@ -85,13 +84,13 @@ For shard overprovisioning, return to the recorded fresh `kubernetes-multiplexer
 
 For `yjs-content-syncer`, restore the captured HPA only after load has normalized. If current replicas exceed the captured maximum, stage the rollback: first restore the captured minimum while retaining a maximum at least as high as the current replica count; allow the slow HPA policy to converge; then restore the captured maximum once current replicas are at or below it. Re-read current load and replicas before both approved writes. Do not accept the script's pod-termination warning while active users may be affected.
 
-The dashboard event contribution requires no manual subtraction. It expires automatically after its buffered end, or is removed by a synchronized delete. Because overlapping contributions are additive, editing another row to "compensate" can under-provision that other event.
+The dashboard event contribution requires no manual rollback. It becomes inactive automatically after its buffered end. Because overlapping contributions are additive, editing another row to "compensate" can under-provision that other event.
 
 ## Closure evidence
 
 Close the run only after recording:
 
-- event row expired/removed from the effective multiplexer transitions;
+- the row's effective buffered window elapsed and pool floors no longer include its contribution;
 - shard and HPA settings match the approved post-event state;
 - desired/ready/available counts are converging without user errors;
 - no event-owned follow-up mutation remains;

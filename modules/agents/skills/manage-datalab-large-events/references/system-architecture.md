@@ -1,5 +1,16 @@
 # DataLab multiplexer architecture
 
+## Contents
+
+- [Request and capacity path](#request-and-capacity-path)
+- [Workspace routing](#workspace-routing)
+- [Language, editor, and shard mapping](#language-editor-and-shard-mapping)
+- [Session pool semantics](#session-pool-semantics)
+- [Workspace Event propagation](#workspace-event-propagation)
+- [Runtime resource shapes](#runtime-resource-shapes)
+- [Separate capacity controls](#separate-capacity-controls)
+- [Source workbook and content load](#source-workbook-and-content-load)
+
 ## Request and capacity path
 
 DataLab is a hosted notebook product. A workspace's notebook content is served and persisted by the collaboration/content-sync path, while executable code runs in a Kubernetes session pod. The multiplexer selects and manages those session pods.

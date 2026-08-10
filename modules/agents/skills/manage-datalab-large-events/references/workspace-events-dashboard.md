@@ -1,8 +1,8 @@
-# Workspace Events and code-along dashboard operations
+# Workspace Event capacity configuration
 
 ## Authorization boundary
 
-These are production writes. First prepare the exact row and obtain explicit approval to create, edit, or delete it. Use an authorized Admin account in the DataLab UI. Do not call private write APIs directly and never call multiplexer `POST /admin/pool-events`.
+Creating a row or correcting its planned values is a production write. First prepare the exact values and obtain explicit approval. Use an authorized Admin account in the DataLab UI. Do not call private write APIs directly and never call multiplexer `POST /admin/pool-events`.
 
 ## Workspace Event fields
 
@@ -37,11 +37,11 @@ Create one row per continuous session window. For sessions separated by a day or
 8. Capture manual shard/HPA baselines separately; the dashboard cannot roll those back.
 9. Obtain explicit approval for the exact form values and production target.
 
-## Create or edit
+## Create or correct a planned row
 
 1. Open **Workspace Events** and re-read the event list immediately before writing.
 2. If the overlap set changed, stop and recalculate.
-3. Create the row, or edit the identified row, using exactly the approved values.
+3. Create the row, or correct the identified planned row, using exactly the approved values.
 4. Include enough context in **Note** to identify the requester, expected peak, sizing decision, related event/source, and manual-change record.
 5. Submit once. Record the row ID/name and timestamp.
 6. Watch sync status. The page polls pending rows about every 10 seconds; the sync cron runs about every 30 seconds and the multiplexer reload is also about 30 seconds.
@@ -60,45 +60,14 @@ A synced row does not mean every attendee is eligible for its runtime. Verify wi
 
 Remember the `datacamp-teams` special case: any active Workspace Event can route that group to `collab-medium-events`. Include it in cross-event risk review.
 
-## Edit, end early, or delete
+## Automatic lifecycle
 
-Treat each as a fresh production write requiring explicit approval.
-
-1. Re-read overlaps and live capacity.
-2. Explain how the edit/delete changes both group routing and additive pool floors.
-3. Confirm attendee traffic no longer depends on the row before shortening or deleting it.
-4. Apply through the dashboard.
-5. Wait for **Synced** and verify removal/update from effective transitions.
-
-Normal closeout needs no early delete: contributions end automatically after the hidden post-event buffer. Manual cluster changes still require explicit rollback.
-
-## Register a code-along source
-
-Source registration is separate from Workspace Events and capacity. It marks the workspace as a protected code-along template and causes copies not to count toward the normal three-workspace limit; source templates cannot be deleted while registered.
-
-Follow the complete validation and registration runbook in [code-along-source.md](code-along-source.md). The concise UI sequence below is only a checklist.
-
-Open:
-
-`https://www.datacamp.com/datalab/admin/code-along-templates`
-
-Before approval:
-
-1. Open the source workspace and verify it is the intended immutable template.
-2. Inspect it for accidental `.git` directories, generated environments, caches, or thousands of small files; estimate total size.
-3. Perform a representative copy and open test. No authoritative numeric file-count or size ceiling was found, so do not claim one.
-4. Choose a stable key with no whitespace. For Packt material, historical guidance requires a `packt-` prefix.
-5. Verify the key and workspace are not already registered.
-
-After explicit approval, select **Configure Workspace As Code-Along**, enter the full **Workspace URL** and approved **Key**, and create the record. The UI extracts the workspace ID from the `/w/<workspace-id>/...` URL. Verify the table shows the expected workspace ID/key and open its link.
-
-Deleting a template registration is also a production write. Confirm downstream copy links and deletion protection implications before approval and verify the row disappears afterward.
+The row remains in the dashboard as the historical event record. Its routing and additive pool contribution become inactive automatically at the entered end plus the hidden 120-minute post-buffer. Manual shard and Yjs HPA changes are separate runtime overrides and still require the captured-baseline rollback.
 
 ## Evidence to retain
 
 - Screenshot or exported values of the approved row and final `Synced` state.
 - Entered and hidden-buffered windows in local time and UTC.
 - Additive arithmetic and overlap list used at submission time.
-- Representative routing/session/copy result.
-- Code-along workspace ID/key, if applicable.
+- Representative routing/session-start result and, when Yjs scaling is relevant, attendee copy/open result.
 - Manual cluster change record and rollback values, if applicable.

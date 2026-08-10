@@ -1,5 +1,15 @@
 # Event intake and sizing
 
+## Contents
+
+- [Intake record](#intake-record)
+- [Decision tree](#decision-tree)
+- [Pool-floor calculation](#pool-floor-calculation)
+- [Choosing desired floors](#choosing-desired-floors)
+- [Shard headroom](#shard-headroom)
+- [Content-sync sizing](#content-sync-sizing)
+- [Plan output](#plan-output)
+
 ## Intake record
 
 Do not size until every material unknown is either answered or recorded as a risk.
@@ -10,23 +20,21 @@ Do not size until every material unknown is either answered or recorded as a ris
 - Every local start/end window and IANA timezone; derived UTC times. Model non-contiguous dates as separate event rows rather than one range spanning idle days.
 - Registrations, expected peak concurrent DataLab users, confidence range, and arrival shape.
 - Whether another DataLab event, multiplexer deploy, or maintenance window overlaps the **120-minute pre/post buffered window**.
-- Whether a large company cohort is likely to share one or a few public IPs; if so, coordinate with INF/Cloudflare owners rather than changing protections ad hoc.
 
 ### Workspace and routing
 
-- Source workspace URL/ID and copy mechanism.
+- Source workspace URL/ID and attendee copy/open mechanism when assessing content-sync load.
 - DataLab entitlement: Free/Basic, Premium, or another paying group entitlement.
 - Ownership: user-owned or group-owned. A Workspace Event does not override user-owned or non-paying-group routing.
 - Exact owning group slug; verify it from the actual group, not an event title or guessed company name.
 - Dashboard language and intended runtime.
-- Whether the source must be registered as a code-along template and the required key.
 
 ### Workload
 
 - Language split if participants may choose different runtimes.
 - Expected peak simultaneous session starts and steady concurrent sessions.
 - Expected peak simultaneous workbook opens/copies.
-- Source file count, unusually dense directories such as `.git` or training data trees, approximate total size, and external database/data dependencies.
+- When Yjs/content-sync scaling may be needed: source file count, unusually dense directories such as `.git` or training data trees, and approximate total size.
 
 ### Live state
 
@@ -41,7 +49,7 @@ Do not size until every material unknown is either answered or recorded as a ris
 
 ```text
 Will many people open or copy the same workbook?
-├─ yes -> inspect/test source; consider code-along registration and Yjs pre-scale
+├─ yes -> inspect/test the attendee copy/open path; consider Yjs pre-scale
 └─ no  -> record why content-sync change is unnecessary
 
 Will many sessions start in a short interval?
@@ -58,12 +66,8 @@ Does any buffered event overlap the same pool?
 └─ no  -> use one `0/0` overlap segment and subtract only the live base
 
 Does the same group have an overlapping different runtime?
-├─ yes -> stop; remove the ambiguity with event owners before writing
+├─ yes -> stop; resolve the ambiguity with event owners before writing
 └─ no  -> continue
-
-Will attendees share a small set of IPs?
-├─ yes -> coordinate with INF/Cloudflare owners before the event
-└─ no/unknown -> record the assessment
 ```
 
 ## Pool-floor calculation

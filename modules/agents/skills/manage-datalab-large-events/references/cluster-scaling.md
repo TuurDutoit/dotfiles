@@ -79,7 +79,6 @@ Never lower max below current replicas during preparation. The script warns beca
 
 - Node scale-up and large image pulls have historically taken 10–15 minutes, but this is an observation rather than a safe universal lead time. Derive the apply-by time from the planned replica increase, the content-syncer's one-pod-per-five-minute policy, and an observation margin; hundreds of sessions need substantially more than a last-minute change.
 - Do not create a giant last-minute jump and assume the autoscaler makes it safe. A past pool depletion caused an unexpectedly large node scale-out and overloaded the image proxy with multi-gigabyte images.
-- Avoid a multiplexer deployment during the event. A deployment concurrent with a code-along has previously contributed to content-syncer overload and a depleted session pool.
-- Large company events can concentrate traffic behind a small number of source IPs. Ask the event owner for the VPN/network public IPs, then coordinate a Cloudflare bypass with INF before the event. Do not weaken protections from this runbook.
+- Avoid a multiplexer deployment during the event. A deployment concurrent with a large live event has previously contributed to content-syncer overload and a depleted session pool.
 
 Proceed to [verification-and-rollback.md](verification-and-rollback.md) after every approved change.
