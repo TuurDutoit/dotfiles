@@ -17,6 +17,6 @@ function title() {
   esac
 }
 
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
 
 alias reload='source ~/.zshrc'
