@@ -21,21 +21,6 @@
 - When pushing changes to a branch that has an open PR, update the PR title and description to reflect the latest state of the changes. If there are existing review comments that have been addressed, reply to them noting they've been resolved.
 - Never use `gh pr checks <num> --watch` — it blocks the session until CI completes. Watch checks in the background instead (e.g. via `Monitor`, or `gh pr checks` polling without `--watch`).
 
-## Pull Request Descriptions
-
-Stay within the repo's PR template if there is one. Otherwise, structure the description as:
-
-- **What it does**:
-  - High-level goal: what problem this solves or feature it implements (1-2 sentences).
-  - Why: explain why this change is needed and the impact it is intended to have.
-  - Approach: high-level rundown of the chosen approach (1-3 sentences/bullets). Briefly note tradeoffs if you picked between options.
-  - Highlights: call out changes that could affect external services — API changes, DB schema changes, new env vars, new dependencies.
-  - Don't list changed files or minor details. Reviewers want a quick overview and the riskiest changes, not a changelog.
-- **How to test**:
-  - QA plan: positive cases, negative cases, and existing functionality to regression-check.
-  - Test instructions: minimal setup needed to run the test environment.
-  - Keep it brief. "The unit tests cover this" is a valid test plan when true.
-
 ## Worktrees
 
 - Default to working in a worktree. When starting any task that involves modifying code in a git repo, set up a worktree first (via `EnterWorktree`) before making changes — unless the user explicitly says otherwise or you are already inside one (cwd contains `/.claude/worktrees/`). Read-only investigation, quick questions, and edits to non-repo files (e.g. dotfiles, `~/.claude/`) do not need a worktree.
