@@ -78,3 +78,5 @@ brew 'mobile-dev-inc/tap/maestro'# Extremely fast Python package installer and r
 brew "uv"
 # Modern diagram scripting language that turns text to diagrams
 brew "d2"
+# Safe, concurrent, practical language
+brew "rust"
