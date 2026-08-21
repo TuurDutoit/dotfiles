@@ -36,3 +36,22 @@ DISABLE_TELEMETRY=1 npx skills add git@github.com:datacamp-engineering/skills.gi
   --yes \
   && success 'DataCamp agent skills installed' \
   || fail 'failed to install DataCamp agent skills'
+
+skills_source="$DOTFILES/modules/agents/skills"
+skills_target="$HOME/.agents/skills"
+mkdir -p "$skills_target"
+
+find "$skills_source" -mindepth 1 -maxdepth 1 -type d -print | sort | while IFS= read -r src
+do
+  skill=$(basename "$src")
+  dst="$skills_target/$skill"
+
+  if [ -e "$dst" ] || [ -L "$dst" ]
+  then
+    rm -rf "$dst"
+  fi
+
+  ln -s "$src" "$dst" \
+    && success "linked agent skill $skill" \
+    || fail "failed to link agent skill $skill"
+done

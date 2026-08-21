@@ -1,4 +1,0 @@
-interface:
-  display_name: "Manage DataLab Workspace Event Capacity"
-  short_description: "Plan and operate DataLab Workspace Event capacity"
-  default_prompt: "Use $manage-datalab-large-events to plan capacity for this DataLab Workspace Event, show exact approval-gated changes, and apply only after I approve."
