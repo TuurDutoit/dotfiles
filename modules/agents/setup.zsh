@@ -7,7 +7,7 @@ fi
 
 DISABLE_TELEMETRY=1 npx skills add git@github.com:datacamp-engineering/skills.git \
   --global \
-  --agent codex claude-code \
+  --agent codex opencode \
   --skill \
     add-kong-redirect \
     adopt-openapi-docs \
