@@ -17,13 +17,13 @@ Every change under `/Users/tuur/.dotfiles` must end with a commit and push in th
 
 This applies to any file under `/Users/tuur/.dotfiles`, including:
 
-- `modules/claude/**` for Claude Code settings, skills, hooks, and related scripts.
 - `modules/codex/**` for Codex settings, skills, hooks, and related scripts.
+- `modules/opencode/**` for OpenCode settings and related scripts.
 - `modules/agents/**` for shared agent skills.
 - Shell config, zsh modules, Oh My Zsh overrides, hooks, `Brewfile`, `Brewfile.lock.json`, and `bin/**`.
 
 ## Notes
 
 - Use `git -C /Users/tuur/.dotfiles <cmd>` so commands work regardless of the current directory.
-- Respect global rules from `/Users/tuur/.codex/AGENTS.md` and `/Users/tuur/.claude/CLAUDE.md`: never use `--no-verify`, never force-push without explicit permission, never commit `.env*` files or secrets.
+- Respect global rules from `/Users/tuur/.codex/AGENTS.md`: never use `--no-verify`, never force-push without explicit permission, never commit `.env*` files or secrets.
 - If a hook blocks a commit, fix the underlying issue and create a new commit instead of amending.

@@ -77,7 +77,7 @@ canonical blocks and comment anchors, restores the canonical Markdown projection
 and records an auditable `reconcile_projection` revision. It intentionally does not
 attempt to parse raw Markdown back into blocks.
 
-## MCP: Codex and Claude Code
+## MCP: Codex
 
 Run the local MCP server from the project root:
 
@@ -108,15 +108,13 @@ touched comment threads, so an agent can discover feedback without polling the
 entire document. It uses the same `WorkspaceService` as the CLI, browser API, and
 storage layer.
 
-Agent behavior is documented in the checked-in local skills:
+Agent behavior is documented in the checked-in local skill:
 
 - [`skills/codex-visual-workspace/SKILL.md`](skills/codex-visual-workspace/SKILL.md)
-- [`skills/claude-code-visual-workspace/SKILL.md`](skills/claude-code-visual-workspace/SKILL.md)
 
-Install/copy the appropriate skill into the agent client's configured project or
-personal skills directory. The two variants share the workflow but identify the
-correct agent client in provenance and explain how to select a visual, apply a safe
-patch, and triage comments.
+Install/copy the skill into the agent client's configured project or personal
+skills directory. It explains how to select a visual, apply a safe patch, and
+triage comments.
 
 ## Local data, export, and deletion
 
