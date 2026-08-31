@@ -78,3 +78,4 @@ brew "uv"
 brew "d2"
 # Safe, concurrent, practical language
 brew "rust"
+cask "todoist-app"
