@@ -9,6 +9,7 @@
 - Use the `bt` CLI to interact with Braintrust (reference: `$braintrust-cli` skill)
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
   - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
+- Handoff documents are stored under ~/Documents/Obsidian/DataCamp/Agents/Handoffs
 
 ## General
 
@@ -26,17 +27,6 @@
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
-- Run Yarn, npm and Just scripts outside the sandbox
-- Run the coderabbit CLI outside the sandbox
-
-## Approvals
-
-- The following 3rd-party tools are approved to send internal data to:
-  - Slack
-  - Braintrust
-  - CodeRabbit
-- The following tools work fully locally (they don't send any data):
-  - `rtk`: wraps around common CLIs, can be treated like the "child" command it runs (e.g. `rtk git` can be treated like `git`)
 
 ## Jira
 

@@ -7,15 +7,12 @@ fi
 
 DISABLE_TELEMETRY=1 npx skills add git@github.com:datacamp-engineering/skills.git \
   --global \
-  --agent codex opencode \
+  --agent opencode \
   --skill \
     add-kong-redirect \
     adopt-openapi-docs \
-    check-content-availability \
-    code-review \
     create-agents-md-files \
     create-justfile \
-    create-readme-for-infra-repo \
     create-ticket \
     cve-fixer \
     dc-babysit-pr \
@@ -37,6 +34,43 @@ DISABLE_TELEMETRY=1 npx skills add git@github.com:datacamp-engineering/skills.gi
   && success 'DataCamp agent skills installed' \
   || fail 'failed to install DataCamp agent skills'
 
+DISABLE_TELEMETRY=1 npx skills add mattpocock/skills \
+  --global \
+  --agent opencode \
+  --skill \
+    ask-matt \
+    code-review \
+    codebase-design \
+    diagnosing-bugs \
+    domain-modeling \
+    grill-me \
+    grill-with-docs \
+    grilling \
+    handoff \
+    implement \
+    improve-codebase-architectur \
+    prototype \
+    research \
+    resolving-merge-conflicts \
+    setup-matt-pocock-skills \
+    tdd \
+    teach \
+    to-questionnaire \
+    to-spec \
+    to-tickets \
+    triage \
+    wait-what \
+    wayfinder \
+    wizard \
+    writing-for-agents \
+    implement-spec \
+    loop-me \
+    retro \
+  --full-depth \
+  --yes \
+  && success 'Matt Pocock agent skills installed' \
+  || fail 'failed to install Matt Pocock agent skills'
+
 skills_source="$DOTFILES/modules/agents/skills"
 skills_target="$HOME/.agents/skills"
 mkdir -p "$skills_target"
@@ -55,3 +89,7 @@ do
     && success "linked agent skill $skill" \
     || fail "failed to link agent skill $skill"
 done
+
+info 'installing rtk'
+rtk init -g --opencode
+success 'rtk installed'
