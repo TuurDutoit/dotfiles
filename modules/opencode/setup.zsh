@@ -1,28 +1,17 @@
-info 'installing OpenCode skills'
+info 'linking OpenCode AGENTS.md'
 
-if ! command -v opencode > /dev/null
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+opencode_home="$config_home/opencode"
+agents_source="$DOTFILES/modules/opencode/AGENTS.md"
+agents_target="$opencode_home/AGENTS.md"
+
+mkdir -p "$opencode_home"
+
+if [ -e "$agents_target" ] || [ -L "$agents_target" ]
 then
-  fail 'opencode CLI not found — install it first'
+  rm "$agents_target"
 fi
 
-skills_source="$DOTFILES/modules/agents/skills"
-config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-skills_target="$config_home/opencode/skills"
-mkdir -p "$skills_target"
-
-find "$skills_source" -mindepth 1 -maxdepth 1 -type d -print | sort | while IFS= read -r src
-do
-  skill=$(basename "$src")
-  dst="$skills_target/$skill"
-
-  if [ -e "$dst" ] || [ -L "$dst" ]
-  then
-    rm -rf "$dst"
-  fi
-
-  ln -s "$src" "$dst" \
-    && success "linked OpenCode skill $skill" \
-    || fail "failed to link OpenCode skill $skill"
-done
-
-success 'OpenCode skills installed'
+ln -s "$agents_source" "$agents_target" \
+  && success "linked OpenCode AGENTS.md" \
+  || fail "failed to link OpenCode AGENTS.md"
