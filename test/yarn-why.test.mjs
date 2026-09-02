@@ -50,6 +50,17 @@ test('parses Berry descriptors, aliases, workspace roots, and cycles', (t) => {
   assert.match(output, /web \(package\.json devDependencies → alias@npm:leaf@\^1\.0\.0\)/);
 });
 
+test('splits quoted Berry keys that merge multiple descriptors onto one entry', (t) => {
+  const directory = fixture({
+    'package.json': JSON.stringify({ name: 'repo', dependencies: { leaf: '^1.0.0' } }),
+    'yarn.lock': `__metadata:\n  version: 8\n  cacheKey: 10c0\n\n"leaf@npm:^1.0.0, leaf@npm:^1.5.0":\n  version: 1.9.0\n  resolution: "leaf@npm:1.9.0"\n  dependencies:\n    stem: "npm:^1.0.0"\n\n"stem@npm:^1.0.0":\n  version: 1.0.0\n  resolution: "stem@npm:1.0.0"\n\n"mid@npm:^1.0.0":\n  version: 1.0.0\n  resolution: "mid@npm:1.0.0"\n  dependencies:\n    leaf: "npm:^1.5.0"\n`,
+  });
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = why.renderWhy(path.join(directory, 'yarn.lock'), why.parseQuery('leaf'));
+  assert.match(output, /mid@1\.0\.0 \(requires leaf@npm:\^1\.5\.0\)/);
+  assert.match(output, /repo \(package\.json dependencies → leaf@\^1\.0\.0\)/);
+});
+
 test('supports exact, prefix, wildcard, caret, tilde, comparator, and OR version filters', () => {
   const match = why.versionMatches;
   assert.equal(match('1.2.3', '1.2.3'), true);
