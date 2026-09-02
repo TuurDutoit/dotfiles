@@ -24,6 +24,14 @@
 - When a learning would help future work, update the most appropriate durable documentation (for example, the README, `AGENTS.md`, a skill, or another relevant doc) as part of the task. Keep guidance specific, concise, and scoped to where it applies.
 - Mention relevant documentation updates or observations in the handoff. Do not add speculative, one-off, or project-specific rules to global instructions.
 
+## Conversations
+
+When commenting in Github, always add the following snippet at the end of your message:
+
+```
+> 🤖 posted on behalf of Tuur
+```
+
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
