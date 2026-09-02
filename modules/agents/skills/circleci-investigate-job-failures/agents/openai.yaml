@@ -1,0 +1,6 @@
+interface:
+  display_name: "Investigate CircleCI Job Failures"
+  short_description: "Diagnose failed CircleCI jobs via the MCP server"
+  default_prompt: "Use $circleci-investigate-job-failures to investigate the failed CircleCI job."
+policy:
+  allow_implicit_invocation: true
