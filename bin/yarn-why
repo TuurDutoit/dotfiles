@@ -395,12 +395,13 @@ function renderWhy(lockPath, query, maxDepth = null) {
     }
     return false;
   }
-  function collectChildren(entry) {
+  function collectChildren(entry, active) {
     const packageParents = new Map();
     const rootParents = new Map();
     const visited = new Set();
     let elided = false;
-    function walk(node) {
+    let splicedItems = 0;
+    function walk(node, spliced) {
       for (const descriptor of node.descriptors) {
         for (const parent of result.parents.get(descriptor) || []) {
           if (workspaceEntryCovered(parent.entry, descriptor)) continue;
@@ -409,14 +410,17 @@ function renderWhy(lockPath, query, maxDepth = null) {
             elided = true;
             if (!visited.has(parent.entry.id)) {
               visited.add(parent.entry.id);
-              walk(parent.entry);
+              walk(parent.entry, true);
             }
             continue;
           }
-          packageParents.set(`${parent.entry.id}\0${parent.dependency.descriptor}`, parent);
+          if (spliced && active.has(parent.entry.id)) continue;
+          if (spliced) splicedItems += 1;
+          packageParents.set(`${parent.entry.id}\0${parent.dependency.descriptor}`, { ...parent, hoisted: spliced });
         }
         for (const root of result.rootsByDescriptor.get(descriptor) || []) {
-          rootParents.set(`${root.label}\0${root.section}\0${root.name}\0${root.reference}`, root);
+          if (spliced) splicedItems += 1;
+          rootParents.set(`${root.label}\0${root.section}\0${root.name}\0${root.reference}`, { ...root, hoisted: spliced });
         }
       }
       for (const descriptor of node.descriptors) {
@@ -427,22 +431,26 @@ function renderWhy(lockPath, query, maxDepth = null) {
         }
       }
     }
-    walk(entry);
+    walk(entry, false);
     return {
       elided,
+      splicedItems,
       packages: [...packageParents.values()].sort((left, right) => entryLabel(left.entry).localeCompare(entryLabel(right.entry)) || left.dependency.descriptor.localeCompare(right.dependency.descriptor)).map((value) => ({ type: 'package', ...value })),
       roots: [...rootParents.values()].sort((left, right) => left.label.localeCompare(right.label) || left.section.localeCompare(right.section)).map((value) => ({ type: 'root', root: value })),
     };
   }
   function printEntry(entry, prefix, active, printed) {
-    const collected = collectChildren(entry);
+    const collected = collectChildren(entry, active);
     const children = [...collected.packages, ...collected.roots];
     if (!children.length && !collected.elided) {
       lines.push(`${prefix}└─ no package.json root matched this path`);
       return;
     }
+    if (collected.elided && (children.length === 0 || collected.splicedItems > 0)) {
+      lines.push(`${prefix}${children.length ? '├─ ' : '└─ '}...`);
+    }
     children.forEach((child, index) => {
-      const last = index === children.length - 1 && !collected.elided;
+      const last = index === children.length - 1;
       const branch = last ? '└─ ' : '├─ ';
       const continuation = `${prefix}${last ? '   ' : '│  '}`;
       if (child.type === 'root') {
@@ -450,18 +458,19 @@ function renderWhy(lockPath, query, maxDepth = null) {
         return;
       }
       const label = entryLabel(child.entry);
-      lines.push(`${prefix}${branch}${label} (requires ${child.dependency.descriptor})`);
+      const repeat = printed.has(child.entry.id);
+      if (child.hoisted && repeat) return;
+      lines.push(child.hoisted ? `${prefix}${branch}${label}` : `${prefix}${branch}${label} (requires ${child.dependency.descriptor})`);
       if (active.has(child.entry.id)) {
         lines.push(`${continuation}└─ cycle back to ${label}`);
         return;
       }
-      if (printed.has(child.entry.id)) return;
+      if (repeat) return;
       printed.add(child.entry.id);
       const next = new Set(active);
       next.add(child.entry.id);
       printEntry(child.entry, continuation, next, printed);
     });
-    if (collected.elided) lines.push(`${prefix}└─ ...`);
   }
   result.targets.forEach((entry, index) => {
     if (index) lines.push('');

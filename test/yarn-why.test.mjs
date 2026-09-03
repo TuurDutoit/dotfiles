@@ -98,13 +98,17 @@ test('limits depth counted from the root package with -d and --depth', (t) => {
   assert.match(unlimited, /top@1\.0\.0 \(requires mid@\^1\.0\.0\)/);
 
   const depthOne = why.renderWhy(lockfile, why.parseQuery('leaf'), 1);
-  assert.match(depthOne, /top@1\.0\.0 \(requires mid@\^1\.0\.0\)/);
-  assert.doesNotMatch(depthOne, /mid@1\.0\.0/);
   assert.match(depthOne, /\.\.\./);
+  assert.match(depthOne, /top@1\.0\.0/);
+  assert.doesNotMatch(depthOne, /\(requires/);
+  assert.doesNotMatch(depthOne, /mid@1\.0\.0/);
+  assert.ok(depthOne.indexOf('...') < depthOne.indexOf('top@1.0.0'));
 
   const depthZero = why.renderWhy(lockfile, why.parseQuery('leaf'), 0);
   assert.match(depthZero, /app \(package\.json dependencies → leaf@\^1\.0\.0\)/);
   assert.doesNotMatch(depthZero, /requires/);
+  assert.match(depthZero, /\.\.\./);
+  assert.ok(depthZero.indexOf('...') < depthZero.indexOf('app ('));
 
   for (const arguments_ of [['-d', '1', 'leaf'], ['--depth', '1', 'leaf'], ['leaf', '-d', '1']]) {
     const result = runWhy(arguments_, directory);
