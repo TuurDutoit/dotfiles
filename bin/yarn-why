@@ -307,7 +307,7 @@ function manifestRoots(lockPath) {
       for (const [name, reference] of Object.entries(manifest[section] || {})) {
         const descriptors = [descriptorFor(name, reference)];
         if (!/^[a-z]+:/.test(reference)) descriptors.push(descriptorFor(name, `npm:${reference}`));
-        dependencies.push({ label, section, name, reference, descriptors });
+        dependencies.push({ label, section, name, reference, descriptors, manifestPath });
       }
     }
   }
@@ -349,6 +349,25 @@ function buildWhy(lockPath, query) {
       rootsByDescriptor.set(descriptor, list);
     }
   }
+  const depthFromRoot = new Map();
+  const queue = [];
+  for (const entry of lock.entries) {
+    const reachesRoot = entry.descriptors.some((descriptor) => (rootsByDescriptor.get(descriptor) || []).length > 0)
+      || entry.descriptors.some((descriptor) => splitDescriptor(descriptor).reference.startsWith('workspace:'));
+    if (!reachesRoot) continue;
+    depthFromRoot.set(entry.id, 1);
+    queue.push(entry);
+  }
+  while (queue.length) {
+    const current = queue.shift();
+    const nextDepth = depthFromRoot.get(current.id) + 1;
+    for (const dependency of current.dependencies) {
+      const required = descriptors.get(dependency.descriptor);
+      if (!required || depthFromRoot.has(required.id)) continue;
+      depthFromRoot.set(required.id, nextDepth);
+      queue.push(required);
+    }
+  }
   const targets = lock.entries.filter((entry) => entryNames(entry).has(query.name) && versionMatches(entry.version, query.range))
     .sort((left, right) => entryLabel(left).localeCompare(entryLabel(right)));
   const workspacesByName = new Map();
@@ -358,72 +377,102 @@ function buildWhy(lockPath, query) {
     list.push(workspace);
     workspacesByName.set(workspace.name, list);
   }
-  return { lock, targets, parents, rootsByDescriptor, workspacesByName };
+  return { depthFromRoot, lock, targets, parents, rootsByDescriptor, workspacesByName };
 }
 
-function renderWhy(lockPath, query) {
+function renderWhy(lockPath, query, maxDepth = null) {
   const result = buildWhy(lockPath, query);
   if (!result.targets.length) return `No installed versions of ${query.name}${query.range ? ` matching ${query.range}` : ''} were found.`;
   const lines = [`Why ${query.name}${query.range ? ` (${query.range})` : ''} is installed:`];
-  function childrenFor(entry) {
+  function workspaceEntryCovered(parentEntry, descriptor) {
+    const roots = result.rootsByDescriptor.get(descriptor) || [];
+    if (!roots.length) return false;
+    for (const workspaceDescriptor of parentEntry.descriptors) {
+      const parsed = splitDescriptor(workspaceDescriptor);
+      if (!parsed.reference.startsWith('workspace:')) continue;
+      const workspaces = result.workspacesByName.get(parsed.name) || [];
+      if (workspaces.some((workspace) => roots.some((root) => root.manifestPath === workspace.manifestPath))) return true;
+    }
+    return false;
+  }
+  function collectChildren(entry) {
     const packageParents = new Map();
     const rootParents = new Map();
-    for (const descriptor of entry.descriptors) {
-      for (const parent of result.parents.get(descriptor) || []) {
-        const key = `${parent.entry.id}\0${parent.dependency.descriptor}`;
-        packageParents.set(key, parent);
+    const visited = new Set();
+    let elided = false;
+    function walk(node) {
+      for (const descriptor of node.descriptors) {
+        for (const parent of result.parents.get(descriptor) || []) {
+          if (workspaceEntryCovered(parent.entry, descriptor)) continue;
+          const depth = result.depthFromRoot.get(parent.entry.id);
+          if (maxDepth !== null && depth !== undefined && depth > maxDepth) {
+            elided = true;
+            if (!visited.has(parent.entry.id)) {
+              visited.add(parent.entry.id);
+              walk(parent.entry);
+            }
+            continue;
+          }
+          packageParents.set(`${parent.entry.id}\0${parent.dependency.descriptor}`, parent);
+        }
+        for (const root of result.rootsByDescriptor.get(descriptor) || []) {
+          rootParents.set(`${root.label}\0${root.section}\0${root.name}\0${root.reference}`, root);
+        }
       }
-      for (const root of result.rootsByDescriptor.get(descriptor) || []) {
-        rootParents.set(`${root.label}\0${root.section}\0${root.name}\0${root.reference}`, root);
+      for (const descriptor of node.descriptors) {
+        const parsed = splitDescriptor(descriptor);
+        if (!parsed.reference.startsWith('workspace:')) continue;
+        for (const workspace of result.workspacesByName.get(parsed.name) || []) {
+          rootParents.set(`${workspace.label}\0workspace`, { ...workspace, section: 'workspace', name: parsed.name, reference: parsed.reference });
+        }
       }
     }
-    for (const descriptor of entry.descriptors) {
-      const parsed = splitDescriptor(descriptor);
-      if (!parsed.reference.startsWith('workspace:')) continue;
-      for (const workspace of result.workspacesByName.get(parsed.name) || []) {
-        rootParents.set(`${workspace.label}\0workspace`, { ...workspace, section: 'workspace', name: parsed.name, reference: parsed.reference });
-      }
-    }
-    return [
-      ...[...packageParents.values()].sort((left, right) => entryLabel(left.entry).localeCompare(entryLabel(right.entry)) || left.dependency.descriptor.localeCompare(right.dependency.descriptor)).map((value) => ({ type: 'package', ...value })),
-      ...[...rootParents.values()].sort((left, right) => left.label.localeCompare(right.label) || left.section.localeCompare(right.section)).map((value) => ({ type: 'root', root: value })),
-    ];
+    walk(entry);
+    return {
+      elided,
+      packages: [...packageParents.values()].sort((left, right) => entryLabel(left.entry).localeCompare(entryLabel(right.entry)) || left.dependency.descriptor.localeCompare(right.dependency.descriptor)).map((value) => ({ type: 'package', ...value })),
+      roots: [...rootParents.values()].sort((left, right) => left.label.localeCompare(right.label) || left.section.localeCompare(right.section)).map((value) => ({ type: 'root', root: value })),
+    };
   }
-  function printEntry(entry, prefix, active) {
-    const children = childrenFor(entry);
-    if (!children.length) {
+  function printEntry(entry, prefix, active, printed) {
+    const collected = collectChildren(entry);
+    const children = [...collected.packages, ...collected.roots];
+    if (!children.length && !collected.elided) {
       lines.push(`${prefix}└─ no package.json root matched this path`);
       return;
     }
     children.forEach((child, index) => {
-      const last = index === children.length - 1;
+      const last = index === children.length - 1 && !collected.elided;
       const branch = last ? '└─ ' : '├─ ';
       const continuation = `${prefix}${last ? '   ' : '│  '}`;
       if (child.type === 'root') {
         lines.push(`${prefix}${branch}${child.root.label} (package.json ${child.root.section} → ${child.root.name}@${child.root.reference})`);
-      } else {
-        const label = entryLabel(child.entry);
-        lines.push(`${prefix}${branch}${label} (requires ${child.dependency.descriptor})`);
-        if (active.has(child.entry.id)) {
-          lines.push(`${continuation}└─ cycle back to ${label}`);
-        } else {
-          const next = new Set(active);
-          next.add(child.entry.id);
-          printEntry(child.entry, continuation, next);
-        }
+        return;
       }
+      const label = entryLabel(child.entry);
+      lines.push(`${prefix}${branch}${label} (requires ${child.dependency.descriptor})`);
+      if (active.has(child.entry.id)) {
+        lines.push(`${continuation}└─ cycle back to ${label}`);
+        return;
+      }
+      if (printed.has(child.entry.id)) return;
+      printed.add(child.entry.id);
+      const next = new Set(active);
+      next.add(child.entry.id);
+      printEntry(child.entry, continuation, next, printed);
     });
+    if (collected.elided) lines.push(`${prefix}└─ ...`);
   }
   result.targets.forEach((entry, index) => {
     if (index) lines.push('');
     lines.push(entryLabel(entry));
-    printEntry(entry, '', new Set([entry.id]));
+    printEntry(entry, '', new Set([entry.id]), new Set());
   });
   return lines.join('\n');
 }
 
 function usage() {
-  return 'Usage: yarn-why [--lockfile <path> | -f <path>] <package[@version-or-range]> [version-or-range]';
+  return 'Usage: yarn-why [--lockfile <path> | -f <path>] [--depth <n> | -d <n>] <package[@version-or-range]> [version-or-range]';
 }
 
 function findLockfile(startDirectory = process.cwd()) {
@@ -443,6 +492,7 @@ function findLockfile(startDirectory = process.cwd()) {
 
 function parseArguments(arguments_, cwd = process.cwd()) {
   let suppliedLockfile = null;
+  let depth = null;
   const positional = [];
   let optionsEnded = false;
   for (let index = 0; index < arguments_.length; index += 1) {
@@ -463,6 +513,15 @@ function parseArguments(arguments_, cwd = process.cwd()) {
       index += 1;
       continue;
     }
+    if (argument === '--depth' || argument === '-d') {
+      if (depth !== null) return { error: 'Specify only one depth.' };
+      const value = arguments_[index + 1];
+      const parsedDepth = Number(value);
+      if (value === undefined || !Number.isInteger(parsedDepth) || parsedDepth < 0) return { error: 'Depth must be a non-negative integer.' };
+      depth = parsedDepth;
+      index += 1;
+      continue;
+    }
     if (argument.startsWith('-')) return { error: `Unknown option: ${argument}` };
     positional.push(argument);
   }
@@ -479,7 +538,7 @@ function parseArguments(arguments_, cwd = process.cwd()) {
 
   if (!positional.length) return { error: 'Package query is required.' };
   if (positional.length > 2) return { error: usage() };
-  return { lockPath, packageArgument: positional[0], separateVersion: positional[1] };
+  return { lockPath, packageArgument: positional[0], separateVersion: positional[1], depth };
 }
 
 function main(arguments_, cwd = process.cwd()) {
@@ -501,7 +560,7 @@ function main(arguments_, cwd = process.cwd()) {
   }
   try {
     console.log(`Lockfile: ${parsed.lockPath}`);
-    console.log(renderWhy(parsed.lockPath, parseQuery(parsed.packageArgument, parsed.separateVersion)));
+    console.log(renderWhy(parsed.lockPath, parseQuery(parsed.packageArgument, parsed.separateVersion), parsed.depth));
   } catch (error) {
     console.error(error.message);
     return 1;
