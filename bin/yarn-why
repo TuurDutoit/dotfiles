@@ -447,7 +447,31 @@ function renderWhy(lockPath, query, maxDepth = null) {
       return;
     }
     if (collected.elided && (children.length === 0 || collected.splicedItems > 0)) {
-      lines.push(`${prefix}${children.length ? '├─ ' : '└─ '}...`);
+      const continuation = children.length ? `${prefix}   ` : '';
+      lines.push(`${prefix}└─ ...`);
+      children.forEach((child, index) => {
+        const last = index === children.length - 1;
+        const branch = last ? '└─ ' : '├─ ';
+        const childContinuation = `${continuation}${last ? '   ' : '│  '}`;
+        if (child.type === 'root') {
+          lines.push(`${continuation}${branch}${child.root.label} (package.json ${child.root.section} → ${child.root.name}@${child.root.reference})`);
+          return;
+        }
+        const label = entryLabel(child.entry);
+        const repeat = printed.has(child.entry.id);
+        if (child.hoisted && repeat) return;
+        lines.push(`${continuation}${branch}${child.hoisted ? label : `${label} (requires ${child.dependency.descriptor})`}`);
+        if (active.has(child.entry.id)) {
+          lines.push(`${childContinuation}└─ cycle back to ${label}`);
+          return;
+        }
+        if (repeat) return;
+        printed.add(child.entry.id);
+        const next = new Set(active);
+        next.add(child.entry.id);
+        printEntry(child.entry, childContinuation, next, printed);
+      });
+      return;
     }
     children.forEach((child, index) => {
       const last = index === children.length - 1;
