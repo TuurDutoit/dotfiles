@@ -1,0 +1,69 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "datacamp-internal-cloudflare-mcp": {
+      "type": "remote",
+      "url": "https://mcp-gateway-internal.datacamp.com/mcp",
+      "enabled": true
+    },
+    "circleci": {
+      "type": "remote",
+      "url": "https://mcp.circleci.com/v1/mcp"
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
+    },
+    "atlassian": {
+      "enabled": false
+    },
+    "better-artifacts": {
+      "enabled": false
+    },
+    "airtable": {
+      "enabled": false
+    },
+    "clickup": {
+      "enabled": false
+    },
+    "cloudflare": {
+      "enabled": false
+    },
+    "huggingface": {
+      "enabled": false
+    },
+    "intercom": {
+      "enabled": false
+    },
+    "linear": {
+      "enabled": false
+    },
+    "miro": {
+      "enabled": false
+    },
+    "notion": {
+      "enabled": false
+    },
+    "webflow": {
+      "enabled": false
+    }
+  },
+  "permission": {
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.example": "allow",
+      "*.sample": "allow"
+    },
+    "external_directory": {
+      "~/Documents/Obsidian/DataCamp/Agents/**": "allow",
+      "/tmp/**": "allow",
+      "~/Projects/**": "allow"
+    }
+  },
+  "plugin": [
+    "@datacamp/opencode-auto-approve",
+    "@datacamp/opencode-openrouter-usage"
+  ]
+}

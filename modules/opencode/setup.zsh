@@ -1,17 +1,22 @@
-info 'linking OpenCode AGENTS.md'
+info 'linking OpenCode config'
 
 config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 opencode_home="$config_home/opencode"
-agents_source="$DOTFILES/modules/opencode/AGENTS.md"
-agents_target="$opencode_home/AGENTS.md"
+module="$DOTFILES/modules/opencode"
 
 mkdir -p "$opencode_home"
 
-if [ -e "$agents_target" ] || [ -L "$agents_target" ]
-then
-  rm "$agents_target"
-fi
+for name in AGENTS.md opencode.jsonc agents
+do
+  source="$module/$name"
+  target="$opencode_home/$name"
 
-ln -s "$agents_source" "$agents_target" \
-  && success "linked OpenCode AGENTS.md" \
-  || fail "failed to link OpenCode AGENTS.md"
+  if [ -e "$target" ] || [ -L "$target" ]
+  then
+    rm -rf "$target"
+  fi
+
+  ln -s "$source" "$target" \
+    && success "linked OpenCode $name" \
+    || fail "failed to link OpenCode $name"
+done
