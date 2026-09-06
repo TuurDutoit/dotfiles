@@ -442,15 +442,22 @@ function renderWhy(lockPath, query, maxDepth = null) {
   function printEntry(entry, prefix, active, printed) {
     const collected = collectChildren(entry, active);
     const children = [...collected.packages, ...collected.roots];
-    if (!children.length && !collected.elided) {
+    const seenEntry = new Set();
+    const effective = children.filter((child) => {
+      if (child.type !== 'package') return true;
+      if (!child.hoisted) { seenEntry.add(child.entry.id); return true; }
+      return !seenEntry.has(child.entry.id);
+    });
+    const showEllipsis = collected.elided && (effective.length === 0 || effective.some((c) => c.type === 'package' && c.hoisted));
+    if (!effective.length && !showEllipsis) {
       lines.push(`${prefix}└─ no package.json root matched this path`);
       return;
     }
-    if (collected.elided && (children.length === 0 || collected.splicedItems > 0)) {
-      const continuation = children.length ? `${prefix}   ` : '';
+    if (showEllipsis) {
+      const continuation = effective.length ? `${prefix}   ` : '';
       lines.push(`${prefix}└─ ...`);
-      children.forEach((child, index) => {
-        const last = index === children.length - 1;
+      effective.forEach((child, index) => {
+        const last = index === effective.length - 1;
         const branch = last ? '└─ ' : '├─ ';
         const childContinuation = `${continuation}${last ? '   ' : '│  '}`;
         if (child.type === 'root') {
@@ -473,8 +480,8 @@ function renderWhy(lockPath, query, maxDepth = null) {
       });
       return;
     }
-    children.forEach((child, index) => {
-      const last = index === children.length - 1;
+    effective.forEach((child, index) => {
+      const last = index === effective.length - 1;
       const branch = last ? '└─ ' : '├─ ';
       const continuation = `${prefix}${last ? '   ' : '│  '}`;
       if (child.type === 'root') {
