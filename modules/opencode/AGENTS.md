@@ -2,11 +2,12 @@
 
 ## Pointers
 
-- Use the `$git-github-workflow` skill for all Git, GitHub, and pull request work.
-- Use the `$coding-workflow-quality` skill when planning, implementing, testing, reviewing, or otherwise modifying code.
-- Use the `$circleci-investigate-job-failures` skill to investigate CircleCI failures
+- Use the `coding-workflow-quality` skill when planning, implementing, testing, reviewing, or otherwise modifying code.
+- Use the `git-github-workflow` skill for all Git, GitHub, and pull request work.
+- Use the `pr` skill when opening a PR
+- Use the `circleci-investigate-job-failures` skill to investigate CircleCI failures
 
-- Use the `bt` CLI to interact with Braintrust (reference: `$braintrust-cli` skill)
+- Use the `bt` CLI to interact with Braintrust (reference: `braintrust-cli` skill)
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
   - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
 - Handoff documents are stored under ~/Documents/Obsidian/DataCamp/Agents/Handoffs
