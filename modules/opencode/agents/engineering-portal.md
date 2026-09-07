@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   DataCamp engineering portal specialist. Use for service catalog entries,
   ownership and teams, Concourse pipelines and jobs, scorecards, SBOM and

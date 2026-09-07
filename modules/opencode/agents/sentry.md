@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   Sentry specialist. Use for error monitoring: finding organizations and
   projects, searching grouped issues, aggregating events (errors, logs,

@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   Looker BI specialist. Use for dashboards, looks, explores, queries and
   pulling data from Looker. When calling this agent, describe what it

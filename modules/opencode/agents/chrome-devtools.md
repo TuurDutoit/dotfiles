@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   Browser automation specialist (Chrome DevTools). Use for opening and
   driving web pages: navigating, clicking, filling forms, taking

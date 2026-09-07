@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   CircleCI specialist. Use for anything CI: listing and inspecting runs,
   workflows and jobs, diagnosing failures (steps, tests, logs, resource

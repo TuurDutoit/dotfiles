@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   incident.io specialist. Use for incidents, alerts, escalations, on-call
   schedules, follow-ups, catalog lookups, incident/alert/escalation stats,

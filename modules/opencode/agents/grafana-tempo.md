@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   Distributed tracing specialist for Grafana Tempo. Use for finding and
   inspecting traces with TraceQL: locating traces for a service or time

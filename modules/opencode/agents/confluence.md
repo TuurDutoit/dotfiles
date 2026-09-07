@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   Fast agent specialized for searching, reading and updating Confluence docs.
   Use this when you need to find relevant info in Confluence, or if you need to
@@ -20,17 +20,17 @@ description: >-
   When editing very large large files, the agent may not be able to use the
   Confluence tools. In that case, it will point at a file path where it has made
   the changes - let me know so I can manually upload the updated content.
-model: openrouter/deepseek/deepseek-v4-flash
+model: openrouter/z-ai/glm-5.3-flash
 tools:
-  "incident-io_*": false
-  "incident_io_*": false
-  "postman_*": false
-  "mcp-internal-tooling_*": false
-  "chrome-devtools_*": false
-  "circleci_*": false
-  "sentry_*": false
-  "datadog_*": false
-  "atlassian_*": true
+  incident-io_*: false
+  incident_io_*: false
+  postman_*: false
+  mcp-internal-tooling_*: false
+  chrome-devtools_*: false
+  circleci_*: false
+  sentry_*: false
+  datadog_*: false
+  atlassian_*: true
 permission:
   "*": deny
   todowrite: deny

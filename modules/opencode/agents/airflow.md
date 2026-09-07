@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   Apache Airflow specialist. Use for DAGs, DAG runs, task instances, task
   logs, schedules, retries, and Airflow variables and connections. When

@@ -1,5 +1,5 @@
 ---
-mode: subagent
+mode: all
 description: >-
   Postman specialist. Use for anything Postman: searching the API network
   or internal collections for APIs, reading workspaces, collections,
