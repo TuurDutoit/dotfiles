@@ -10,19 +10,14 @@
       "type": "remote",
       "url": "https://mcp.circleci.com/v1/mcp"
     },
-    "incident-io": {
-      "enabled": false
-    },
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
     },
-    "atlassian": {
-      "type": "remote",
-      "url": "https://mcp.atlassian.com/v1/mcp/authv2",
-      "enabled": true
+    "incident-io": {
+      "enabled": false
     },
-    "datadog": {
+    "atlassian": {
       "enabled": false
     },
     "better-artifacts": {
@@ -58,13 +53,13 @@
   },
   "tools": {
     "incident-io_*": false,
-    "incident_io_*": false,
     "postman_*": false,
     "mcp-internal-tooling_*": false,
     "chrome-devtools_*": false,
     "circleci_*": false,
     "sentry_*": false,
-    "atlassian_*": false
+    "atlassian_*": false,
+    "datacamp-internal-cloudflare-mcp_*": true,
   },
   "permission": {
     "read": {
@@ -75,9 +70,9 @@
       "*.sample": "allow"
     },
     "external_directory": {
-      "~/Documents/Obsidian/DataCamp/Agents/**": "allow",
+      "/Users/tuur/Documents/Obsidian/DataCamp/Agents/**": "allow",
       "/tmp/**": "allow",
-      "~/Projects/**": "allow"
+      "/Users/tuur/Projects/**": "allow"
     }
   },
   "plugin": [

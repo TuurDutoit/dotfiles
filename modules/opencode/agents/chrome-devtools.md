@@ -7,15 +7,13 @@ description: >-
   network activity, recording performance traces and running Lighthouse
   audits. When calling this agent, describe what to check or do in the
   browser and it reports exactly what it observed.
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/deepseek/deepseek-v4-flash-latest
 tools:
-  "incident-io_*": false
-  "incident_io_*": false
   "postman_*": false
   "mcp-internal-tooling_*": false
   "circleci_*": false
   "sentry_*": false
-  "atlassian_*": false
+  "datadog_*": false
   "chrome-devtools_*": true
 ---
 

@@ -6,15 +6,13 @@ description: >-
   needs (e.g. "pull the weekly signup numbers from dashboard X", "which
   look answers Y?") and it returns the data or the dashboard/look
   definitions.
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/deepseek/deepseek-v4-flash-latest
 tools:
-  "incident-io_*": false
-  "incident_io_*": false
   "postman_*": false
   "chrome-devtools_*": false
   "circleci_*": false
   "sentry_*": false
-  "atlassian_*": false
+  "datadog_*": false
   "mcp-internal-tooling_*": false
   "mcp-internal-tooling_looker_*": true
 ---

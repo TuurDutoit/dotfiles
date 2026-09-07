@@ -7,15 +7,13 @@ description: >-
   APIs, or planning an integration. When calling this agent, describe what
   it needs (e.g. "find our notification-service API", "how do I call X?")
   and it returns the answer with Postman links.
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/deepseek/deepseek-v4-flash-latest
 tools:
-  "incident-io_*": false
-  "incident_io_*": false
   "mcp-internal-tooling_*": false
   "chrome-devtools_*": false
   "circleci_*": false
   "sentry_*": false
-  "atlassian_*": false
+  "datadog_*": false
   "postman_*": true
 ---
 

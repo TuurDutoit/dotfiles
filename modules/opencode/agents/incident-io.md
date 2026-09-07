@@ -7,16 +7,14 @@ description: >-
   action (e.g. "summarise INC-123's investigation", "who is on call for
   the payments team?", "how many P1s did we have this month?") and it
   returns the answer with references.
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/deepseek/deepseek-v4-flash-latest
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false
   "chrome-devtools_*": false
   "circleci_*": false
   "sentry_*": false
-  "atlassian_*": false
-  "incident-io_*": true
-  "incident_io_*": true
+  "datadog_*": false
   "datacamp-internal-cloudflare-mcp_portal_*": true
 ---
 

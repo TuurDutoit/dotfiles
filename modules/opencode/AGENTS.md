@@ -40,6 +40,10 @@ When commenting in Github, always add the following snippet at the end of your m
 
 - Default to project `LX` (Learner Experience) when creating Jira tickets, unless told otherwise.
 
+## Confluence
+
+- Always use the HTML or ADF format to fetch and save Confluence content. The Markdown format doesn't support some content types, which results in parts of the page getting lost when updating it.
+
 ## BigQuery
 
 - Always default to project ID `datacamp-data-platform`. Do not guess or use any other project ID unless explicitly told to.

@@ -6,15 +6,13 @@ description: >-
   calling this agent, describe what it needs (e.g. "why did dag X fail
   last night?", "when does dag Y next run?") and it returns the answer
   with the relevant run or task details.
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/deepseek/deepseek-v4-flash-latest
 tools:
-  "incident-io_*": false
-  "incident_io_*": false
   "postman_*": false
   "chrome-devtools_*": false
   "circleci_*": false
   "sentry_*": false
-  "atlassian_*": false
+  "datadog_*": false
   "mcp-internal-tooling_*": false
   "mcp-internal-tooling_airflow_*": true
 ---

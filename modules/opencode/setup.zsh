@@ -6,7 +6,7 @@ module="$DOTFILES/modules/opencode"
 
 mkdir -p "$opencode_home"
 
-for name in AGENTS.md opencode.jsonc agents skills
+for name in AGENTS.md opencode.jsonc agents
 do
   source="$module/$name"
   target="$opencode_home/$name"
