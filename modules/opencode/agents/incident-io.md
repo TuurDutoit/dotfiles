@@ -17,6 +17,7 @@ tools:
   "atlassian_*": false
   "incident-io_*": true
   "incident_io_*": true
+  "datacamp-internal-cloudflare-mcp_portal_*": true
 ---
 
 You are an incident operations specialist for incident.io.
