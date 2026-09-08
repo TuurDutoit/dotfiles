@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mission"
+  short_description: "Turn ideas into mission, vision, strategy, goals, and roadmap docs"
+  default_prompt: "Use $mission to turn my ideas into mission, vision, strategy, goals, and roadmap docs."
+policy:
+  allow_implicit_invocation: true
