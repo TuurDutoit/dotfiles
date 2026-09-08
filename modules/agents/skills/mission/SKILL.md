@@ -18,7 +18,7 @@ Turn rough ideas, strategy fragments, or product concepts into a coherent, struc
 
 ## Process
 
-Follow these 5 phases in order. Complete each phase before advancing.
+Follow these 6 phases in order. Complete each phase before advancing.
 
 ```
 Phase 1: Ingest & Assess
@@ -30,6 +30,8 @@ Phase 3: Synthesize & Review
 Phase 4: Determine Storage Location
        │
 Phase 5: Write the Strategy Bundle
+       │
+Phase 6: Update AGENTS.md
 ```
 
 ---
@@ -121,3 +123,17 @@ Write the strategy bundle inside the resolved `<target_dir>/strategy/` directory
 | **`roadmap.md`** | Prioritized initiatives grouped by horizon (Now / Next / Later) with ROI rationale. |
 
 Verify that all files are created, correctly formatted, and cross-linked.
+
+---
+
+### Phase 6: Update AGENTS.md
+
+If an `AGENTS.md` (or `CLAUDE.md`) exists in the repository root or `.dotfiles`, add a concise context pointer so other agents can discover and consume the strategy documents.
+
+Add a single bullet under the existing pointers or documentation section:
+
+```markdown
+- Strategy, mission, vision, and roadmap docs live at `<relative_path_to_strategy_dir>/` (see `<relative_path_to_strategy_dir>/README.md`).
+```
+
+Keep the pointer concise and avoid duplicating file contents into `AGENTS.md`.
