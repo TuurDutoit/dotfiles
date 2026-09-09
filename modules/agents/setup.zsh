@@ -22,7 +22,6 @@ DISABLE_TELEMETRY=1 npx skills add git@github.com:datacamp-engineering/skills.gi
     dc-migrate-oxfmt-oxlint \
     dc-migrate-oxlint \
     dc-team-lx-ask-for-pr-review \
-    dc-team-lx-multi-review \
     dead-code \
     enable-teleport-for-db \
     improve-codebase-architecture \
