@@ -14,6 +14,11 @@
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
     },
+    "cua-driver": {
+      "type": "local",
+      "command": ["/Users/tuur/.local/bin/cua-driver", "mcp"],
+      "enabled": true
+    },
     "incident-io": {
       "enabled": false
     },

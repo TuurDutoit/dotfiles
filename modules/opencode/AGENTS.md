@@ -12,8 +12,9 @@
   - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
 - Handoff documents are stored under ~/Documents/Obsidian/DataCamp/Agents/Handoffs
 
-## General
+## General - very important!
 
+- Back up all your statements with hard proof - DO NOT assume things. Find references in official docs, issue trackers or public forums. Find the actual error message when something crashes. Get a screenshot to validate a UI looks good. Be your own critic.
 - When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
 - Keep changes simple, elegant, and well integrated with the existing code. Prefer the smallest coherent solution over new abstractions or complexity.
 - Before implementing a feature, consider whether a focused refactor of the affected code would make the change clearer or simpler. When it would, do that refactor first; avoid speculative refactors unrelated to the feature.
