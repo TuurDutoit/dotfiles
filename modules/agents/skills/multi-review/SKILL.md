@@ -1,6 +1,6 @@
 ---
 name: multi-review
-description: Run reviewer subagents in parallel on the current branch (or a given PR), choosing which review dimensions fit the change. Local approximation of /ultrareview. Usage — `/multi-review` for current branch vs merge-base; `/multi-review <PR_URL_or_number>` for a specific PR.
+description: Run reviewer subagents in parallel to review a diff (current branch or a given PR) or a spec/implementation plan, choosing which review dimensions fit the input. Local approximation of /ultrareview. Usage — `/multi-review` for current branch vs merge-base; `/multi-review <PR_URL_or_number>` for a specific PR; `/multi-review <path-to-spec-or-plan>` to review a spec or implementation plan.
 allowed-tools:
   - Bash(git *)
   - Bash(gh *)
@@ -12,14 +12,14 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '2.0.0'
+  version: '2.1.0'
 ---
 
 # Multi-agent code review (local)
 
 ## Context
 
-A local approximation of Claude Code's `/ultrareview`. Dispatches reviewer subagents in parallel — the dimensions chosen in Step 2 — then deduplicates and merges their findings into a single prioritized report.
+A local approximation of Claude Code's `/ultrareview`. Dispatches reviewer subagents in parallel — the dimensions chosen in Step 2 — then deduplicates and merges their findings into a single prioritized report. The input under review is either a diff (current branch or a PR) or a design document (a spec or implementation plan).
 
 Unlike `/ultrareview`, this runs against your current subscription on your local machine. It does not have ultrareview's remote verification sandbox, so findings should be treated as a strong signal, not ground truth.
 
@@ -29,6 +29,7 @@ Unlike `/ultrareview`, this runs against your current subscription on your local
 
 - **Empty** → review the current branch against its merge-base with the repo's default branch (`main` or `master`).
 - **A PR reference** → accepts a full URL (`https://github.com/owner/repo/pull/123`), `owner/repo#123`, or a bare `123` when you're already inside the repo. Fetch the PR's diff and description with `gh`.
+- **A spec or implementation plan** → a path to a Markdown/Doc document describing what to build or how. The document itself is reviewed; there is no diff. See Step 1 (case 4) and the spec/plan-mode guidance in Step 2.
 
 ## Finding classification
 
@@ -42,6 +43,8 @@ Every finding must be categorized as:
 - **Existing** — the issue was already present before the changes. It is flagged only because it is related to code that was touched. Existing findings are never merge-blockers on their own.
 
 Reviewers must verify freshness by checking the merge-base version of the file (`git show <merge-base>:<path>`) when unsure: if the problem exists at the merge-base, it is Existing.
+
+In spec/plan mode freshness does not apply — there is no diff for anything to be new or existing against. Omit the freshness tag on every finding.
 
 ### Priority
 
@@ -62,7 +65,7 @@ Reviewers need both the diff (to see what changed) **and** read access to a chec
 
 Run these in the current working directory:
 
-1. Confirm you are inside a git repo. If not, stop and tell the user.
+1. Confirm you are inside a git repo. If not, stop and tell the user. (Spec/plan mode needs no repo — see case 4.)
 2. **No-argument case** — the user is already on the branch under review:
    - Default branch: `git symbolic-ref refs/remotes/origin/HEAD` (fallback: try `main` then `master`).
    - Merge-base: `git merge-base <default> HEAD`.
@@ -76,10 +79,14 @@ Run these in the current working directory:
    - Run `git -C <host-clone> fetch origin pull/<N>/head` if the SHA isn't already present locally.
    - Create a fresh detached worktree at the PR head: `WORKTREE=$(mktemp -d -t multi-review)` then `git -C <host-clone> worktree add --detach "$WORKTREE" <headRefOid>`. **This is the path reviewers must use as the repo root** — it reflects the PR head exactly, regardless of what the user has checked out elsewhere.
    - Remember `<host-clone>` and `$WORKTREE` so you can clean up in Step 5.
+4. **Spec/plan case** — the user passes a path to a spec or implementation plan:
+   - Read the document in full. If the path does not exist, stop and tell the user.
+   - No diff, no merge-base, no worktree, no repo check. The document is the unit under review.
+   - Context to pass along: the document's absolute path and, when known, what it is for (which team/project/ticket it came from).
 
-If the diff is empty, stop and report "No changes to review." (Clean up the worktree first if you created one.)
+If the diff is empty (diff modes only), stop and report "No changes to review." (Clean up the worktree first if you created one.)
 
-Keep the diff text available for the subagents. If it is very large (> ~2000 lines), you may instead give each subagent the list of changed files and instruct them to read the files themselves from the repo root.
+Keep the diff text available for the subagents. If it is very large (> ~2000 lines), you may instead give each subagent the list of changed files and instruct them to read the files themselves from the repo root. In spec/plan mode the same rule applies to the document: inline it when reasonable, otherwise hand each reviewer the path to read.
 
 ## Step 2 — Choose the review dimensions, then spawn the subagents in parallel
 
@@ -94,11 +101,27 @@ Available dimensions:
 | Edge cases | `edge-case-reviewer` | The change handles user input, external data, API boundaries, or state transitions. |
 | Performance | `performance-reviewer` | The change touches hot paths, large data sets, loops over collections, DB queries, or rendering. Skip for small config/UI/copy changes with no measurable hot path. |
 | Security | `security-reviewer` | The change touches auth, sessions, user input handling, secrets, queries, HTML rendering, or any trust boundary. |
+| Architecture | `architecture-reviewer` | The change adds or modifies components, module boundaries, public interfaces, cross-service/app communication, API endpoints, or DB schema. Skip for localized logic/config/UI changes that stay inside existing boundaries. |
 | Code quality | `quality-reviewer` | Almost always. Checks abstractions, simplification, naming, and clarity. |
 | Docs | `docs-reviewer` | The change alters behavior, public interfaces, setup, or workflows that docs describe — or introduces a learning worth recording. |
 | General | `general-purpose` (runs the built-in `/review` skill) | Almost always, as a broad safety net. |
 
-Default set when in doubt: Logic, Edge cases, Code quality, General. Add Specs when specs exist. Add Performance/Security only when the change plausibly touches them. Add Docs when behavior or interfaces changed.
+Default set when in doubt: Logic, Edge cases, Code quality, General. Add Specs when specs exist. Add Architecture when boundaries, interfaces, services, or schemas are in play. Add Performance/Security only when the change plausibly touches them. Add Docs when behavior or interfaces changed.
+
+### Spec / implementation-plan mode
+
+When the input is a spec or implementation plan (Step 1, case 4), only the dimensions that can judge a design document apply:
+
+| Dimension | Include when reviewing a spec or plan |
+| --- | --- |
+| Architecture | Almost always — the core question: is the proposed structure sound? |
+| Logic | Almost always — does the design hold together: gaps, contradictions, undefined behavior, missing states? |
+| Specs | Almost always — reviews the document itself: completeness, ambiguity, testability, internal consistency. |
+| Edge cases | Does the plan enumerate error paths, boundary conditions, concurrent and failed states? |
+| Performance | Only when the design plausibly touches hot paths, large data sets, or data growth. |
+| Security | Only when the design touches auth, trust boundaries, user data, or external input. |
+
+Docs and General (`/review`) never run in this mode — both are diff-driven. There is no merge-base, so freshness does not apply. Ask reviewers to anchor findings by document section (or line) instead of `file:line`.
 
 For every specialist subagent, each prompt must include:
 
@@ -122,13 +145,16 @@ For every specialist subagent, each prompt must include:
    >
    > Each bullet must include `file:line` and a one-sentence description; add a brief suggested fix on a sub-bullet if useful. Do not group findings under sub-headings — return a flat bulleted list. If you have no findings, say "No findings." and nothing else.
 
+In spec/plan mode, items 1–3 of the payload are replaced by: the absolute path of the document under review, plus its full text when reasonable to inline (reviewers may also read it themselves). In the quoted format requirement, tell reviewers to use the document's section heading in place of `file:line` and to omit the freshness tag.
+
 Dimension-specific prompt additions:
 
-- **Specs reviewer** (`general-purpose` agent type acting as `specs-reviewer`): give it the spec/ticket text (or point it at the issue/PR description) and instruct it to check three things: (a) completeness — is everything in the spec implemented? (b) correctness — does each implementation match what the spec says? (c) scope — did the change stay within the spec, or does it silently do more/less? Report anything implemented that isn't in the spec too.
+- **Specs reviewer** (`general-purpose` agent type acting as `specs-reviewer`): in diff mode, give it the spec/ticket text (or point it at the issue/PR description) and instruct it to check three things: (a) completeness — is everything in the spec implemented? (b) correctness — does each implementation match what the spec says? (c) scope — did the change stay within the spec, or does it silently do more/less? Report anything implemented that isn't in the spec too. In spec/plan mode, it reviews the document instead: (a) completeness — missing requirements, undefined terms, unhandled states; (b) testability — can an implementer act on each statement without guessing, and are acceptance criteria measurable? (c) internal consistency — contradictions, conflicting statements, ambiguous scope; (d) scope — silent scope creep relative to the document's own goals, missing non-goals.
+- **Architecture reviewer** (`general-purpose` agent type acting as `architecture-reviewer`): instruct it to evaluate high-level structure, not line-level logic: component and module boundaries and responsibilities; coupling and cohesion between changed components; public interfaces and contracts (naming, typing, stability, breaking changes); communication with other apps and microservices (sync vs async, timeouts, retries, idempotency, error handling across the boundary, contract versioning and backwards compatibility); API design (resource modeling, naming, error semantics, pagination, versioning); DB schema design (normalization, indexes for the queries the change will run, constraints and nullability, migration and rollback strategy, data-growth assumptions); and consistency with the codebase's existing architecture — divergence from established patterns must be justified. In spec/plan mode, apply the same questions to the proposed design and additionally check that the plan covers rollout, migration/backfill, and rollback.
 - **Quality reviewer**: instruct it to look for: unnecessary new abstractions; code that can be removed, merged, or simplified; naming (variables, functions, types) that is inconsistent across the changed files or with the codebase's conventions; code that is hard to understand; and changes whose intent isn't clear from the code (or commit messages).
 - **Docs reviewer**: instruct it to check whether internal repo docs, README.md, AGENTS.md, external docs, and relevant Confluence pages need updates given the change; and whether a durable learning from this change should be recorded in a new or existing skill, or a Jira ticket. It may read the docs (and may fetch linked Confluence pages if tooling allows) but must not edit anything — report gaps only.
 
-For the **general-purpose `/review` subagent**, the prompt must:
+For the **general-purpose `/review` subagent** (diff modes only), the prompt must:
 
 1. Provide the **absolute path to the PR-head checkout** (the worktree from Step 1, or the user's cwd in no-arg mode) and ask the agent to `cd` into it before doing anything else.
 2. Tell the agent to invoke the built-in `review` skill via the `Skill` tool. Pass `args` exactly as the parent received them:
@@ -153,14 +179,16 @@ When all subagents have returned, do the following before writing the report:
    - If two reviewers genuinely disagree about severity or describe distinct concerns at the same location, keep them as separate entries rather than forcing a merge.
 4. **Sort** the merged list: New findings first (Blocker → Recommendation → Suggestion → Question → Nit → Note), then Existing findings (same order). Within a group, sort by file path then line number for predictability.
 
+In spec/plan mode: skip step 2 (no `/review` output, no freshness) and sort the single merged list by priority, then by document section order.
+
 ## Step 4 — Report
 
 Output a single combined report:
 
 ```text
-# Local multi-review — <branch or PR ref>
+# Local multi-review — <branch, PR ref, or spec path>
 
-<one-line diff summary, e.g. "12 files, +340 / -85">
+<one-line summary, e.g. "12 files, +340 / -85" or "spec/plan: <N> sections">
 
 ## Dimensions reviewed
 
@@ -186,6 +214,7 @@ Output a single combined report:
 - Edge cases: N findings
 - Performance: N findings
 - Security: N findings
+- Architecture: N findings
 - Code quality: N findings
 - Docs: N findings
 - General (/review): N findings
@@ -193,6 +222,8 @@ Output a single combined report:
 ```
 
 Omit the "Specs"/"Performance"/etc. rows for dimensions that were not run. If there are zero findings overall, replace the findings sections with `No findings.` and skip the count lines. If there are no existing findings, omit that section.
+
+In spec/plan mode: use a single `## Findings` section (no freshness groups) with the count line `N total: ...`, and anchor findings by document section instead of `file:line`.
 
 Do **not** apply fixes automatically. Leave that for the user to decide after reading the report.
 
@@ -203,4 +234,4 @@ If you created a worktree in Step 1 (PR-ref case), remove it after the report is
 - `git -C <host-clone> worktree remove --force "$WORKTREE"`
 - `rm -rf "$WORKTREE"` as a fallback if the worktree command failed.
 
-Skip this step in no-arg mode (no worktree was created).
+Skip this step in no-arg and spec/plan modes (no worktree was created).
