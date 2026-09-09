@@ -12,7 +12,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '2.1.0'
+  version: '2.2.0'
 ---
 
 # Multi-agent code review (local)
@@ -104,9 +104,8 @@ Available dimensions:
 | Architecture | `architecture-reviewer` | The change adds or modifies components, module boundaries, public interfaces, cross-service/app communication, API endpoints, or DB schema. Skip for localized logic/config/UI changes that stay inside existing boundaries. |
 | Code quality | `quality-reviewer` | Almost always. Checks abstractions, simplification, naming, and clarity. |
 | Docs | `docs-reviewer` | The change alters behavior, public interfaces, setup, or workflows that docs describe — or introduces a learning worth recording. |
-| General | `general-purpose` (runs the built-in `/review` skill) | Almost always, as a broad safety net. |
 
-Default set when in doubt: Logic, Edge cases, Code quality, General. Add Specs when specs exist. Add Architecture when boundaries, interfaces, services, or schemas are in play. Add Performance/Security only when the change plausibly touches them. Add Docs when behavior or interfaces changed.
+Default set when in doubt: Logic, Edge cases, Code quality. Add Specs when specs exist. Add Architecture when boundaries, interfaces, services, or schemas are in play. Add Performance/Security only when the change plausibly touches them. Add Docs when behavior or interfaces changed.
 
 ### Spec / implementation-plan mode
 
@@ -121,7 +120,7 @@ When the input is a spec or implementation plan (Step 1, case 4), only the dimen
 | Performance | Only when the design plausibly touches hot paths, large data sets, or data growth. |
 | Security | Only when the design touches auth, trust boundaries, user data, or external input. |
 
-Docs and General (`/review`) never run in this mode — both are diff-driven. There is no merge-base, so freshness does not apply. Ask reviewers to anchor findings by document section (or line) instead of `file:line`.
+Docs never runs in this mode — it is diff-driven. There is no merge-base, so freshness does not apply. Ask reviewers to anchor findings by document section (or line) instead of `file:line`.
 
 For every specialist subagent, each prompt must include:
 
@@ -154,32 +153,20 @@ Dimension-specific prompt additions:
 - **Quality reviewer**: instruct it to look for: unnecessary new abstractions; code that can be removed, merged, or simplified; naming (variables, functions, types) that is inconsistent across the changed files or with the codebase's conventions; code that is hard to understand; and changes whose intent isn't clear from the code (or commit messages).
 - **Docs reviewer**: instruct it to check whether internal repo docs, README.md, AGENTS.md, external docs, and relevant Confluence pages need updates given the change; and whether a durable learning from this change should be recorded in a new or existing skill, or a Jira ticket. It may read the docs (and may fetch linked Confluence pages if tooling allows) but must not edit anything — report gaps only.
 
-For the **general-purpose `/review` subagent** (diff modes only), the prompt must:
-
-1. Provide the **absolute path to the PR-head checkout** (the worktree from Step 1, or the user's cwd in no-arg mode) and ask the agent to `cd` into it before doing anything else.
-2. Tell the agent to invoke the built-in `review` skill via the `Skill` tool. Pass `args` exactly as the parent received them:
-   - If `$ARGUMENTS` is empty → call `Skill({ skill: "review" })` with no args (reviews the current branch — works because the cwd is already on the branch under review).
-   - If a PR ref was given → call `Skill({ skill: "review", args: "<PR_URL_or_number>" })`.
-3. Instruct the agent to return the `/review` output verbatim as its final message, with no extra commentary.
-4. Remind the agent it should not write code, push, or post anything — review-only.
-
-(The `/review` skill has its own output format — do not force the prefix scheme on it. The parent will reclassify its findings during merge in Step 3.)
-
 ## Step 3 — Deduplicate, classify, and merge
 
 When all subagents have returned, do the following before writing the report:
 
 1. **Collect** every finding from every subagent into one flat list, tagging each with its source dimension(s).
-2. **Classify the `/review` output**: split it into individual findings and assign each one a freshness and a priority using the same definitions above. If `/review` already wrote prose paragraphs, distill each into a single bulleted finding.
-3. **Deduplicate** findings that target the same `file:line` (or the same logical issue across adjacent lines) and describe the same underlying problem. When merging:
+2. **Deduplicate** findings that target the same `file:line` (or the same logical issue across adjacent lines) and describe the same underlying problem. When merging:
    - Keep the strongest priority (Blocker > Recommendation > Suggestion > Question > Nit > Note).
    - Prefer `(new)` over `(existing)` when freshness disagrees — and record the disagreement.
    - Combine descriptions into the clearest single sentence.
    - List all dimensions that flagged it, e.g. `(security, logic)`.
    - If two reviewers genuinely disagree about severity or describe distinct concerns at the same location, keep them as separate entries rather than forcing a merge.
-4. **Sort** the merged list: New findings first (Blocker → Recommendation → Suggestion → Question → Nit → Note), then Existing findings (same order). Within a group, sort by file path then line number for predictability.
+3. **Sort** the merged list: New findings first (Blocker → Recommendation → Suggestion → Question → Nit → Note), then Existing findings (same order). Within a group, sort by file path then line number for predictability.
 
-In spec/plan mode: skip step 2 (no `/review` output, no freshness) and sort the single merged list by priority, then by document section order.
+In spec/plan mode: sort the single merged list by priority, then by document section order.
 
 ## Step 4 — Report
 
@@ -200,7 +187,7 @@ Output a single combined report:
   - Suggested fix: <brief fix if useful>
 - **Recommendation:** `path/to/file.ts:15` — <description>. _(performance)_
 - **Suggestion:** `path/to/other.ts:108` — <description>. _(edge-case)_
-- **Question:** `path/to/file.ts:88` — <description>. _(general)_
+- **Question:** `path/to/file.ts:88` — <description>. _(architecture)_
 - **Nit:** `path/to/file.ts:3` — <description>. _(quality)_
 - **Note:** `path/to/file.ts:77` — <description>. _(logic)_
 
@@ -217,7 +204,6 @@ Output a single combined report:
 - Architecture: N findings
 - Code quality: N findings
 - Docs: N findings
-- General (/review): N findings
 - After dedup: N unique findings (N new, M existing)
 ```
 
