@@ -7,7 +7,7 @@ description: >-
   action (e.g. "summarise INC-123's investigation", "who is on call for
   the payments team?", "how many P1s did we have this month?") and it
   returns the answer with references.
-model: openrouter/deepseek/deepseek-v4-flash-latest
+model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

@@ -7,7 +7,7 @@ description: >-
   calling this agent, describe what it needs (e.g. "why did run X fail?",
   "what is deployed to production?", "is my orb pin stale?") and it
   returns the evidence and root cause.
-model: openrouter/deepseek/deepseek-v4-flash-latest
+model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

@@ -7,7 +7,7 @@ description: >-
   root-cause analysis. When calling this agent, describe what it needs
   (e.g. "what are the top errors in project X?", "run Seer on ISSUE-123")
   and it returns the answer.
-model: openrouter/deepseek/deepseek-v4-flash-latest
+model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

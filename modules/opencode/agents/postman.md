@@ -7,7 +7,7 @@ description: >-
   APIs, or planning an integration. When calling this agent, describe what
   it needs (e.g. "find our notification-service API", "how do I call X?")
   and it returns the answer with Postman links.
-model: openrouter/deepseek/deepseek-v4-flash-latest
+model: openrouter/z-ai/glm-5.3-flash
 tools:
   "mcp-internal-tooling_*": false
   "chrome-devtools_*": false

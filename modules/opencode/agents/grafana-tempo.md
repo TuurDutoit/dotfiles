@@ -7,7 +7,7 @@ description: >-
   error behaviour. When calling this agent, describe what it needs (e.g.
   "find slow checkout-api traces from yesterday") and it returns the
   traces and findings.
-model: openrouter/deepseek/deepseek-v4-flash-latest
+model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false
   "chrome-devtools_*": false
