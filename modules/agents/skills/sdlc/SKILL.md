@@ -88,7 +88,9 @@ OpenChamber's session actions) with this brief prompt:
 Don't check on the reviewer session — it runs independently and will send its findings back to the implementer session, waking it up.
 
 The implementer addresses the findings, then prompts the same reviewer session
-to re-review. Keep going until the reviewer reports no important findings.
+to re-review, with a list of the changes made: for each finding, say what you did to address it.
+The reviewer session checks the changes, and either reports more findings or confirms that the output is now acceptable.
+Keep going until the reviewer reports no important findings.
 
 Then ask Tuur to review the final output. On approval, merge the changes, and
 start a new session for the next stage. Tell that session only the path of the
