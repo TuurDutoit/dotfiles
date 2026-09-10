@@ -1,34 +1,31 @@
 ---
 name: coding-workflow-quality
-description: Use when planning, implementing, testing, reviewing, or otherwise modifying code. Follow the required delegation, engineering workflow, code-quality, and command-selection practices.
+description: Use when implementing code — as the implementation step of the `sdlc` workflow, or for smaller coding tasks that don't follow the full `sdlc` workflow. Covers subagent delegation, workflow steps, QA against the running app, review, and code-quality practices.
 ---
+
+This skill covers the implementation step of the `sdlc` workflow, and smaller
+coding tasks that don't follow the full workflow. The `sdlc` skill owns the
+full intent → spec → plan → implement → verify process — one session per
+stage, with committed handoff files between stages.
 
 ## Subagents
 
-- Avoid making code edits in the main context — delegate to subagents instead. Exception: trivial 1-line edits where subagent overhead is not worth it.
-- Choose the right model for the job:
-  - **gpt-5.4-mini**: small, focused edits (max 2-3 files, well-understood changes)
-  - **gpt-5.4**: most tasks — new features, multi-file changes, moderate complexity
-  - **gpt-5.5**: large-scale, context-heavy work (many files, complex logic, critical systems)
-- Use a team of parallel agents for changes that can be split across independent modules or repos.
+Delegate by change size:
 
-Examples:
-
-- 1-line fix → main context (no subagent)
-- Merging 2 functions + updating tests → 1 gpt-5.4-mini subagent
-- Implementing a new feature in one repo → 1 gpt-5.4 agent for changes + 1 gpt-5.4-mini agent to run tests and summarize
-- Large-scale changes across 2 critical repos (e.g. Keycloak) → team of gpt-5.5 agents
+- **Small changes** — make them yourself in the main context.
+- **Medium changes** — delegate to a subagent.
+- **Large-scale changes across different modules** — delegate to multiple subagents, ideally one per module.
 
 ### Workflow Steps
 
 Follow these steps for non-trivial tasks:
 
-1. **Explore** — Use an `Explore` subagent to map entry points, dependencies, and existing tests before touching anything.
-2. **Plan** — Use a `Plan` subagent to design the implementation. Align with the user before writing code.
-3. **Implement** — Delegate code changes to a subagent. Commit each logical step separately.
-4. **Test** — Run the test suite in a subagent. If coverage was thin, write and commit tests first before implementing.
-5. **QA** — Use the `verify` skill to exercise the real app and confirm the golden path and edge cases work.
-6. **Review** — Always run `/coderabbit:code-review`. For medium-to-large changes, also run `/dc-team-lx-multi-review`.
+1. **Explore** — Use an `explore` subagent to map entry points, dependencies, and existing tests before touching anything.
+2. **Plan** — Plan the changes yourself: the files to touch, the order of work, and the tests that prove it. Align with the user before writing code.
+3. **Implement** — Make the code changes. Commit each logical step separately.
+4. **Test** — Run the test suite. If coverage was thin, write and commit tests first before implementing.
+5. **QA** — Verify your changes against the real, locally running app: figure out how to run it, then exercise the golden path and edge cases. A task is not finished until it has been QA'd this way. If anything blocks running the app, flag it to the user instead of declaring the task done.
+6. **Review** — Always run the `multi-review` skill on the final diff. Never use `coderabbit:code-review` or `dc-team-lx-multi-review`.
 
 ## Code Quality
 
