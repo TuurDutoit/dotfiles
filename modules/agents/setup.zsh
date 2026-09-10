@@ -38,7 +38,6 @@ DISABLE_TELEMETRY=1 npx skills add mattpocock/skills \
   --agent opencode \
   --skill \
     ask-matt \
-    code-review \
     codebase-design \
     diagnosing-bugs \
     domain-modeling \

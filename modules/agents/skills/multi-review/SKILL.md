@@ -1,6 +1,6 @@
 ---
 name: multi-review
-description: Run reviewer subagents in parallel to review a diff (current branch or a given PR) or a spec/implementation plan, choosing which review dimensions fit the input. Local approximation of /ultrareview. Usage — `/multi-review` for current branch vs merge-base; `/multi-review <PR_URL_or_number>` for a specific PR; `/multi-review <path-to-spec-or-plan>` to review a spec or implementation plan.
+description: Run reviewer subagents in parallel to review a diff (current branch, a given PR, or a fixed point) or a spec/implementation plan, choosing which review dimensions fit the input. Local approximation of /ultrareview. Usage — `/multi-review` for current branch vs merge-base; `/multi-review <PR_URL_or_number>` for a specific PR; `/multi-review <git-ref>` to review HEAD since a fixed point (commit, branch, or tag); `/multi-review <path-to-spec-or-plan>` to review a spec or implementation plan.
 allowed-tools:
   - Bash(git *)
   - Bash(gh *)
@@ -12,7 +12,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '2.2.0'
+  version: '2.3.0'
 ---
 
 # Multi-agent code review (local)
@@ -29,6 +29,7 @@ Unlike `/ultrareview`, this runs against your current subscription on your local
 
 - **Empty** → review the current branch against its merge-base with the repo's default branch (`main` or `master`).
 - **A PR reference** → accepts a full URL (`https://github.com/owner/repo/pull/123`), `owner/repo#123`, or a bare `123` when you're already inside the repo. Fetch the PR's diff and description with `gh`.
+- **A git fixed point** → a commit SHA, branch name, tag, or `HEAD~N`. Reviews `HEAD` against that point instead of the default merge-base; everything else works as in the empty case.
 - **A spec or implementation plan** → a path to a Markdown/Doc document describing what to build or how. The document itself is reviewed; there is no diff. See Step 1 (case 4) and the spec/plan-mode guidance in Step 2.
 
 ## Finding classification
@@ -66,9 +67,9 @@ Reviewers need both the diff (to see what changed) **and** read access to a chec
 Run these in the current working directory:
 
 1. Confirm you are inside a git repo. If not, stop and tell the user. (Spec/plan mode needs no repo — see case 4.)
-2. **No-argument case** — the user is already on the branch under review:
+2. **Current-branch case** — no argument, or the argument is a git fixed point (commit SHA, branch name, tag, `HEAD~N`):
    - Default branch: `git symbolic-ref refs/remotes/origin/HEAD` (fallback: try `main` then `master`).
-   - Merge-base: `git merge-base <default> HEAD`.
+   - Fixed point: with an argument, confirm it resolves first (`git rev-parse <arg>` — a bad ref fails here, not inside the subagents) and use it as the merge-base everywhere, including freshness checks; without, `git merge-base <default> HEAD`.
    - Diff: `git diff --stat <merge-base>...HEAD` + full `git diff <merge-base>...HEAD`.
    - Repo root for reviewers: the current working directory (`pwd`).
    - Context: current branch name and latest commit subject.
@@ -102,7 +103,7 @@ Available dimensions:
 | Performance | `performance-reviewer` | The change touches hot paths, large data sets, loops over collections, DB queries, or rendering. Skip for small config/UI/copy changes with no measurable hot path. |
 | Security | `security-reviewer` | The change touches auth, sessions, user input handling, secrets, queries, HTML rendering, or any trust boundary. |
 | Architecture | `architecture-reviewer` | The change adds or modifies components, module boundaries, public interfaces, cross-service/app communication, API endpoints, or DB schema. Skip for localized logic/config/UI changes that stay inside existing boundaries. |
-| Code quality | `quality-reviewer` | Almost always. Checks abstractions, simplification, naming, and clarity. |
+| Code quality | `quality-reviewer` | Almost always. Checks documented coding standards, the smell baseline, abstractions, simplification, naming, and clarity. |
 | Docs | `docs-reviewer` | The change alters behavior, public interfaces, setup, or workflows that docs describe — or introduces a learning worth recording. |
 
 Default set when in doubt: Logic, Edge cases, Code quality. Add Specs when specs exist. Add Architecture when boundaries, interfaces, services, or schemas are in play. Add Performance/Security only when the change plausibly touches them. Add Docs when behavior or interfaces changed.
@@ -148,9 +149,9 @@ In spec/plan mode, items 1–3 of the payload are replaced by: the absolute path
 
 Dimension-specific prompt additions:
 
-- **Specs reviewer** (`general-purpose` agent type acting as `specs-reviewer`): in diff mode, give it the spec/ticket text (or point it at the issue/PR description) and instruct it to check three things: (a) completeness — is everything in the spec implemented? (b) correctness — does each implementation match what the spec says? (c) scope — did the change stay within the spec, or does it silently do more/less? Report anything implemented that isn't in the spec too. In spec/plan mode, it reviews the document instead: (a) completeness — missing requirements, undefined terms, unhandled states; (b) testability — can an implementer act on each statement without guessing, and are acceptance criteria measurable? (c) internal consistency — contradictions, conflicting statements, ambiguous scope; (d) scope — silent scope creep relative to the document's own goals, missing non-goals.
+- **Specs reviewer** (`general-purpose` agent type acting as `specs-reviewer`): in diff mode, first locate the spec, in this order: (1) issue references in the commits under review (`#123`, `Closes #45`, GitLab `!67`), fetched via the repo's tracker workflow; (2) a path the user passed; (3) a spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature; (4) if nothing is found, ask the user — if they say there isn't one, skip the dimension and note "no spec available" in the report. Then give it the spec/ticket text (or point it at the issue/PR description) and instruct it to check three things: (a) completeness — is everything in the spec implemented? (b) correctness — does each implementation match what the spec says? (c) scope — did the change stay within the spec, or does it silently do more/less? Report anything implemented that isn't in the spec too. In spec/plan mode, it reviews the document instead: (a) completeness — missing requirements, undefined terms, unhandled states; (b) testability — can an implementer act on each statement without guessing, and are acceptance criteria measurable? (c) internal consistency — contradictions, conflicting statements, ambiguous scope; (d) scope — silent scope creep relative to the document's own goals, missing non-goals.
 - **Architecture reviewer** (`general-purpose` agent type acting as `architecture-reviewer`): instruct it to evaluate high-level structure, not line-level logic: component and module boundaries and responsibilities; coupling and cohesion between changed components; public interfaces and contracts (naming, typing, stability, breaking changes); communication with other apps and microservices (sync vs async, timeouts, retries, idempotency, error handling across the boundary, contract versioning and backwards compatibility); API design (resource modeling, naming, error semantics, pagination, versioning); DB schema design (normalization, indexes for the queries the change will run, constraints and nullability, migration and rollback strategy, data-growth assumptions); and consistency with the codebase's existing architecture — divergence from established patterns must be justified. In spec/plan mode, apply the same questions to the proposed design and additionally check that the plan covers rollout, migration/backfill, and rollback.
-- **Quality reviewer**: instruct it to look for: unnecessary new abstractions; code that can be removed, merged, or simplified; naming (variables, functions, types) that is inconsistent across the changed files or with the codebase's conventions; code that is hard to understand; and changes whose intent isn't clear from the code (or commit messages).
+- **Quality reviewer**: instruct it to review along two tracks. First, **documented standards**: read the repo's documented coding standards (AGENTS.md, CLAUDE.md, CONTRIBUTING.md, CODING_STANDARDS.md — whichever exist) and report every place the diff violates one, citing the standard (file + rule); these can be hard findings, and a documented standard outranks everything below. Second, generic quality: unnecessary new abstractions; code that can be removed, merged, or simplified; naming (variables, functions, types) that is inconsistent across the changed files or with the codebase's conventions; code that is hard to understand; and changes whose intent isn't clear from the code (or commit messages). For this second track, also paste in the **smell baseline** from `smell-baseline.md` in this skill folder, in full (the subagent has no other access to it): baseline smells are always judgement calls, never hard violations; where a documented standard endorses something a smell would flag, the repo wins; skip anything tooling already enforces (linters, formatters, typecheckers).
 - **Docs reviewer**: instruct it to check whether internal repo docs, README.md, AGENTS.md, external docs, and relevant Confluence pages need updates given the change; and whether a durable learning from this change should be recorded in a new or existing skill, or a Jira ticket. It may read the docs (and may fetch linked Confluence pages if tooling allows) but must not edit anything — report gaps only.
 
 ## Step 3 — Deduplicate, classify, and merge
