@@ -7,6 +7,8 @@ description: Monitor a merged PR through CircleCI, the version tag, and the Conc
 
 Follow the chain: merge commit → CircleCI workflow → version tag → Concourse pipeline → staging QA → prod QA. The **tag** is the source of truth at every stage: the deployed version you watch for is the git tag minted from this PR's merge commit, never a build number.
 
+**Watching = polling.** There are no push notifications. Re-run the read command for the current state, `sleep 30` in the shell between polls, and keep a bounded budget (~30 attempts); on timeout, report the last observed state to the user instead of looping forever.
+
 ## 1. Find the merge commit
 
 `gh pr view <url> --json mergeCommit,mergedAt,baseRefName` — confirm the base is `master`/`main` and the state is MERGED. Hold the merge commit SHA; every later stage keys off it.
@@ -50,7 +52,11 @@ Two version levels coexist: the **manifest snapshot number** (e.g. 365) and the 
 
 ## 6. QA on staging
 
-Ask the user first: what to test (the PR's intended change), and anything you need (credentials, feature flags). Then exercise the change against `https://www.datacamp-staging.com` — via the OpenChamber browser or webfetch.
+Derive the test spec from context first: a shared plan, the Jira ticket if it's already in context, or the PR description may already state the intended change and acceptance criteria — use that. Ask the user only when no test spec exists in context, and for anything you need to run it (credentials, feature flags). Then exercise the change against `https://www.datacamp-staging.com` — pick the right tool per surface:
+
+- **OpenChamber browser** for UI flows.
+- **webfetch** for simple GETs.
+- **curl** for anything webfetch can't do: POST/PUT with bodies, auth headers, cookies, or checking API responses the change touches. Never print secrets in logs.
 
 - **QA fails** → report exactly what failed (steps, evidence, error messages) and stop.
 - **QA passes** → proceed to step 7.
