@@ -89,6 +89,26 @@ do
     || fail "failed to link agent skill $skill"
 done
 
+info 'installing diagram-design skill'
+
+diagram_design_repo="$HOME/Projects/diagram-design"
+
+if [ -d "$diagram_design_repo/.git" ]
+then
+  git -C "$diagram_design_repo" pull --ff-only \
+    && success 'diagram-design repo updated' \
+    || fail 'failed to update diagram-design repo'
+else
+  mkdir -p "$HOME/Projects"
+  git clone https://github.com/cathrynlavery/diagram-design.git "$diagram_design_repo" \
+    && success 'diagram-design repo cloned' \
+    || fail 'failed to clone diagram-design repo'
+fi
+
+ln -sfn "$diagram_design_repo/skills/diagram-design" "$skills_target/diagram-design" \
+  && success 'linked diagram-design skill' \
+  || fail 'failed to link diagram-design skill'
+
 info 'installing rtk'
 rtk init -g --opencode
 success 'rtk installed'
