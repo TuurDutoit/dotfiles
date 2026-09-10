@@ -85,6 +85,8 @@ OpenChamber's session actions) with this brief prompt:
 > `<implementer session id>` — the comments come from another agent, not the
 > user.
 
+Don't check on the reviewer session — it runs independently and will send its findings back to the implementer session, waking it up.
+
 The implementer addresses the findings, then prompts the same reviewer session
 to re-review. Keep going until the reviewer reports no important findings.
 
