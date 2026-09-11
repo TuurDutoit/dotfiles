@@ -14,7 +14,7 @@ constraints, open questions. No formal language required. Usually no code
 reading at all: capture the problem and the proposed solution from the
 conversation, and interview the originator to fill the gaps.
 
-Start from `../sdlc/references/templates/intent.md`. Commit once the
+Start from `references/templates/intent.md` in this skill. Commit once the
 originator confirms it is correct.
 
 ## Gate and handoff

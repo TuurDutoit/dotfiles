@@ -21,7 +21,8 @@ which pages to open and what to do on them; for API changes, which curl
 commands to run and the expected output. Iterate until someone who never saw
 the conversation could implement from the plan alone.
 
-Start from `../sdlc/references/templates/plan.md`. Commit the accepted plan.
+Start from `references/templates/plan.md` in this skill. Commit the accepted
+plan.
 
 ## Review and gate
 

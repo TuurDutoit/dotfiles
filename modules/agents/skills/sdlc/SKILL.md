@@ -136,12 +136,11 @@ records — supersede, never edit a decision away.
 
 ## Document templates
 
-Copy the matching template from this skill's `references/templates/` into the
-task directory (or the ADR directory) and fill it in:
+Each stage skill carries its own document template in its
+`references/templates/` directory — `sdlc-intent` → `intent.md`,
+`sdlc-spec` → `spec.md`, `sdlc-architecture` → `architecture.md`,
+`sdlc-plan` → `plan.md`. Copy the matching one into the task directory and
+fill it in.
 
-- `references/templates/intent.md` — the problem, in the originator's terms
-- `references/templates/spec.md` — the user experience
-- `references/templates/architecture.md` — the boundaries: API / DB /
-  config schemas, data flows, packages, env vars, auth
-- `references/templates/plan.md` — implementation plan
-- `references/templates/adr.md` — architecture decision record
+The ADR template lives in this skill: copy `references/templates/adr.md`
+into the ADR directory and fill it in.

@@ -17,7 +17,7 @@ crosses a boundary — internal structure is the plan's business. Reading code
 to understand the shape of the external interfaces is fine, but the
 architecture must not reference the code either.
 
-Start from `../sdlc/references/templates/architecture.md`. Commit the
+Start from `references/templates/architecture.md` in this skill. Commit the
 accepted architecture.
 
 ## Review and gate

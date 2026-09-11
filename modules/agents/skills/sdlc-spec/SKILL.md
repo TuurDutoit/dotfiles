@@ -16,8 +16,8 @@ states, permissions as the user meets them. Reading code is allowed, but only
 to understand how the app works — the spec itself must not reference the
 code; internals belong to the architecture and the plan.
 
-Start from `../sdlc/references/templates/spec.md`. Resolve flagged concerns
-with the requester before moving on. Commit the accepted spec.
+Start from `references/templates/spec.md` in this skill. Resolve flagged
+concerns with the requester before moving on. Commit the accepted spec.
 
 ## Review and gate
 
