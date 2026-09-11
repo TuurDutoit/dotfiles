@@ -7,7 +7,7 @@ description: >-
   report. Say "review <PR/branch/ref>" or "/multi-review <args>" to it, and
   scope the review with a dimensions clause, e.g. "review #123 for
   performance and security" or "review this spec, specs only".
-mode: primary
+mode: all
 model: openrouter/z-ai/glm-5.3-flash
 permission:
   skill:

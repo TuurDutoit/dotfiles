@@ -90,21 +90,22 @@ Run this at the end of every stage except intent — intent skips the review
 loop entirely (Tuur's approval is the only check there). The dimensions to
 request are named in each stage's `sdlc-*` skill.
 
-As soon as a stage's output is ready, start a reviewer session (via the
-available session tooling — e.g. OpenChamber's session actions) running the
-`multi-review-orchestrator` agent, with this brief prompt:
+As soon as a stage's output is ready, run the review as a subagent: dispatch
+the `multi-review-orchestrator` agent through the Task tool — not as a
+separate session — with this brief prompt:
 
 > Review `<path to the file>` (or: the uncommitted changes) with these
-> dimensions: `<the stage's dimensions>`. Send your findings back to session
-> `<implementer session id>` — the comments come from another agent, not the
-> user.
+> dimensions: `<the stage's dimensions>`. Your findings go back to the
+> dispatching agent — the comments come from another agent, not the user.
 
-Don't check on the reviewer session — it runs independently and will send its
-findings back to this session, waking it up. Address the findings, then prompt
-the same reviewer session to re-review, with a list of the changes made: for
-each finding, say what you did to address it. The reviewer session checks the
-changes, and either reports more findings or confirms that the output is now
-acceptable. Keep going until the reviewer reports no important findings.
+The call blocks until the review is done, and the findings arrive as the
+subagent's report. Keep the `task_id` from the result. Address the findings,
+then resume the same reviewer by calling the Task tool again with that
+`task_id`, with a list of the changes made: for each finding, say what you
+did to address it. The resumed reviewer continues with its earlier findings
+in context, re-reviews the changes, and either reports more findings or
+confirms that the output is now acceptable. Keep going until the reviewer
+reports no important findings.
 
 ### Stage gate
 
@@ -112,7 +113,7 @@ The stage gate decides whether the output moves on. It opens only when all
 three conditions hold — until then, the stage is not done and the next stage
 does not start:
 
-1. **Reviewer accepted.** The reviewer session confirms the output is
+1. **Reviewer accepted.** The reviewer subagent confirms the output is
    acceptable — or Tuur explicitly overrides its rejection and moves on
    anyway. The intent stage has no reviewer; there, Tuur's approval alone
    satisfies this condition.
