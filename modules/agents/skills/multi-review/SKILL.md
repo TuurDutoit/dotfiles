@@ -12,7 +12,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.2.1'
+  version: '3.3.0'
 ---
 
 # Multi-agent code review (dispatcher)
@@ -30,7 +30,10 @@ All actual reviewing happens inside the subagents. Each dimension has its own sk
 ## Step 1 — Interpret the arguments
 
 These are the arguments passed by the user:
+
+```
 $ARGUMENTS
+```
 
 Arguments are optional:
 
@@ -38,6 +41,23 @@ Arguments are optional:
 - **A PR reference** → accepts a full URL (`https://github.com/owner/repo/pull/123`), `owner/repo#123`, or a bare `123` when you're already inside the repo. Fetch the PR's diff and description with `gh`.
 - **A git fixed point** → a commit SHA, branch name, tag, or `HEAD~N`. Reviews `HEAD` against that point instead of the default merge-base; everything else works as in the empty case.
 - **A spec or implementation plan** → a path to a Markdown/Doc document describing what to build or how. The document itself is reviewed; there is no diff.
+
+### Dimension override
+
+Any target form can carry a **dimensions override** — a clause naming the dimensions the user wants, such as:
+
+- `/multi-review #123 for performance and security`
+- `/multi-review just logic and quality`
+- `/multi-review specs only` (with a spec path before it)
+- `/multi-review HEAD~3 security`
+
+Parse it like this:
+
+1. **Strip the override clause from the target.** Look for a trailing clause naming dimensions — `for <dims>`, `just <dims>`, `only <dims>`, or a bare `<dims>` tail (e.g. `#123 security`). Everything before it is the target; handle the target per the rules above.
+2. **Match each named word to a dimension**, case-insensitively, by exact name or unambiguous prefix: `logic`, `specs`, `performance`/`perf`, `security`, `architecture`, `quality`, `docs`. If a word is ambiguous or matches nothing, stop and ask the user rather than guessing.
+3. **Honor the override exactly**: review only the named dimensions. Skip the usual selection logic (Step 3) — do not add or remove dimensions on your own.
+4. **Mode still constrains**: docs cannot run in spec/plan mode and specs never runs without a spec-like input — if a requested dimension can't run, say so in the report's dimensions section and run the rest.
+5. **Record the override in the report**: under "Dimensions reviewed", write `Requested by user: <dimensions>` instead of justifying inclusion.
 
 ## Step 2 — Gather the review material
 
@@ -72,7 +92,7 @@ Keep the diff text available. If it is very large (> ~2000 lines), give each sub
 
 ## Step 3 — Choose dimensions and dispatch subagents
 
-**Not every change needs every dimension.** Use the diff, PR description, branch name, and repo context to pick the dimensions that fit this change. Justify each inclusion or exclusion briefly (one line) in the final report so the user can override.
+**Not every change needs every dimension.** If the user passed a dimensions override (Step 1), review only those dimensions and skip this selection logic. Otherwise, use the diff, PR description, branch name, and repo context to pick the dimensions that fit this change. Justify each inclusion or exclusion briefly (one line) in the final report so the user can override.
 
 ### Diff-mode dimension table
 

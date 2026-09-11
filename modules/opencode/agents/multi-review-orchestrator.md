@@ -4,7 +4,9 @@ description: >-
   a PR, or a fixed point) or a spec/implementation plan: it interprets the
   request, gathers the material, chooses review dimensions, dispatches
   multi-review-dimension subagents, and reports one merged prioritized
-  report. Say "review <PR/branch/ref>" or "/multi-review <args>" to it.
+  report. Say "review <PR/branch/ref>" or "/multi-review <args>" to it, and
+  scope the review with a dimensions clause, e.g. "review #123 for
+  performance and security" or "review this spec, specs only".
 mode: primary
 model: openrouter/z-ai/glm-5.3-flash
 permission:
