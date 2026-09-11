@@ -56,6 +56,15 @@ Global `tools` in `opencode.jsonc` and per-agent `tools:` frontmatter in `module
 
 Cloudflare portal servers expose tools under a `datacamp-internal-cloudflare-mcp_portal_*` prefix, gated per-server by the portal picker (`portal_toggle_servers`); enabling it in an agent's tools exposes **all** enabled portal servers to that agent — narrow the glob once the exact tool names are known.
 
+## Scoping skills to agents
+
+To make a skill available to one agent only (e.g. `sdlc-*` → the `sdlc` agent):
+
+1. Deny it globally in the user config's `permission.skill` block, after the `"*": "allow"` rule — within a block, the **last** matching glob wins.
+2. In the owning agent's frontmatter, restate the **full** skill ruleset in `permission:` — per-agent permission overrides the global block — with the owning glob allowed last, e.g. `"*": "allow", "multi-review*": "deny", "sdlc-*": "allow"`. See `modules/opencode/agents/sdlc.md`.
+
+A new skill under `modules/agents/skills` needs its `~/.agents/skills` symlink before OpenCode sees it — running `dt s agents` relinks every skill directory.
+
 ## Agent tool reference
 
 When a server's tools change or migrate (e.g. to the portal), update:
