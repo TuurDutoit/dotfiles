@@ -10,8 +10,8 @@ testable statements.>
 ## User experience
 
 <What this looks and feels like for the user: surfaces, flows, states,
-permissions as the user meets them. Codebase internals belong to
-architecture.md and plan.md.>
+permissions as the user meets them. No references to the code — internals
+belong to architecture.md and plan.md.>
 
 ## Areas of concern
 

@@ -48,14 +48,22 @@ no file. A new tool for an AI agent, for example, needs a spec of just a
 few lines: how the tool shows up in the conversation, how its permissions
 work. A small UI tweak touches no boundary and skips the architecture doc.
 
+Keep every artifact brief and to the point, written in plain language for
+a reader with no context — no jargon; explain technical terms simply. For
+a simple feature that means an intent of only a few lines, a short spec,
+and an architecture that is little more than the schema diffs.
+
 1. **Capture intent.** Write the problem in the originator's own terms — what
    is wanted, why, constraints, open questions. No formal language required.
-   Start from the intent template. Commit once the originator confirms it is
-   correct.
+   Usually no code reading at all: capture the problem and the proposed
+   solution from the conversation, and interview the originator to fill the
+   gaps. Start from the intent template. Commit once the originator confirms
+   it is correct.
 
 2. **Write the spec — the user experience.** What the feature looks and
    feels like for users: surfaces, flows, states, permissions as the user
-   meets them. Codebase internals are not spec material — those belong to
+   meets them. Reading code is allowed, but only to understand how the app
+   works — the spec itself must not reference the code; internals belong to
    the architecture and the plan. Start from the spec template. Resolve
    flagged concerns with the requester before moving on. Commit the
    accepted spec.
@@ -63,14 +71,20 @@ work. A small UI tweak touches no boundary and skips the architecture doc.
 3. **Write the architecture — the boundaries.** The external interfaces
    that power the experience: API / DB / config schemas, data flows,
    packages to install, env vars and auth. Only what crosses a boundary —
-   internal structure is the plan's business. Start from the architecture
-   template. Commit the accepted architecture.
+   internal structure is the plan's business. Reading code to understand
+   the shape of the external interfaces is fine, but the architecture must
+   not reference the code either. Start from the architecture template.
+   Commit the accepted architecture.
 
 4. **Write the plan before writing code.** The implementation: the files
    that change and in which modules, the naming (follow the project
-   glossary / DDD terms), the order of work, the risks, and the tests that
-   prove it. Iterate until someone who never saw the conversation could
-   implement from the plan alone. Commit the accepted plan. If
+   glossary / DDD terms), the order of work, the risks, and the proof.
+   Proof has two halves: command-based checks (typecheck, lint, unit
+   tests) and a QA plan for testing the change in the actual app, derived
+   from the spec — for frontend changes, which pages to open and what to
+   do on them; for API changes, which curl commands to run and the
+   expected output. Iterate until someone who never saw the conversation
+   could implement from the plan alone. Commit the accepted plan. If
    implementation departs from the plan, update `plan.md` in the same
    commit.
 

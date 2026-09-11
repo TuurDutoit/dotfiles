@@ -6,7 +6,8 @@ From spec: `./spec.md`. Status: draft.
 
 <Every interface this feature adds or touches, with exact names and shapes:
 API endpoints and payloads, DB tables and migrations, config schema, env
-vars, auth and permissions. Packages to install.>
+vars, auth and permissions. Packages to install. Describe the interfaces
+themselves — no references to the code.>
 
 ## Data flows
 

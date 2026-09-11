@@ -5,7 +5,8 @@ Author: <name / role>. Status: draft.
 ## Problem
 
 <What cannot be done today, who is affected, what better looks like.
-Written in the originator's own words.>
+Written in the originator's own words, from the conversation — no
+codebase reading; interview the originator to fill gaps.>
 
 ## Proposed outcome
 

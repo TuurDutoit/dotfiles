@@ -22,5 +22,13 @@ if it has one.>
 
 ## Proof
 
-<The tests and executable specs that prove it, and how to run them
-(the single terminal command).>
+### Command-based checks
+
+<Typecheck, lint, unit tests — each with the one terminal command that
+runs it.>
+
+### QA plan
+
+<How to test the change in the actual app, derived from the spec: for
+frontend changes, which pages to open and what to do on them; for API
+changes, which curl commands to run and the expected output.>
