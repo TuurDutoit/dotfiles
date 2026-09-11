@@ -65,8 +65,20 @@ a skipped stage leaves no file). Resolve the directory in this order:
 
 The task-slug is `YYYY-MM-DD-<type>-<slug>` — e.g.
 `2026-09-08-feat-github-integration` — where `<type>` is one of `feat`,
-`fix`, `refactor`, `chore`, and `<repo-name>` is the repository's directory
-name. Use the same convention wherever the artifacts live.
+`fix`, `refactor`, `chore`. Use the same convention wherever the artifacts
+live.
+
+Resolve `<repo-name>` from the git remote, never from the current
+directory's basename — in a git worktree that basename is the worktree
+name, not the repo:
+
+1. **Git remote.** Run `git remote get-url origin` (or the first remote)
+   and take the repository basename from the URL, dropping `.git` — e.g.
+   `git@github.com:TuurDutoit/dotfiles.git` → `dotfiles`.
+2. **Canonical checkout.** With no remote, use the name of the repo's
+   canonical checkout under `~/Projects`: the main worktree's directory
+   name (first row of `git worktree list`). When the current directory is
+   that main worktree, this is just the directory name.
 
 Artifacts inside the repo are committed as they are accepted — git history is
 the audit trail. Fallback artifacts live outside git; write them, and no
