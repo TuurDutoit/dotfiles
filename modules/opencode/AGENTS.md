@@ -16,6 +16,7 @@
 
 - Back up all your statements with hard proof - DO NOT assume things. Find references in official docs, issue trackers or public forums. Find the actual error message when something crashes. Get a screenshot to validate a UI looks good. Be your own critic.
 - When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
+- If you have a problem installing packages through npm or Yarn, stop and let me know.
 - Keep changes simple, elegant, and well integrated with the existing code. Prefer the smallest coherent solution over new abstractions or complexity.
 - Before implementing a feature, consider whether a focused refactor of the affected code would make the change clearer or simpler. When it would, do that refactor first; avoid speculative refactors unrelated to the feature.
 
