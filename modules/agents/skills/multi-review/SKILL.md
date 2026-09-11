@@ -12,7 +12,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.2.0'
+  version: '3.2.1'
 ---
 
 # Multi-agent code review (dispatcher)
@@ -29,7 +29,10 @@ All actual reviewing happens inside the subagents. Each dimension has its own sk
 
 ## Step 1 — Interpret the arguments
 
-`$ARGUMENTS` is optional:
+These are the arguments passed by the user:
+$ARGUMENTS
+
+Arguments are optional:
 
 - **Empty** → review the current branch against its merge-base with the repo's default branch (`main` or `master`).
 - **A PR reference** → accepts a full URL (`https://github.com/owner/repo/pull/123`), `owner/repo#123`, or a bare `123` when you're already inside the repo. Fetch the PR's diff and description with `gh`.
@@ -76,24 +79,22 @@ Keep the diff text available. If it is very large (> ~2000 lines), give each sub
 | Dimension | Skill to load | Include when |
 | --- | --- | --- |
 | Specs | `multi-review-specs` | A spec, ticket, issue, or PR description states what the change must do. Skip if no spec-like input exists. |
-| Logic | `multi-review-logic` | Almost always. Any non-trivial behavior change. |
-| Edge cases | `multi-review-edge-cases` | The change handles user input, external data, API boundaries, or state transitions. |
+| Logic | `multi-review-logic` | Almost always. Any non-trivial behavior change, or anything handling user input, external data, API boundaries, or state transitions. |
 | Performance | `multi-review-performance` | The change touches hot paths, large data sets, loops, DB queries, or rendering. Skip for small config/UI/copy changes. |
 | Security | `multi-review-security` | The change touches auth, sessions, user input, secrets, queries, HTML rendering, or any trust boundary. |
 | Architecture | `multi-review-architecture` | The change adds or modifies components, module boundaries, public interfaces, cross-service communication, API endpoints, or DB schema. |
 | Code quality | `multi-review-quality` | The change involves code (not for specs/plans). |
 | Docs | `multi-review-docs` | The change alters behavior, public interfaces, setup, or workflows that docs describe. |
 
-Default set when in doubt: Logic, Edge cases, Code quality. Add Specs when specs exist; Architecture when boundaries, interfaces, services, or schemas are in play; Performance/Security only when plausibly touched; Docs when behavior or interfaces changed.
+Default set when in doubt: Logic, Code quality. Add Specs when specs exist; Architecture when boundaries, interfaces, services, or schemas are in play; Performance/Security only when plausibly touched; Docs when behavior or interfaces changed.
 
 ### Spec/plan-mode dimension table
 
 | Dimension | Include when reviewing a spec or plan |
 | --- | --- |
 | Architecture | Almost always — is the proposed structure sound? |
-| Logic | Almost always — gaps, contradictions, undefined behavior, missing states? |
+| Logic | Almost always — gaps, contradictions, undefined behavior, missing states? And does the plan enumerate error paths, boundary conditions, concurrent and failed states? |
 | Specs | Almost always — completeness, ambiguity, testability, internal consistency of the document itself. |
-| Edge cases | Does the plan enumerate error paths, boundary conditions, concurrent and failed states? |
 | Performance | Only when the design plausibly touches hot paths, large data sets, or data growth. |
 | Security | Only when the design touches auth, trust boundaries, user data, or external input. |
 
@@ -149,7 +150,7 @@ Output a single combined report:
 - **Blocker:** `path/to/file.ts:42` — <one-sentence description>. _(security, logic)_
   - Suggested fix: <brief fix if useful>
 - **Recommendation:** `path/to/file.ts:15` — <description>. _(performance)_
-- **Suggestion:** `path/to/other.ts:108` — <description>. _(edge-case)_
+- **Suggestion:** `path/to/other.ts:108` — <description>. _(logic)_
 - **Question:** `path/to/file.ts:88` — <description>. _(architecture)_
 - **Nit:** `path/to/file.ts:3` — <description>. _(quality)_
 - **Note:** `path/to/file.ts:77` — <description>. _(logic)_
@@ -161,7 +162,6 @@ Output a single combined report:
 ## By reviewer
 - Specs: N findings
 - Logic: N findings
-- Edge cases: N findings
 - Performance: N findings
 - Security: N findings
 - Architecture: N findings
