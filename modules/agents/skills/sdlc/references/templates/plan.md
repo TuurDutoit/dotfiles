@@ -1,6 +1,12 @@
 # Plan: <one-line summary>
 
-From spec: `./spec.md`. Status: draft.
+From spec: `./spec.md`. From architecture: `./architecture.md` (omit the
+line when it was skipped). Status: draft.
+
+## Naming
+
+<New terms and module names, with definitions; extend the project glossary
+if it has one.>
 
 ## Files that change
 

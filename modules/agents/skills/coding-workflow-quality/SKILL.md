@@ -5,8 +5,8 @@ description: Use when implementing code — as the implementation step of the `s
 
 This skill covers the implementation step of the `sdlc` workflow, and smaller
 coding tasks that don't follow the full workflow. The `sdlc` skill owns the
-full intent → spec → plan → implement → verify process — one session per
-stage, with committed handoff files between stages.
+full intent → spec → architecture → plan → implement → verify process —
+one session per stage, with committed handoff files between stages.
 
 ## Subagents
 
