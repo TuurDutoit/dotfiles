@@ -9,8 +9,9 @@ Every stage ends by producing one artifact the next stage reads. The chain of
 artifacts is the audit trail: what was asked for, what was decided, how it was
 built. Historical context lives in git history.
 
-Each stage closes with the automated review loop below before the work moves
-on. The human gate is approval of the final output, not first-line review.
+Each stage closes with the automated review loop below, and its output moves
+on only when the stage gate there opens. The human gate is approval of the
+final output, not first-line review.
 
 ## Artifact location
 
@@ -108,8 +109,22 @@ to re-review, with a list of the changes made: for each finding, say what you di
 The reviewer session checks the changes, and either reports more findings or confirms that the output is now acceptable.
 Keep going until the reviewer reports no important findings.
 
-Then ask Tuur to review the final output. On approval, merge the changes, and
-start a new session for the next stage. Tell that session only the path of the
+### Stage gate
+
+The stage gate decides whether the output moves on. It opens only when all
+three conditions hold — until then, the stage is not done and the next stage
+does not start:
+
+1. **Reviewer accepted.** The reviewer session confirms the output is
+   acceptable — or Tuur explicitly overrides its rejection and moves on
+   anyway.
+2. **No open questions.** Every open question in the artifacts and every
+   question raised during the stage has an answer, recorded in the artifact.
+3. **Tuur approved.** Tuur has explicitly approved this stage's output. No
+   response is not approval — ask, and wait for the answer.
+
+With all three met, merge the changes, and start a new session for the next
+stage. Tell that session only the path of the
 previous stage's output file — it reads its context from the artifact, e.g.:
 
 > `<task dir>/intent.md` is accepted. Write the spec for it.
