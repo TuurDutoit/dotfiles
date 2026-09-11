@@ -34,6 +34,17 @@ pass the mode word to ticket-ID resolution.
 2. Do not move Jira tickets and do not post a Slack review request.
 3. Run **`/dc-babysit-pr`** once the PR exists.
 
+## PR comments
+
+After opening a PR, evaluate if anything in the diff is worth calling out with a GitHub comment.
+Only comment about things where it may not be obvious _why_ it show up in the diff;
+comments about the code itself should be in the code already.
+
+Good use cases of PR comments:
+
+- pointing out that a auto-generated schema was updated due to API changes in another service.
+- explaining why a package was added (why it's needed in the project, and why this package was chosen over alternatives).
+
 ## Promoting a Draft PR
 
 When the user says that a draft PR is ready (for example, “the PR is ready” or
