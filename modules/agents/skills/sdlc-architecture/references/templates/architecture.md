@@ -23,4 +23,6 @@ Resolve each with the requester before the plan; note resolutions here.>
 
 ## Open questions
 
-<Unresolved items raised while drawing boundaries.>
+<Questions routed to the plan, such as file-level choices. Interface
+questions are answered in Boundaries and Data flows before the gate
+opens.>

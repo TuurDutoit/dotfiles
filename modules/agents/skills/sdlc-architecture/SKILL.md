@@ -12,10 +12,16 @@ run this stage inside it.
 Start from the accepted `<task dir>/spec.md`.
 
 Write the external interfaces that power the experience: API / DB / config
-schemas, data flows, packages to install, env vars and auth. Only what
-crosses a boundary — internal structure is the plan's business. Reading code
-to understand the shape of the external interfaces is fine, but the
-architecture must not reference the code either.
+schemas, data flows, packages to install, env vars and auth.
+
+Stay inside the architecture stage's scope (the scope table in the `sdlc`
+skill): reading code to learn the shape of the interfaces and how data
+flows today is expected, but the architecture talks about the interfaces
+themselves — not the files that implement them; internal structure is the
+plan's business. Answer every interface question before the gate —
+response shapes, auth, env vars and config, behaviour at the boundary
+(failure modes, caching, what the current path does). File-level choices
+route to the plan stage.
 
 Start from `references/templates/architecture.md` in this skill. Commit the
 accepted architecture.

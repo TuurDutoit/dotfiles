@@ -37,6 +37,30 @@ and an architecture that is little more than the schema diffs.
 When any stage makes a choice that shapes the system's structure and is hard
 to reverse, record it as an ADR (below).
 
+## Stage scope
+
+Each stage looks at a narrower slice than the last, and its artifact talks
+only about that slice. A stage that wanders outside its scope pollutes every
+later artifact — code references in the intent, internal choices in the
+spec. Each stage stays inside its scope:
+
+| Stage | May look at | Artifact talks about | Owns questions about |
+| --- | --- | --- | --- |
+| Intent | the originator and their sources (tickets, docs) — never the codebase | the problem and wanted outcome, in the originator's terms | what the originator can answer |
+| Spec | the product as users meet it; code only to see how it works today | behavior the user can observe | what the experience should be |
+| Architecture | code and systems, to learn interface shapes and current data flows | boundaries: API / DB / config schemas, data flows, packages, env vars, auth | interfaces: shapes, auth, config, behaviour at boundaries |
+| Plan | the codebase, thoroughly | the change: files, naming, order of work, risks, proof | how to build it |
+| Implement | the code, per the plan | the code and its tests | nothing new — departures update the plan |
+
+Questions belong to the stage whose scope covers them. A stage answers
+every question its scope covers before its gate opens — by looking inside
+its scope, or by asking Tuur. A question outside the stage's scope is not
+parked there: the artifact routes it to the stage that owns it, and it
+gates that stage instead. In practice: the intent names systems, not
+files; the spec describes behavior, not modules; the architecture names
+interfaces, not the files implementing them; the plan is the first
+artifact allowed to name files.
+
 ## One stage per session
 
 Each stage is executed by the `sdlc` agent in a session of its own: that
@@ -117,13 +141,14 @@ does not start:
    acceptable — or Tuur explicitly overrides its rejection and moves on
    anyway. The intent stage has no reviewer; there, Tuur's approval alone
    satisfies this condition.
-2. **No open questions.** Every open question in the artifacts and every
-   question raised during the stage has an answer, recorded in the artifact.
-   Open questions never carry over to the next stage: an unanswered question
-   keeps this gate closed, no matter how far along the stage is. If any open
-   question remains, ask Tuur it directly — use the `question` tool, one
-   call listing all open questions where possible — and record the answers
-   in the artifact. Do not guess, park, or defer questions.
+2. **No open questions in scope.** Every question this stage's scope
+   covers — in the artifact or raised during the stage — has an answer,
+   recorded in the artifact. Ask Tuur directly for the ones only Tuur can
+   answer — use the `question` tool, one call listing all of them if
+   possible — and record the answers in the artifact. Questions outside
+   the stage's scope are never guessed, parked, or half-answered: route
+   each one in the artifact to the stage that owns it, and it gates that
+   stage instead.
 3. **Tuur approved.** Tuur has explicitly approved this stage's output. No
    response is not approval — ask, and wait for the answer.
 

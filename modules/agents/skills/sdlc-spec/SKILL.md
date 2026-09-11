@@ -12,9 +12,15 @@ run this stage inside it.
 Start from the accepted `<task dir>/intent.md`.
 
 Write what the feature looks and feels like for users: surfaces, flows,
-states, permissions as the user meets them. Reading code is allowed, but only
-to understand how the app works — the spec itself must not reference the
-code; internals belong to the architecture and the plan.
+states, permissions as the user meets them.
+
+Stay inside the spec stage's scope (the scope table in the `sdlc` skill):
+the artifact talks about behavior the user can observe. Reading code is
+allowed only to see how the app works today — never to decide how to
+change it — and the spec itself names no code: internals belong to the
+architecture and the plan. Answer every behavioral question (what should
+happen when X) before the gate; boundary questions route to the
+architecture stage.
 
 Start from `references/templates/spec.md` in this skill. Resolve flagged
 concerns with the requester before moving on. Commit the accepted spec.

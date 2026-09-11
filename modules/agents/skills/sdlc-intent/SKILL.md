@@ -10,9 +10,16 @@ process context — artifact location, review loop, stage gate, handoff — and
 run this stage inside it.
 
 Write the problem in the originator's own terms — what is wanted, why,
-constraints, open questions. No formal language required. Usually no code
-reading at all: capture the problem and the proposed solution from the
-conversation, and interview the originator to fill the gaps.
+constraints, open questions. No formal language required. Capture it from
+the conversation and the originator's sources, and interview the
+originator to fill the gaps — never from reading the codebase.
+
+Stay inside the intent stage's scope (the scope table in the `sdlc`
+skill): name systems and products, not files — where a source mentions
+code, translate it into the originator's terms, since later stages find
+the real code themselves. Questions are scoped too: ask what the
+originator can answer, and route what needs code or systems
+investigation in "Open questions" to the stage that owns it.
 
 Start from `references/templates/intent.md` in this skill. Commit once the
 originator confirms it is correct.

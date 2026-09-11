@@ -11,8 +11,10 @@ inside it.
 
 Start from the accepted `<task dir>/plan.md`.
 
-Implement it. If implementation departs from the plan, update `plan.md` in
-the same commit. Tests and executable specs live alongside the code,
+Implement it. If implementation departs from the plan, or needs a change
+outside the plan's files and steps, update `plan.md` in the same commit —
+a departure is a plan update, not a silent widening of scope. Tests and
+executable specs live alongside the code,
 runnable from the terminal with one command, so the work can be checked
 mechanically. Never weaken a test to make code pass.
 

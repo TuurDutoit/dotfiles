@@ -14,7 +14,8 @@ codebase reading; interview the originator to fill gaps.>
 
 ## Affected users and systems
 
-<Who uses this, which parts of the system it touches.>
+<Who uses this, which parts of the system it touches — name systems,
+not files.>
 
 ## Constraints
 
@@ -22,4 +23,7 @@ codebase reading; interview the originator to fill gaps.>
 
 ## Open questions
 
-<Unresolved items that the spec must answer or carry forward.>
+<Questions outside this stage's scope, each routed to the stage that
+owns it (e.g. "response shape of the new endpoint → architecture").
+Questions the originator can answer are asked and recorded above, not
+left open.>

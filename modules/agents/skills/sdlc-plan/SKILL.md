@@ -24,6 +24,11 @@ the conversation could implement from the plan alone.
 Start from `references/templates/plan.md` in this skill. Commit the accepted
 plan.
 
+Stay inside the plan stage's scope (the scope table in the `sdlc` skill):
+the plan is the first artifact that names files, and it must be grounded
+in the real codebase — a plan naming a file that does not exist is wrong.
+Behavioral or boundary questions route back to spec or architecture.
+
 ## Review and gate
 
 Run the review loop with dimensions: **all**. When the stage gate opens,

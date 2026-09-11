@@ -20,4 +20,6 @@ Resolve each with the requester before implementation; note resolutions here.>
 
 ## Open questions carried forward
 
-<Unresolved items from the intent, plus any raised during design.>
+<Questions routed to architecture or plan, each with its owner stage.
+Questions the spec's scope covers are answered above — the stage gate
+does not open with them unresolved.>
