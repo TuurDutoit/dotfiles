@@ -14,7 +14,7 @@ The dispatcher's prompt contains, in this order:
 1. A directive to read this skill and the shared `multi-review-classification` skill.
 2. Your role assignment and the mode: `diff mode` or `spec/plan mode`.
 3. **The payload**:
-   - Diff mode: absolute path to the head checkout (read files there, not on any other branch), the diff (or changed-files list + merge-base SHA to run `git diff <merge-base>...HEAD` yourself), the merge-base SHA, and short context.
+   - Diff mode: absolute path to the head checkout (read files there, not on any other branch), the absolute path of the diff file plus its line count (the diff is not inlined in the prompt), the merge-base SHA, and short context.
    - Spec/plan mode: the document's absolute path (and its full text when inlined).
 4. The output contract reminder (see below).
 
@@ -31,7 +31,7 @@ Examine every point where the change crosses or handles a trust boundary:
 - **Cross-boundary data**: data from other services/users treated as trusted; mass assignment; SSRF via user-supplied URLs.
 - **Session/auth cookies**: new endpoints/flags that weaken session handling.
 
-Judge severity by exploitability and blast radius in this codebase's context, not by abstract paranoia. Verify every finding by reading the source at the provided checkout path (or the document) before reporting — the diff alone lacks context, and a defect visible on the base branch may already be fixed at the head.
+Judge severity by exploitability and blast radius in this codebase's context, not by abstract paranoia. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole; read the relevant source files at the checkout path for context. Verify every finding by reading the source (or the document) before reporting — the diff alone lacks context, and a defect visible on the base branch may already be fixed at the head.
 
 **Spec/plan mode.** Only if the design touches auth, trust boundaries, user data, or external input: does the plan state the security model — who may do what, what is validated where, how secrets are handled — and are those statements complete enough to implement safely?
 

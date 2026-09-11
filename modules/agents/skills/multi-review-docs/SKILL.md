@@ -13,7 +13,7 @@ The dispatcher's prompt contains, in this order:
 
 1. A directive to read this skill and the shared `multi-review-classification` skill.
 2. Your role assignment and the mode (always `diff mode` for you).
-3. **The payload**: absolute path to the head checkout (read files there, not on any other branch), the diff (or changed-files list + merge-base SHA to run `git diff <merge-base>...HEAD` yourself), the merge-base SHA, and short context.
+3. **The payload**: absolute path to the head checkout (read files there, not on any other branch), the absolute path of the diff file plus its line count (the diff is not inlined in the prompt), the merge-base SHA, and short context.
 4. The output contract reminder (see below).
 
 If anything on that list is missing, ask the dispatcher (finish with your best-effort findings plus a note on what was missing).
@@ -31,7 +31,7 @@ You may read the docs but must not edit anything — report gaps only.
 
 ## What to look for
 
-Documentation that the change invalidates or a learning worth recording. Verify each claim by reading the doc at the provided checkout path before reporting — a doc you haven't opened may already cover the new behavior.
+Documentation that the change invalidates or a learning worth recording. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole. Verify each claim by reading the doc at the provided checkout path before reporting — a doc you haven't opened may already cover the new behavior.
 
 ## Output contract
 

@@ -14,7 +14,7 @@ The dispatcher's prompt contains, in this order:
 1. A directive to read this skill and the shared `multi-review-classification` skill.
 2. Your role assignment and the mode: `diff mode` or `spec/plan mode`.
 3. **The payload**:
-   - Diff mode: absolute path to the head checkout (read files there, not on any other branch), the diff (or changed-files list + merge-base SHA to run `git diff <merge-base>...HEAD` yourself), the merge-base SHA, and short context.
+   - Diff mode: absolute path to the head checkout (read files there, not on any other branch), the absolute path of the diff file plus its line count (the diff is not inlined in the prompt), the merge-base SHA, and short context.
    - Spec/plan mode: the document's absolute path (and its full text when inlined).
 4. The output contract reminder (see below).
 
@@ -43,7 +43,7 @@ You review the document itself, as the unit under review:
 
 ## What to look for
 
-Divergences between what was promised and what was produced (or between the document and itself). Verify every finding by reading the source at the provided checkout path (diff mode) or re-reading the relevant document section before reporting.
+Divergences between what was promised and what was produced (or between the document and itself). If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole. Verify every finding by reading the source at the provided checkout path (diff mode) or re-reading the relevant document section before reporting.
 
 ## Output contract
 

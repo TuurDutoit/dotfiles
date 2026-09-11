@@ -12,7 +12,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.3.0'
+  version: '3.4.0'
 ---
 
 # Multi-agent code review (dispatcher)
@@ -66,23 +66,27 @@ Parse it like this:
 Run these in the current working directory:
 
 1. Confirm you are inside a git repo. If not, stop and tell the user.
-2. **Current-branch / fixed-point case**:
+2. **Save the full diff to a file** — never hold the whole diff in context:
+   - `DIFF_FILE=$(mktemp -t multi-review-diff)`
+   - Current-branch / fixed-point case: `git diff <merge-base>...HEAD > "$DIFF_FILE"`.
+   - PR-ref case: `gh pr diff <ref> > "$DIFF_FILE"`.
+   - Size it: `wc -l < "$DIFF_FILE"` → `$DIFF_LINES`.
+3. **Current-branch / fixed-point case**:
    - Default branch: `git symbolic-ref refs/remotes/origin/HEAD` (fallback: try `main` then `master`).
    - Fixed point: with an argument, confirm it resolves first (`git rev-parse <arg>` — a bad ref fails here, not inside the subagents) and use it as the merge-base everywhere, including freshness checks; without, `git merge-base <default> HEAD`.
-   - Diff: `git diff --stat <merge-base>...HEAD` + full `git diff <merge-base>...HEAD`.
+   - Diff: `git diff --stat <merge-base>...HEAD` for the summary; the full diff is already in `$DIFF_FILE`.
    - Reviewer repo root: the current working directory (`pwd`).
    - Context: current branch name and latest commit subject.
-3. **PR-ref case**:
-   - `gh pr diff <ref>` for the diff.
+4. **PR-ref case**:
    - `gh pr view <ref> --json title,body,headRefName,baseRefName,headRefOid` for context. Capture `headRefOid` (the PR head SHA).
-   - Locate a local clone of the PR's repo, in this order: (a) current working directory inside a clone of the same repo; (b) `~/projects/<repo-name>`; (c) otherwise fall back to `gh pr diff` only and tell each reviewer that file reads are unavailable.
+   - Locate a local clone of the PR's repo, in this order: (a) current working directory inside a clone of the same repo; (b) `~/projects/<repo-name>`; (c) otherwise fall back to the `$DIFF_FILE` written by `gh pr diff` and tell each reviewer that file reads are unavailable.
    - `git -C <host-clone> fetch origin pull/<N>/head` if the SHA isn't already present locally.
    - Create a fresh detached worktree at the PR head: `WORKTREE=$(mktemp -d -t multi-review)` then `git -C <host-clone> worktree add --detach "$WORKTREE" <headRefOid>`. **This worktree path is what every reviewer uses as the repo root** — it reflects the PR head exactly.
-   - Remember `<host-clone>` and `$WORKTREE` for Step 6.
+   - Remember `<host-clone>`, `$WORKTREE`, and `$DIFF_FILE` for Step 6.
 
-If the diff is empty, stop and report "No changes to review." (Clean up the worktree first if you created one.)
+If the diff is empty, stop and report "No changes to review." (Clean up the worktree and diff file first if you created them.)
 
-Keep the diff text available. If it is very large (> ~2000 lines), give each subagent instead the list of changed files plus the merge-base SHA and instruct them to run `git diff <merge-base>...HEAD` themselves.
+**Reading the diff.** The `--stat` output plus context (PR body, commit subjects) is usually enough to choose dimensions. Read `$DIFF_FILE` only when the stat isn't enough, and only if it is small (< ~2000 lines). For a large diff, never read it whole — **search** it instead (Grep for `diff --git a/<path>` to see per-file changes, `^+++` / `^---` for touched files, `@@` hunks by keyword) and read the relevant source files at the checkout path for real context.
 
 ### Spec/plan mode
 
@@ -131,7 +135,7 @@ The contract is stated on both sides: here, and in the `multi-review-dimension` 
 1. **Role assignment and skill directive** (first sentences): `You are the <dimension> reviewer for a multi-review. Load and follow the multi-review-<dimension> skill, together with the multi-review-classification skill it references. Review ONLY that dimension; findings from other domains are out of scope for you.`
 2. **Mode**: `diff mode` or `spec/plan mode`.
 3. **The payload**:
-   - Diff mode: absolute path to the head checkout ("files at this path reflect the PR head; do not assume they match the base branch"), the diff (inline if reasonable, else changed-files list + merge-base SHA so they can run `git diff` themselves), the merge-base SHA, and short context (PR title and body, or branch name + latest commit subject).
+   - Diff mode: absolute path to the head checkout ("files at this path reflect the PR head; do not assume they match the base branch"), the **path to the diff file** plus its line count (`$DIFF_FILE`, `$DIFF_LINES`) — never paste the diff into the prompt — the merge-base SHA, and short context (PR title and body, or branch name + latest commit subject).
    - Spec/plan mode: the absolute path of the document plus its full text when reasonable to inline; no merge-base, no worktree.
 4. **Output contract reminder** (verbatim):
 
@@ -194,11 +198,11 @@ Omit rows for dimensions not run. If there are zero findings overall, replace th
 
 Do **not** apply fixes automatically. Leave that for the user to decide after reading the report.
 
-## Step 6 — Clean up the temporary worktree
+## Step 6 — Clean up the temporary worktree and diff file
 
-If you created a worktree in Step 2 (PR-ref case), remove it after the report is written:
+After the report is written, remove what Step 2 created:
 
-- `git -C <host-clone> worktree remove --force "$WORKTREE"`
-- `rm -rf "$WORKTREE"` as a fallback if the worktree command failed.
+- PR-ref case: `git -C <host-clone> worktree remove --force "$WORKTREE"`, falling back to `rm -rf "$WORKTREE"` if the worktree command failed.
+- All diff modes: `rm -f "$DIFF_FILE"`.
 
-Skip in no-arg and spec/plan modes (no worktree was created).
+Skip the worktree cleanup in no-arg and spec/plan modes (no worktree was created).

@@ -13,7 +13,7 @@ The dispatcher's prompt contains, in this order:
 
 1. A directive to read this skill and the shared `multi-review-classification` skill.
 2. Your role assignment and the mode: `diff mode` (you never run in spec/plan mode).
-3. **The payload**: absolute path to the head checkout (read files there, not on any other branch), the diff (or changed-files list + merge-base SHA to run `git diff <merge-base>...HEAD` yourself), the merge-base SHA, and short context.
+3. **The payload**: absolute path to the head checkout (read files there, not on any other branch), the absolute path of the diff file plus its line count (the diff is not inlined in the prompt), the merge-base SHA, and short context.
 4. The output contract reminder (see below).
 
 If anything on that list is missing, ask the dispatcher (finish with your best-effort findings plus a note on what was missing).
@@ -37,7 +37,7 @@ The smell baseline is in `smell-baseline.md` in this skill's folder; read it the
 
 ## What to look for
 
-Quality issues in the changed code itself. Verify every finding by reading the source at the provided checkout path before reporting — the diff alone lacks context, and an issue visible on the base branch may already be fixed at the head.
+Quality issues in the changed code itself. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole; read the relevant source files at the checkout path for context. Verify every finding by reading the source before reporting — the diff alone lacks context, and an issue visible on the base branch may already be fixed at the head.
 
 ## Output contract
 
