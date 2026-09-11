@@ -106,15 +106,27 @@ and an architecture that is little more than the schema diffs.
 
 ## Automated review loop
 
-Run this at the end of every stage — steps 1–4 for docs, step 5 for code. The
+Run this at the end of every stage — steps 2–4 for docs, step 5 for code.
+The intent stage skips the review loop entirely (see the table below). The
 implementer agent does not wait for the human: as soon as its output is ready,
 it starts a reviewer session (via the available session tooling — e.g.
 OpenChamber's session actions) with this brief prompt:
 
 > Use the `multi-review` skill. Review `<path to the file>` (or: the
-> uncommitted changes). Send your findings back to session
+> uncommitted changes) with these dimensions: `<stage's dimensions from the
+> table below>`. Send your findings back to session
 > `<implementer session id>` — the comments come from another agent, not the
 > user.
+
+Recommended dimensions per stage:
+
+| Stage | Dimensions |
+| --- | --- |
+| 1 Intent | none — no review; Tuur's approval is the only check |
+| 2 Spec | Logic, Edge cases |
+| 3 Architecture | all except Code quality |
+| 4 Plan | all |
+| 5 Code | all |
 
 Don't check on the reviewer session — it runs independently and will send its findings back to the implementer session, waking it up.
 
@@ -131,7 +143,8 @@ does not start:
 
 1. **Reviewer accepted.** The reviewer session confirms the output is
    acceptable — or Tuur explicitly overrides its rejection and moves on
-   anyway.
+   anyway. The intent stage has no reviewer; there, Tuur's approval alone
+   satisfies this condition.
 2. **No open questions.** Every open question in the artifacts and every
    question raised during the stage has an answer, recorded in the artifact.
 3. **Tuur approved.** Tuur has explicitly approved this stage's output. No
