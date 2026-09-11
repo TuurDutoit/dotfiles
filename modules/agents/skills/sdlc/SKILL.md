@@ -124,23 +124,3 @@ Each stage's `sdlc-*` skill names the sentence to hand forward from that
 stage. To start a new task, hand off the same way:
 
 > Capture the intent for this: <what is wanted, in one sentence>
-
-## ADRs
-
-When a choice shapes the system's structure and is hard to reverse, record it
-as an ADR. ADRs document the codebase, so they live in the repo: follow an
-`AGENTS.md` instruction first, then an existing ADR directory (`docs/adr/`,
-`adr/`, ...), otherwise create `docs/adr/`. Name files `NNNN-kebab-title.md`,
-numbered sequentially. Start from the ADR template. ADRs are immutable
-records — supersede, never edit a decision away.
-
-## Document templates
-
-Each stage skill carries its own document template in its
-`references/templates/` directory — `sdlc-intent` → `intent.md`,
-`sdlc-spec` → `spec.md`, `sdlc-architecture` → `architecture.md`,
-`sdlc-plan` → `plan.md`. Copy the matching one into the task directory and
-fill it in.
-
-The ADR template lives in this skill: copy `references/templates/adr.md`
-into the ADR directory and fill it in.
