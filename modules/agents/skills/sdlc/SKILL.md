@@ -118,6 +118,11 @@ does not start:
    satisfies this condition.
 2. **No open questions.** Every open question in the artifacts and every
    question raised during the stage has an answer, recorded in the artifact.
+   Open questions never carry over to the next stage: an unanswered question
+   keeps this gate closed, no matter how far along the stage is. If any open
+   question remains, ask Tuur it directly — use the `question` tool, one
+   call listing all open questions where possible — and record the answers
+   in the artifact. Do not guess, park, or defer questions.
 3. **Tuur approved.** Tuur has explicitly approved this stage's output. No
    response is not approval — ask, and wait for the answer.
 
