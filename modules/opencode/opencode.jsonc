@@ -79,7 +79,7 @@
       "multi-review*": "deny"
     },
     "task": {
-      "*": "ask",
+      "*": "allow",
       "multi-review-dimension": "deny"
     },
     "external_directory": {
