@@ -1,6 +1,6 @@
 ---
 name: sdlc
-description: AI-native SDLC process — capture intent, write spec, write architecture, write plan, implement, verify. Use when starting any new task (feature, bug fix, refactor, chore), writing or updating intent.md, spec.md, architecture.md, or plan.md, or recording an architecture decision as an ADR. Applies throughout a task's lifecycle, from capture to implementation to verification.
+description: AI-native SDLC process — capture intent, write spec, write architecture, write plan, implement and verify, one stage per sdlc-agent session. Use when starting any new task (feature, bug fix, refactor, chore), when writing or updating intent.md, spec.md, architecture.md, or plan.md, or when recording an architecture decision as an ADR.
 ---
 
 # SDLC: intent → spec → architecture → plan → implement → verify
@@ -12,6 +12,38 @@ built. Historical context lives in git history.
 Each stage closes with the automated review loop below, and its output moves
 on only when the stage gate there opens. The human gate is approval of the
 final output, not first-line review.
+
+## The stages
+
+Scale the stages to the task: a stage's doc may be only a few lines when
+little needs saying, and a stage with nothing to say is skipped entirely —
+no file. A new tool for an AI agent, for example, needs a spec of just a
+few lines: how the tool shows up in the conversation, how its permissions
+work. A small UI tweak touches no boundary and skips the architecture doc.
+
+Keep every artifact brief and to the point, written in plain language for
+a reader with no context — no jargon; explain technical terms simply. For
+a simple feature that means an intent of only a few lines, a short spec,
+and an architecture that is little more than the schema diffs.
+
+| Stage | Produces | Runs as |
+| --- | --- | --- |
+| 1 Intent | `intent.md` — the problem in the originator's own terms | `sdlc-intent` |
+| 2 Spec | `spec.md` — the user experience | `sdlc-spec` |
+| 3 Architecture | `architecture.md` — the boundaries: API / DB / config schemas, data flows, packages, env vars, auth | `sdlc-architecture` |
+| 4 Plan | `plan.md` — files that change, naming, order of work, risks, proof | `sdlc-plan` |
+| 5 Implement + verify | working code, tests alongside it, statuses closed out | `sdlc-implement` |
+
+When any stage makes a choice that shapes the system's structure and is hard
+to reverse, record it as an ADR (below).
+
+## One stage per session
+
+Each stage is executed by the `sdlc` agent in a session of its own: that
+session loads this skill for process context, plus the stage's `sdlc-*` skill
+for the stage instructions. The `sdlc-*` skills are restricted to the `sdlc`
+agent — if you are any other agent, don't execute a stage yourself; make the
+handoff below instead.
 
 ## Artifact location
 
@@ -40,100 +72,27 @@ Artifacts inside the repo are committed as they are accepted — git history is
 the audit trail. Fallback artifacts live outside git; write them, and no
 commit applies.
 
-## Process
-
-Scale the stages to the task: a stage's doc may be only a few lines when
-little needs saying, and a stage with nothing to say is skipped entirely —
-no file. A new tool for an AI agent, for example, needs a spec of just a
-few lines: how the tool shows up in the conversation, how its permissions
-work. A small UI tweak touches no boundary and skips the architecture doc.
-
-Keep every artifact brief and to the point, written in plain language for
-a reader with no context — no jargon; explain technical terms simply. For
-a simple feature that means an intent of only a few lines, a short spec,
-and an architecture that is little more than the schema diffs.
-
-1. **Capture intent.** Write the problem in the originator's own terms — what
-   is wanted, why, constraints, open questions. No formal language required.
-   Usually no code reading at all: capture the problem and the proposed
-   solution from the conversation, and interview the originator to fill the
-   gaps. Start from the intent template. Commit once the originator confirms
-   it is correct.
-
-2. **Write the spec — the user experience.** What the feature looks and
-   feels like for users: surfaces, flows, states, permissions as the user
-   meets them. Reading code is allowed, but only to understand how the app
-   works — the spec itself must not reference the code; internals belong to
-   the architecture and the plan. Start from the spec template. Resolve
-   flagged concerns with the requester before moving on. Commit the
-   accepted spec.
-
-3. **Write the architecture — the boundaries.** The external interfaces
-   that power the experience: API / DB / config schemas, data flows,
-   packages to install, env vars and auth. Only what crosses a boundary —
-   internal structure is the plan's business. Reading code to understand
-   the shape of the external interfaces is fine, but the architecture must
-   not reference the code either. Start from the architecture template.
-   Commit the accepted architecture.
-
-4. **Write the plan before writing code.** The implementation: the files
-   that change and in which modules, the naming (follow the project
-   glossary / DDD terms), the order of work, the risks, and the proof.
-   Proof has two halves: command-based checks (typecheck, lint, unit
-   tests) and a QA plan for testing the change in the actual app, derived
-   from the spec — for frontend changes, which pages to open and what to
-   do on them; for API changes, which curl commands to run and the
-   expected output. Iterate until someone who never saw the conversation
-   could implement from the plan alone. Commit the accepted plan. If
-   implementation departs from the plan, update `plan.md` in the same
-   commit.
-
-5. **Verify the work.** Tests and executable specs live alongside the code,
-   runnable from the terminal with one command, so the work can be checked
-   mechanically. Never weaken a test to make code pass.
-
-6. **Record architecture decisions as ADRs.** When a choice shapes the
-   system's structure and is hard to reverse, record it as an ADR. ADRs
-   document the codebase, so they live in the repo: follow an `AGENTS.md`
-   instruction first, then an existing ADR directory (`docs/adr/`, `adr/`,
-   ...), otherwise create `docs/adr/`. Name files `NNNN-kebab-title.md`,
-   numbered sequentially. Start from the ADR template. ADRs are immutable
-   records — supersede, never edit a decision away.
-
-7. **Close out.** When the task is done, the task directory stays as
-   historical context. Ensure each doc's Status reflects reality (draft →
-   accepted → implemented).
-
 ## Automated review loop
 
-Run this at the end of every stage — steps 2–4 for docs, step 5 for code.
-The intent stage skips the review loop entirely (see the table below). The
-implementer agent does not wait for the human: as soon as its output is ready,
-it starts a reviewer session (via the available session tooling — e.g.
-OpenChamber's session actions) with this brief prompt:
+Run this at the end of every stage except intent — intent skips the review
+loop entirely (Tuur's approval is the only check there). The dimensions to
+request are named in each stage's `sdlc-*` skill.
 
-> Use the `multi-review` skill. Review `<path to the file>` (or: the
-> uncommitted changes) with these dimensions: `<stage's dimensions from the
-> table below>`. Send your findings back to session
+As soon as a stage's output is ready, start a reviewer session (via the
+available session tooling — e.g. OpenChamber's session actions) running the
+`multi-review-orchestrator` agent, with this brief prompt:
+
+> Review `<path to the file>` (or: the uncommitted changes) with these
+> dimensions: `<the stage's dimensions>`. Send your findings back to session
 > `<implementer session id>` — the comments come from another agent, not the
 > user.
 
-Recommended dimensions per stage:
-
-| Stage | Dimensions |
-| --- | --- |
-| 1 Intent | none — no review; Tuur's approval is the only check |
-| 2 Spec | Logic, Edge cases |
-| 3 Architecture | all except Code quality |
-| 4 Plan | all |
-| 5 Code | all |
-
-Don't check on the reviewer session — it runs independently and will send its findings back to the implementer session, waking it up.
-
-The implementer addresses the findings, then prompts the same reviewer session
-to re-review, with a list of the changes made: for each finding, say what you did to address it.
-The reviewer session checks the changes, and either reports more findings or confirms that the output is now acceptable.
-Keep going until the reviewer reports no important findings.
+Don't check on the reviewer session — it runs independently and will send its
+findings back to this session, waking it up. Address the findings, then prompt
+the same reviewer session to re-review, with a list of the changes made: for
+each finding, say what you did to address it. The reviewer session checks the
+changes, and either reports more findings or confirms that the output is now
+acceptable. Keep going until the reviewer reports no important findings.
 
 ### Stage gate
 
@@ -150,18 +109,35 @@ does not start:
 3. **Tuur approved.** Tuur has explicitly approved this stage's output. No
    response is not approval — ask, and wait for the answer.
 
-With all three met, merge the changes, and start a new session for the next
-stage. Tell that session only the path of the
-previous stage's output file — it reads its context from the artifact, e.g.:
+With all three met, merge the changes, and make the handoff.
 
-> `<task dir>/intent.md` is accepted. Write the spec for it.
->
-> `<task dir>/spec.md` is accepted. Write the architecture for it.
+## Handoff
+
+When the stage gate opens, the next stage starts in a new `sdlc`-agent
+session — never in this one; a fresh session reads its context from the
+artifacts. Start it (via the available session tooling) and tell it in one
+short sentence what to do, naming the previous stage's output file, e.g.:
+
+> Write a spec doc for this intent: `<task dir>/intent.md`
+
+Each stage's `sdlc-*` skill names the sentence to hand forward from that
+stage. To start a new task, hand off the same way:
+
+> Capture the intent for this: <what is wanted, in one sentence>
+
+## ADRs
+
+When a choice shapes the system's structure and is hard to reverse, record it
+as an ADR. ADRs document the codebase, so they live in the repo: follow an
+`AGENTS.md` instruction first, then an existing ADR directory (`docs/adr/`,
+`adr/`, ...), otherwise create `docs/adr/`. Name files `NNNN-kebab-title.md`,
+numbered sequentially. Start from the ADR template. ADRs are immutable
+records — supersede, never edit a decision away.
 
 ## Document templates
 
-Copy the matching template from `references/templates/` into the task
-directory (or the ADR directory) and fill it in:
+Copy the matching template from this skill's `references/templates/` into the
+task directory (or the ADR directory) and fill it in:
 
 - `references/templates/intent.md` — the problem, in the originator's terms
 - `references/templates/spec.md` — the user experience

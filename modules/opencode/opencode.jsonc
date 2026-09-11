@@ -76,7 +76,8 @@
     },
     "skill": {
       "*": "allow",
-      "multi-review*": "deny"
+      "multi-review*": "deny",
+      "sdlc-*": "deny"
     },
     "task": {
       "*": "allow",
