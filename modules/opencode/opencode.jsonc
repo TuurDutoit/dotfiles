@@ -74,6 +74,10 @@
       "*.example": "allow",
       "*.sample": "allow"
     },
+    "skill": {
+      "*": "allow",
+      "multi-review-*": "deny"
+    },
     "external_directory": {
       "/Users/tuur/Documents/Obsidian/DataCamp/Agents/**": "allow",
       "/tmp/**": "allow",

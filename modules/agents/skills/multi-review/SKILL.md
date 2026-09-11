@@ -12,7 +12,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.0.0'
+  version: '3.1.0'
 ---
 
 # Multi-agent code review (dispatcher)
@@ -73,7 +73,7 @@ Keep the diff text available. If it is very large (> ~2000 lines), give each sub
 
 ### Diff-mode dimension table
 
-| Dimension | Subagent skill | Include when |
+| Dimension | Subagent | Include when |
 | --- | --- | --- |
 | Specs | `multi-review-specs` | A spec, ticket, issue, or PR description states what the change must do. Skip if no spec-like input exists. |
 | Logic | `multi-review-logic` | Almost always. Any non-trivial behavior change. |
@@ -101,17 +101,18 @@ Docs never runs in spec/plan mode (it is diff-driven). There is no merge-base, s
 
 ### The dispatch protocol
 
-Spawn all chosen subagents **in parallel** with the Task tool, using the `general-purpose` agent type. Each subagent must know exactly what it will receive and exactly what to return — that contract is stated on both sides: here, and in each dimension skill's own SKILL.md (which the subagent loads).
+Spawn all chosen subagents **in parallel** with the Task tool, using the dedicated reviewer agent for each dimension (`subagent_type: multi-review-<dimension>` — e.g. `multi-review-logic`, `multi-review-edge-cases`). Each of these agents already has permission to load exactly its own dimension skill plus the shared `multi-review-classification` skill, and nothing else — so you never need to inline review instructions; the prompt below only carries the payload.
+
+The contract is stated on both sides: here, and in each dimension agent's own SKILL.md (which the agent loads itself).
 
 **Each dispatch prompt must contain, in this order:**
 
-1. **Skill directive** (first sentence): `Read and follow the multi-review-<dimension> skill (path: /Users/tuur/.agents/skills/multi-review-<dimension>/SKILL.md), including the shared multi-review-classification skill it references. Your final message back to me must follow that skill's Output contract exactly.`
-2. **Role assignment**: `You are the <dimension> reviewer for a multi-review. Review ONLY that dimension; findings from other domains are out of scope for you.`
-3. **Mode**: `diff mode` or `spec/plan mode`.
-4. **The payload**:
+1. **Role assignment** (first sentence): `You are the <dimension> reviewer for a multi-review. Review ONLY that dimension; findings from other domains are out of scope for you.`
+2. **Mode**: `diff mode` or `spec/plan mode`.
+3. **The payload**:
    - Diff mode: absolute path to the head checkout ("files at this path reflect the PR head; do not assume they match the base branch"), the diff (inline if reasonable, else changed-files list + merge-base SHA so they can run `git diff` themselves), the merge-base SHA, and short context (PR title and body, or branch name + latest commit subject).
    - Spec/plan mode: the absolute path of the document plus its full text when reasonable to inline; no merge-base, no worktree.
-5. **Output contract reminder** (verbatim):
+4. **Output contract reminder** (verbatim):
 
    > Return your findings as your final message and nothing else. Follow the output contract in your dimension skill and the shared multi-review-classification skill: one flat bulleted list, each bullet starting with a priority prefix (`Blocker:`, `Recommendation:`, `Suggestion:`, `Question:`, `Nit:`, `Note:`) followed by a freshness tag `(new)`/`(existing)` — omit the freshness tag in spec/plan mode. Each bullet includes `file:line` (or the document section heading in spec/plan mode) and a one-sentence description, with an optional sub-bullet for a suggested fix. If you have no findings, reply exactly `No findings.`.
 
