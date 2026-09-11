@@ -12,7 +12,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.1.0'
+  version: '3.2.0'
 ---
 
 # Multi-agent code review (dispatcher)
@@ -73,7 +73,7 @@ Keep the diff text available. If it is very large (> ~2000 lines), give each sub
 
 ### Diff-mode dimension table
 
-| Dimension | Subagent | Include when |
+| Dimension | Skill to load | Include when |
 | --- | --- | --- |
 | Specs | `multi-review-specs` | A spec, ticket, issue, or PR description states what the change must do. Skip if no spec-like input exists. |
 | Logic | `multi-review-logic` | Almost always. Any non-trivial behavior change. |
@@ -101,13 +101,13 @@ Docs never runs in spec/plan mode (it is diff-driven). There is no merge-base, s
 
 ### The dispatch protocol
 
-Spawn all chosen subagents **in parallel** with the Task tool, using the dedicated reviewer agent for each dimension (`subagent_type: multi-review-<dimension>` — e.g. `multi-review-logic`, `multi-review-edge-cases`). Each of these agents already has permission to load exactly its own dimension skill plus the shared `multi-review-classification` skill, and nothing else — so you never need to inline review instructions; the prompt below only carries the payload.
+Spawn all chosen subagents **in parallel** with the Task tool, always using the shared reviewer agent: `subagent_type: multi-review-dimension`. It can load every dimension skill plus the shared `multi-review-classification` skill, so you never inline review instructions — the prompt only names the dimension and carries the payload.
 
-The contract is stated on both sides: here, and in each dimension agent's own SKILL.md (which the agent loads itself).
+The contract is stated on both sides: here, and in the `multi-review-dimension` agent's own prompt (which tells it to load the dimension skill you name).
 
 **Each dispatch prompt must contain, in this order:**
 
-1. **Role assignment** (first sentence): `You are the <dimension> reviewer for a multi-review. Review ONLY that dimension; findings from other domains are out of scope for you.`
+1. **Role assignment and skill directive** (first sentences): `You are the <dimension> reviewer for a multi-review. Load and follow the multi-review-<dimension> skill, together with the multi-review-classification skill it references. Review ONLY that dimension; findings from other domains are out of scope for you.`
 2. **Mode**: `diff mode` or `spec/plan mode`.
 3. **The payload**:
    - Diff mode: absolute path to the head checkout ("files at this path reflect the PR head; do not assume they match the base branch"), the diff (inline if reasonable, else changed-files list + merge-base SHA so they can run `git diff` themselves), the merge-base SHA, and short context (PR title and body, or branch name + latest commit subject).

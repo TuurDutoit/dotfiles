@@ -76,7 +76,11 @@
     },
     "skill": {
       "*": "allow",
-      "multi-review-*": "deny"
+      "multi-review*": "deny"
+    },
+    "task": {
+      "*": "ask",
+      "multi-review-dimension": "deny"
     },
     "external_directory": {
       "/Users/tuur/Documents/Obsidian/DataCamp/Agents/**": "allow",
