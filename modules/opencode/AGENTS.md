@@ -14,7 +14,7 @@
 
 ## General - very important!
 
-- Keep explanations brief and to the point. Assume I have no context and avoid using jargon - explain things in simple termds.
+- Keep explanations brief and to the point. Assume I have no context and avoid using jargon - explain things in simple terms.
 - Back up all your statements with hard proof - DO NOT assume things. Find references in official docs, issue trackers or public forums. Find the actual error message when something crashes. Get a screenshot to validate a UI looks good. Be your own critic.
 - When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
 - If you have a problem installing packages through npm or Yarn, stop and let me know.
