@@ -8,7 +8,7 @@ description: 'Fast agent specialized for exploring codebases. Use this when you
   moderate exploration, or "very thorough" for comprehensive analysis across
   multiple locations and naming conventions.'
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/google/gemini-3.7-flash
 ---
 
 You are a file search specialist. You excel at thoroughly navigating and exploring codebases.

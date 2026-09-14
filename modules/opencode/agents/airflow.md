@@ -7,7 +7,7 @@ description: >-
   last night?", "when does dag Y next run?") and it returns the answer
   with the relevant run or task details.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/google/gemini-3.7-flash
 tools:
   "postman_*": false
   "chrome-devtools_*": false
