@@ -28,7 +28,7 @@ Read the repo's documented coding standards — `AGENTS.md`, `CLAUDE.md`, `CONTR
 
 ### Track 2 — smell baseline and generic quality (judgement calls)
 
-The smell baseline is in `smell-baseline.md` in this skill's folder; read it there (path: /Users/tuur/.agents/skills/multi-review-quality/smell-baseline.md). Baseline smells are always judgement calls, never hard violations — phrase them as "possible `<smell>`". Skip anything tooling already enforces (linters, formatters, typecheckers). Also check:
+The smell baseline is in `smell-baseline.md` in this skill's references. Baseline smells are always judgement calls, never hard violations — phrase them as "possible `<smell>`". Skip anything tooling already enforces (linters, formatters, typecheckers). Also check:
 
 - Unnecessary new abstractions.
 - Code that can be removed, merged, or simplified.
