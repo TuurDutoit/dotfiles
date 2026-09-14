@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "subagent_depth": 3,
   "mcp": {
     "datacamp-internal-cloudflare-mcp": {
       "type": "remote",
