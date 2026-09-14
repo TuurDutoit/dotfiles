@@ -1,6 +1,6 @@
 ---
 name: sdlc-architecture
-description: Write the architecture for an accepted SDLC spec — the boundaries (API / DB / config schemas, data flows, packages, env vars, auth) in architecture.md, then hand off to the plan. Use when asked to write or update an architecture.md. Runs as one stage of a sdlc-agent session.
+description: Write the architecture for an accepted SDLC spec — the boundaries (API / DB / config schemas, data flows, packages, env vars, auth) in architecture.md, then hand off to the plan. Use when asked to write or update an architecture.md. Runs as the architecture stage in the `spec` agent.
 ---
 
 # Stage 3 — Architecture

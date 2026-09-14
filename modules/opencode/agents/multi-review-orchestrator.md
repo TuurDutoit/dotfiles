@@ -8,6 +8,7 @@ description: >-
   scope the review with a dimensions clause, e.g. "review #123 for
   performance and security" or "review this spec, specs only".
 mode: all
+# model-category: review
 model: openrouter/z-ai/glm-5.3-flash
 permission:
   skill:

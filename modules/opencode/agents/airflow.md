@@ -6,6 +6,7 @@ description: >-
   calling this agent, describe what it needs (e.g. "why did dag X fail
   last night?", "when does dag Y next run?") and it returns the answer
   with the relevant run or task details.
+# model-category: tools
 model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false

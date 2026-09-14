@@ -1,6 +1,7 @@
 ---
 mode: primary
 description: Plan mode. Disallows all edit tools.
+# model-category: spec
 model: openrouter/~anthropic/claude-opus-latest
 ---
 

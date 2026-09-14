@@ -7,7 +7,8 @@ description: 'Fast agent specialized for exploring codebases. Use this when you
   the desired thoroughness level: "quick" for basic searches, "medium" for
   moderate exploration, or "very thorough" for comprehensive analysis across
   multiple locations and naming conventions.'
-model: openrouter/deepseek/deepseek-v4-flash
+# model-category: tools
+model: openrouter/z-ai/glm-5.3-flash
 ---
 
 You are a file search specialist. You excel at thoroughly navigating and exploring codebases.

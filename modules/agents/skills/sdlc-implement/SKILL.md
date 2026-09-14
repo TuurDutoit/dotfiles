@@ -1,6 +1,6 @@
 ---
 name: sdlc-implement
-description: Implement and verify an accepted SDLC plan — write the code per plan.md with tests alongside it, run the review loop, close out doc statuses. Use when asked to implement a plan. This is the final stage of a sdlc-agent session.
+description: Implement and verify an accepted SDLC plan — write the code per plan.md with tests alongside it, run the review loop, close out doc statuses. Use when asked to implement a plan. This is the implement stage, run in the `engineer` agent.
 ---
 
 # Stage 5 — Implement and verify

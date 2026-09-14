@@ -6,6 +6,7 @@ description: >-
   needs (e.g. "pull the weekly signup numbers from dashboard X", "which
   look answers Y?") and it returns the data or the dashboard/look
   definitions.
+# model-category: tools
 model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false

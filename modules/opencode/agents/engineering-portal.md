@@ -7,6 +7,7 @@ description: >-
   dashboards. When calling this agent, describe what it needs (e.g. "who
   owns service X?", "is service Y meeting its scorecard?") and it returns
   the answer.
+# model-category: tools
 model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false

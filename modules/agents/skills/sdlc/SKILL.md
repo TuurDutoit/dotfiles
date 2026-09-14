@@ -1,6 +1,6 @@
 ---
 name: sdlc
-description: AI-native SDLC process — capture intent, write spec, write architecture, write plan, implement and verify, one stage per sdlc-agent session. Use when starting any new task (feature, bug fix, refactor, chore), when writing or updating intent.md, spec.md, architecture.md, or plan.md, or when recording an architecture decision as an ADR.
+description: AI-native SDLC process — capture intent, write spec, write architecture, write plan, implement and verify, one stage per agent session in the `spec` (intent, spec, architecture, plan) or `engineer` (implement) agent. Use when starting any new task (feature, bug fix, refactor, chore), when writing or updating intent.md, spec.md, architecture.md, or plan.md, or when recording an architecture decision as an ADR.
 ---
 
 # SDLC: intent → spec → architecture → plan → implement → verify
@@ -28,11 +28,11 @@ and an architecture that is little more than the schema diffs.
 
 | Stage | Produces | Runs as |
 | --- | --- | --- |
-| 1 Intent | `intent.md` — the problem in the originator's own terms | `sdlc-intent` |
-| 2 Spec | `spec.md` — the user experience | `sdlc-spec` |
-| 3 Architecture | `architecture.md` — the boundaries: API / DB / config schemas, data flows, packages, env vars, auth | `sdlc-architecture` |
-| 4 Plan | `plan.md` — files that change, naming, order of work, risks, proof | `sdlc-plan` |
-| 5 Implement + verify | working code, tests alongside it, statuses closed out | `sdlc-implement` |
+| 1 Intent | `intent.md` — the problem in the originator's own terms | `spec` — `sdlc-intent` |
+| 2 Spec | `spec.md` — the user experience | `spec` — `sdlc-spec` |
+| 3 Architecture | `architecture.md` — the boundaries: API / DB / config schemas, data flows, packages, env vars, auth | `spec` — `sdlc-architecture` |
+| 4 Plan | `plan.md` — files that change, naming, order of work, risks, proof | `spec` — `sdlc-plan` |
+| 5 Implement + verify | working code, tests alongside it, statuses closed out | `engineer` — `sdlc-implement` |
 
 When any stage makes a choice that shapes the system's structure and is hard
 to reverse, record it as an ADR (below).
@@ -63,11 +63,12 @@ artifact allowed to name files.
 
 ## One stage per session
 
-Each stage is executed by the `sdlc` agent in a session of its own: that
-session loads this skill for process context, plus the stage's `sdlc-*` skill
-for the stage instructions. The `sdlc-*` skills are restricted to the `sdlc`
-agent — if you are any other agent, don't execute a stage yourself; make the
-handoff below instead.
+Each stage is executed in a session of its own: the `spec` agent runs the
+intent, spec, architecture, and plan stages, and the `engineer` agent runs
+the implement stage. That session loads this skill for process context, plus
+the stage's `sdlc-*` skill for the stage instructions. The `sdlc-*` skills are
+restricted to the `spec` and `engineer` agents — if you are any other agent,
+don't execute a stage yourself; make the handoff below instead.
 
 ## Artifact location
 
@@ -169,8 +170,9 @@ With all three met, merge the changes, and make the handoff.
 
 ## Handoff
 
-When the stage gate opens, the next stage starts in a new `sdlc`-agent
-session — never in this one; a fresh session reads its context from the
+When the stage gate opens, the next stage starts in a new session of its own
+agent — `spec` for intent, spec, architecture, and plan; `engineer` for
+implement — never in this one; a fresh session reads its context from the
 artifacts. Start it (via the available session tooling) and tell it in one
 short sentence what to do, naming the previous stage's output file, e.g.:
 

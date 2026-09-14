@@ -7,6 +7,7 @@ description: >-
   root-cause analysis. When calling this agent, describe what it needs
   (e.g. "what are the top errors in project X?", "run Seer on ISSUE-123")
   and it returns the answer.
+# model-category: tools
 model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false

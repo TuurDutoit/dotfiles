@@ -7,6 +7,7 @@ description: >-
   network activity, recording performance traces and running Lighthouse
   audits. When calling this agent, describe what to check or do in the
   browser and it reports exactly what it observed.
+# model-category: tools
 model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false

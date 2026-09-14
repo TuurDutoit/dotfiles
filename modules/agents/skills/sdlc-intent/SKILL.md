@@ -1,6 +1,6 @@
 ---
 name: sdlc-intent
-description: Capture the intent for an SDLC task — write intent.md in the originator's own words, get Tuur's approval, hand off to the spec. Use when starting a new SDLC task or when asked to capture or write an intent. Runs as one stage of a sdlc-agent session.
+description: Capture the intent for an SDLC task — write intent.md in the originator's own words, get Tuur's approval, hand off to the spec. Use when starting a new SDLC task or when asked to capture or write an intent. Runs as the intent stage in the `spec` agent.
 ---
 
 # Stage 1 — Intent

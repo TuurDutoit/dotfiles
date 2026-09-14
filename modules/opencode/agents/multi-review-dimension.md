@@ -6,6 +6,7 @@ description: >-
   quality, or docs) and carries the payload.
 mode: subagent
 hidden: true
+# model-category: review
 model: openrouter/z-ai/glm-5.3-flash
 permission:
   skill:
