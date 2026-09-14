@@ -28,6 +28,6 @@ originator confirms it is correct.
 
 This stage has no reviewer: Tuur's approval alone satisfies the reviewer
 condition of the stage gate (the other conditions are in the `sdlc` skill).
-When the gate opens, hand off to the next stage's session:
+When the gate opens, hand off to the next stage's session in a `spec` agent:
 
-> Write a spec doc for this intent: `<task dir>/intent.md`
+> Using the sdlc-spec skill, write a spec doc for this intent: `<task dir>/intent.md`

@@ -32,6 +32,6 @@ Behavioral or boundary questions route back to spec or architecture.
 ## Review and gate
 
 Run the review loop with dimensions: **all**. When the stage gate opens,
-hand off to the next stage's session:
+hand off to the next stage's session in an `engineer` agent:
 
 > Implement this plan: `<task dir>/plan.md`

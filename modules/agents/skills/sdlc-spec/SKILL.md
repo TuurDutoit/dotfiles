@@ -28,6 +28,6 @@ concerns with the requester before moving on. Commit the accepted spec.
 ## Review and gate
 
 Run the review loop with dimensions: **Logic**. When the stage
-gate opens, hand off to the next stage's session:
+gate opens, hand off to the next stage's session in a `spec` agent:
 
-> Write the architecture for this spec: `<task dir>/spec.md`
+> Using the sdlc-architecture skill, write the architecture for this spec: `<task dir>/spec.md`

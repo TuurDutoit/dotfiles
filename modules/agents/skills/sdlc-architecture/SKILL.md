@@ -29,7 +29,7 @@ accepted architecture.
 ## Review and gate
 
 Run the review loop with dimensions: **all except Code quality**. When the
-stage gate opens, hand off to the next stage's session:
+stage gate opens, hand off to the next stage's session in a `spec` agent:
 
-> Write the implementation plan for this spec: `<task dir>/spec.md` —
+> Using the sdlc-plan skill, write the implementation plan for this spec: `<task dir>/spec.md` —
 > architecture: `<task dir>/architecture.md`
