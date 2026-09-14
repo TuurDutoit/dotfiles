@@ -7,7 +7,7 @@ description: >-
 mode: subagent
 hidden: true
 # model-category: review
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/google/gemini-3.7-flash
 permission:
   skill:
     "*": "deny"
