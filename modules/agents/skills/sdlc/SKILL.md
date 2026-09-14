@@ -9,9 +9,9 @@ Every stage ends by producing one artifact the next stage reads. The chain of
 artifacts is the audit trail: what was asked for, what was decided, how it was
 built. Historical context lives in git history.
 
-Each stage closes with the automated review loop below, and its output moves
-on only when the stage gate there opens. The human gate is approval of the
-final output, not first-line review.
+Each stage closes with the loops below — open questions first, then review —
+and its output moves on only when the stage gate opens. The human gate is
+approval of the final output, not first-line review.
 
 ## The stages
 
@@ -108,13 +108,31 @@ Artifacts inside the repo are committed as they are accepted — git history is
 the audit trail. Fallback artifacts live outside git; write them, and no
 commit applies.
 
-## Automated review loop
+## Open questions and review loop
 
-Run this at the end of every stage except intent — intent skips the review
-loop entirely (Tuur's approval is the only check there). The dimensions to
-request are named in each stage's `sdlc-*` skill.
+Run these in order at the end of every stage except intent — intent skips
+both loops entirely (Tuur's approval is the only check there). The review
+dimensions to request are named in each stage's `sdlc-*` skill.
 
-As soon as a stage's output is ready, run the review as a subagent: dispatch
+### Open-questions loop
+
+Run this before the review loop. List the open questions: those the artifact
+marks as open, plus any raised during the stage. Every question this stage's
+scope covers must end with an answer recorded in the artifact:
+
+1. Gather all currently open questions in scope.
+2. Ask Tuur with the built-in `question` tool — one call listing all of
+   them, with options where possible.
+3. Update the artifact with each answer, turning it from open into decided.
+4. Repeat until no open questions in scope remain.
+
+Questions outside the stage's scope are never guessed, parked, or
+half-answered: route each one in the artifact to the stage that owns it, and
+it gates that stage instead.
+
+### Review loop
+
+As soon as the open-questions loop has closed, run the review as a subagent: dispatch
 the `multi-review-orchestrator` agent through the Task tool — not as a
 separate session — with this brief prompt:
 
@@ -141,14 +159,9 @@ does not start:
    acceptable — or Tuur explicitly overrides its rejection and moves on
    anyway. The intent stage has no reviewer; there, Tuur's approval alone
    satisfies this condition.
-2. **No open questions in scope.** Every question this stage's scope
-   covers — in the artifact or raised during the stage — has an answer,
-   recorded in the artifact. Ask Tuur directly for the ones only Tuur can
-   answer — use the `question` tool, one call listing all of them if
-   possible — and record the answers in the artifact. Questions outside
-   the stage's scope are never guessed, parked, or half-answered: route
-   each one in the artifact to the stage that owns it, and it gates that
-   stage instead.
+2. **No open questions in scope.** The open-questions loop above has closed:
+   every question this stage's scope covers — in the artifact or raised
+   during the stage — has an answer, recorded in the artifact.
 3. **Tuur approved.** Tuur has explicitly approved this stage's output. No
    response is not approval — ask, and wait for the answer.
 
