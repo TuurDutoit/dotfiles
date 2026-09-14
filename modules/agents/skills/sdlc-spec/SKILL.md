@@ -27,7 +27,7 @@ concerns with the requester before moving on. Commit the accepted spec.
 
 ## Review and gate
 
-Run the review loop with dimensions: **Logic, Edge cases**. When the stage
+Run the review loop with dimensions: **Logic**. When the stage
 gate opens, hand off to the next stage's session:
 
 > Write the architecture for this spec: `<task dir>/spec.md`
