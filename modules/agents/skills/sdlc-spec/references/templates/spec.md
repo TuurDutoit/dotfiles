@@ -13,6 +13,15 @@ testable statements.>
 permissions as the user meets them. No references to the code — internals
 belong to architecture.md and plan.md.>
 
+## QA scenarios & test cases
+
+<Always include a list of concrete test cases for humans or AI agents to test.
+Specify which users/personas, which scenarios to test, and the expected outcome
+in "if this then that" / Cucumber-style (Given / When / Then) scenarios.>
+
+- **Scenario 1:** Given <user persona/role and starting state>, When <action taken>, Then <expected outcome>
+- **Scenario 2:** If <user state/condition>, when <action taken>, then <expected outcome>
+
 ## High-level & executable specs
 
 <If there are Cucumber specs (.feature files) or high-level e2e tests focused on

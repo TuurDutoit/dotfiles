@@ -1,6 +1,6 @@
 ---
 name: "sdlc-spec"
-description: "Write the spec for an accepted SDLC intent — the user experience (requirements, surfaces, flows, states, permissions, Cucumber/e2e specs) in spec.md, then hand off to the architecture. Use when asked to write or update a spec.md. Runs as the spec stage in the `spec` agent."
+description: "Write the spec for an accepted SDLC intent — the user experience (requirements, surfaces, flows, states, permissions, QA test cases, Cucumber/e2e specs) in spec.md, then hand off to the architecture. Use when asked to write or update a spec.md. Runs as the spec stage in the `spec` agent."
 ---
 
 # Stage 2 — Spec
@@ -13,6 +13,12 @@ Start from the accepted `<task dir>/intent.md`.
 
 Write what the feature looks and feels like for users: surfaces, flows,
 states, permissions as the user meets them.
+
+Document exact QA scenarios and test cases: always include a section in the
+spec doc listing concrete test cases for humans or AI agents to test.
+Specify which users/personas, which scenarios to test, and the expected
+outcome, written as "if this then that" / Cucumber-style scenarios
+(Given / When / Then).
 
 If the codebase has Cucumber specs (`.feature` files) or high-level e2e tests
 (anything user experience-focused), inspect them and document in the spec how to
