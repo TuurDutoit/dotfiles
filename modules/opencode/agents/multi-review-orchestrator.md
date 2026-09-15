@@ -22,6 +22,7 @@ permission:
     "*": "ask"
     "git *": "allow"
     "gh *": "allow"
+    "mkdir *": "allow"
     "mktemp *": "allow"
     "wc *": "allow"
     "ls *": "allow"

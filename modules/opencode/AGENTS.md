@@ -11,6 +11,7 @@
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
   - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
 - Handoff documents are stored under ~/Documents/Obsidian/DataCamp/Agents/Handoffs
+- Multi-review diffs are stored under ~/Documents/Obsidian/DataCamp/Agents/Diffs
 
 ## General - very important!
 

@@ -4,6 +4,9 @@ description: Run reviewer subagents in parallel to review a diff (current branch
 allowed-tools:
   - Bash(git *)
   - Bash(gh *)
+  - Bash(mkdir *)
+  - Bash(mktemp *)
+  - Bash(wc *)
   - Bash(cd *)
   - Bash(pwd)
   - Bash(ls *)
@@ -12,7 +15,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.4.0'
+  version: '3.5.0'
 ---
 
 # Multi-agent code review (dispatcher)
@@ -66,25 +69,32 @@ Parse it like this:
 Run these in the current working directory:
 
 1. Confirm you are inside a git repo. If not, stop and tell the user.
-2. **Save the full diff to a file** — never hold the whole diff in context:
-   - `DIFF_FILE=$(mktemp -t multi-review-diff)`
+2. **Resolve the diff directory and file path** under `/Users/tuur/Documents/Obsidian/DataCamp/Agents/Diffs`:
+   - Resolve `<repo-name>`: run `git remote get-url origin` (or first remote) and take the repository basename from the URL, dropping `.git` (e.g. `git@github.com:TuurDutoit/dotfiles.git` → `dotfiles`). With no remote, use the current directory name.
+   - Diff directory: `DIFF_DIR="/Users/tuur/Documents/Obsidian/DataCamp/Agents/Diffs/<repo-name>"`
+   - Ensure the directory exists: `mkdir -p "$DIFF_DIR"`.
+   - Name the diff file:
+     - Current-branch case: `DIFF_FILE="$DIFF_DIR/$(date +%Y-%m-%d)-$(git rev-parse --abbrev-ref HEAD | tr '/' '-').diff"`
+     - PR-ref case: `DIFF_FILE="$DIFF_DIR/pr-<ref-or-number>.diff"`
+     - Fixed-point case: `DIFF_FILE="$DIFF_DIR/$(date +%Y-%m-%d)-<ref-slug>.diff"`
+3. **Save the full diff to the file** — never hold the whole diff in context:
    - Current-branch / fixed-point case: `git diff <merge-base>...HEAD > "$DIFF_FILE"`.
    - PR-ref case: `gh pr diff <ref> > "$DIFF_FILE"`.
    - Size it: `wc -l < "$DIFF_FILE"` → `$DIFF_LINES`.
-3. **Current-branch / fixed-point case**:
+4. **Current-branch / fixed-point case**:
    - Default branch: `git symbolic-ref refs/remotes/origin/HEAD` (fallback: try `main` then `master`).
    - Fixed point: with an argument, confirm it resolves first (`git rev-parse <arg>` — a bad ref fails here, not inside the subagents) and use it as the merge-base everywhere, including freshness checks; without, `git merge-base <default> HEAD`.
    - Diff: `git diff --stat <merge-base>...HEAD` for the summary; the full diff is already in `$DIFF_FILE`.
    - Reviewer repo root: the current working directory (`pwd`).
    - Context: current branch name and latest commit subject.
-4. **PR-ref case**:
+5. **PR-ref case**:
    - `gh pr view <ref> --json title,body,headRefName,baseRefName,headRefOid` for context. Capture `headRefOid` (the PR head SHA).
    - Locate a local clone of the PR's repo, in this order: (a) current working directory inside a clone of the same repo; (b) `~/projects/<repo-name>`; (c) otherwise fall back to the `$DIFF_FILE` written by `gh pr diff` and tell each reviewer that file reads are unavailable.
    - `git -C <host-clone> fetch origin pull/<N>/head` if the SHA isn't already present locally.
    - Create a fresh detached worktree at the PR head: `WORKTREE=$(mktemp -d -t multi-review)` then `git -C <host-clone> worktree add --detach "$WORKTREE" <headRefOid>`. **This worktree path is what every reviewer uses as the repo root** — it reflects the PR head exactly.
    - Remember `<host-clone>`, `$WORKTREE`, and `$DIFF_FILE` for Step 6.
 
-If the diff is empty, stop and report "No changes to review." (Clean up the worktree and diff file first if you created them.)
+If the diff is empty, stop and report "No changes to review." (Remove the empty diff file and clean up the worktree if created.)
 
 **Reading the diff.** The `--stat` output plus context (PR body, commit subjects) is usually enough to choose dimensions. Read `$DIFF_FILE` only when the stat isn't enough, and only if it is small (< ~2000 lines). For a large diff, never read it whole — **search** it instead (Grep for `diff --git a/<path>` to see per-file changes, `^+++` / `^---` for touched files, `@@` hunks by keyword) and read the relevant source files at the checkout path for real context.
 
@@ -164,6 +174,7 @@ Output a single combined report:
 # Local multi-review — <branch, PR ref, or spec path>
 
 <one-line summary, e.g. "12 files, +340 / -85" or "spec/plan: <N> sections">
+Diff: `/Users/tuur/Documents/Obsidian/DataCamp/Agents/Diffs/<repo-name>/<filename>.diff` (diff modes only)
 
 ## Dimensions reviewed
 
@@ -198,11 +209,11 @@ Omit rows for dimensions not run. If there are zero findings overall, replace th
 
 Do **not** apply fixes automatically. Leave that for the user to decide after reading the report.
 
-## Step 6 — Clean up the temporary worktree and diff file
+## Step 6 — Clean up the temporary worktree
 
-After the report is written, remove what Step 2 created:
+After the report is written, clean up temporary resources:
 
 - PR-ref case: `git -C <host-clone> worktree remove --force "$WORKTREE"`, falling back to `rm -rf "$WORKTREE"` if the worktree command failed.
-- All diff modes: `rm -f "$DIFF_FILE"`.
+- The diff file under `/Users/tuur/Documents/Obsidian/DataCamp/Agents/Diffs` is kept as a durable artifact in Obsidian — do not delete it.
 
 Skip the worktree cleanup in no-arg and spec/plan modes (no worktree was created).
