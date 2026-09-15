@@ -3,7 +3,7 @@ description: >-
   Coding agent: implements and verifies an accepted SDLC plan (the implement
   stage), and handles smaller coding tasks that don't need the full SDLC
   process.
-mode: primary
+mode: all
 # model-category: coding
 model: openrouter/google/gemini-3.8-flash
 permission:
