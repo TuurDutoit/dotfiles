@@ -13,6 +13,12 @@ testable statements.>
 permissions as the user meets them. No references to the code — internals
 belong to architecture.md and plan.md.>
 
+## High-level & executable specs
+
+<If there are Cucumber specs (.feature files) or high-level e2e tests focused on
+user experience, document how to update them: what scenarios or specs to add,
+modify, or remove. Omit if no user-facing specs exist.>
+
 ## Areas of concern
 
 <Flagged points: contradictions, risks, things needing a decision.

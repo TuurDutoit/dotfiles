@@ -29,8 +29,8 @@ and an architecture that is little more than the schema diffs.
 | Stage | Produces | Runs as |
 | --- | --- | --- |
 | 1 Intent | `intent.md` — the problem in the originator's own terms | `spec` — `sdlc-intent` |
-| 2 Spec | `spec.md` — the user experience | `spec` — `sdlc-spec` |
-| 3 Architecture | `architecture.md` — the boundaries: API / DB / config schemas, data flows, packages, env vars, auth | `spec` — `sdlc-architecture` |
+| 2 Spec | `spec.md` — the user experience (flows, requirements, Cucumber/e2e specs) | `spec` — `sdlc-spec` |
+| 3 Architecture | `architecture.md` — the boundaries: API / DB / config schemas, boundary conditions & dependencies, data flows, packages, env vars, auth | `spec` — `sdlc-architecture` |
 | 4 Plan | `plan.md` — files that change, naming, order of work, risks, proof | `spec` — `sdlc-plan` |
 | 5 Implement + verify | working code, tests alongside it, statuses closed out | `engineer` — `sdlc-implement` |
 
@@ -47,8 +47,8 @@ spec. Each stage stays inside its scope:
 | Stage | May look at | Artifact talks about | Owns questions about |
 | --- | --- | --- | --- |
 | Intent | the originator and their sources (tickets, docs) — never the codebase | the problem and wanted outcome, in the originator's terms | what the originator can answer |
-| Spec | the product as users meet it; code only to see how it works today | behavior the user can observe | what the experience should be |
-| Architecture | code and systems, to learn interface shapes and current data flows | boundaries: API / DB / config schemas, data flows, packages, env vars, auth | interfaces: shapes, auth, config, behaviour at boundaries |
+| Spec | the product as users meet it; existing e2e/Cucumber specs; code only to see how it works today | behavior the user can observe; Cucumber / e2e specs to add or update | what the experience should be and how user-level specs reflect it |
+| Architecture | code, systems, and cross-repo callers / dependencies (via an `explore` agent) | boundaries: API / DB / config schemas, data flows, boundary condition checks (consumer usage, live prerequisites), packages, env vars, auth | interfaces: shapes, auth, config, boundary conditions, dependency readiness |
 | Plan | the codebase, thoroughly | the change: files, naming, order of work, risks, proof | how to build it |
 | Implement | the code, per the plan | the code and its tests | nothing new — departures update the plan |
 

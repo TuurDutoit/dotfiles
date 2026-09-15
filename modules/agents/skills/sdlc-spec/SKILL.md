@@ -1,6 +1,6 @@
 ---
 name: "sdlc-spec"
-description: "Write the spec for an accepted SDLC intent — the user experience (requirements, surfaces, flows, states, permissions) in spec.md, then hand off to the architecture. Use when asked to write or update a spec.md. Runs as the spec stage in the `spec` agent."
+description: "Write the spec for an accepted SDLC intent — the user experience (requirements, surfaces, flows, states, permissions, Cucumber/e2e specs) in spec.md, then hand off to the architecture. Use when asked to write or update a spec.md. Runs as the spec stage in the `spec` agent."
 ---
 
 # Stage 2 — Spec
@@ -14,10 +14,15 @@ Start from the accepted `<task dir>/intent.md`.
 Write what the feature looks and feels like for users: surfaces, flows,
 states, permissions as the user meets them.
 
+If the codebase has Cucumber specs (`.feature` files) or high-level e2e tests
+(anything user experience-focused), inspect them and document in the spec how to
+update those (what scenarios or specs to add, change, or remove).
+
 Stay inside the spec stage's scope (the scope table in the `sdlc` skill):
 the artifact talks about behavior the user can observe. Reading code is
-allowed only to see how the app works today — never to decide how to
-change it — and the spec itself names no code: internals belong to the
+allowed only to see how the app works today and how existing user-facing specs
+are structured — never to decide how to change implementation code — and the spec
+itself names no internal implementation details: internals belong to the
 architecture and the plan. Answer every behavioral question (what should
 happen when X) before the gate; boundary questions route to the
 architecture stage.
