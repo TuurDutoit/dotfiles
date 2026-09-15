@@ -55,3 +55,9 @@ When commenting in Github, always add the following snippet at the end of your m
 ## BigQuery
 
 - Always default to project ID `datacamp-data-platform`. Do not guess or use any other project ID unless explicitly told to.
+
+## Project Aliases
+
+Whenever referencing a project in this list (e.g. in session names, spec documents, or conversations with Tuur), you may abbreviate the full project name to its alias:
+
+- `content-authorization-service` → `CAS`
