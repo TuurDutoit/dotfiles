@@ -42,6 +42,10 @@ When commenting in Github, always add the following snippet at the end of your m
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
 
+## Sessions and Subagents
+
+- When starting new sessions or subagents, always use the default model (omit or leave the model argument empty) unless explicitly told which model to use.
+
 ## Jira
 
 - Default to project `LX` (Learner Experience) when creating Jira tickets, unless told otherwise.
