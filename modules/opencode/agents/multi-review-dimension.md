@@ -2,7 +2,7 @@
 description: >-
   Shared multi-review dimension reviewer subagent. Dispatched only by the
   multi-review orchestrator; the dispatch prompt names the single dimension
-  to review (logic, edge-cases, performance, security, architecture, specs,
+  to review (logic, performance, security, architecture, specs,
   quality, or docs) and carries the payload.
 mode: subagent
 hidden: true
