@@ -83,6 +83,7 @@
       "*": "allow",
       "review-dimension": "deny"
     },
+    "question": "allow",
     "external_directory": {
       "/Users/tuur/Documents/Obsidian/DataCamp/Agents/**": "allow",
       "/tmp/**": "allow",
