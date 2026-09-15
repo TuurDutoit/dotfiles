@@ -141,7 +141,7 @@ separate session — with this brief prompt:
 > dimensions: `<the stage's dimensions>`. Your findings go back to the
 > dispatching agent — the comments come from another agent, not the user.
 
-The reviewer runs the `multi-review-merged` skill autonomously in a single pass.
+The reviewer runs the `review` skill autonomously.
 The call blocks until the review is done, and the findings arrive as the
 subagent's report. Keep the `task_id` from the result. Address the findings,
 then resume the same reviewer by calling the Task tool again with that

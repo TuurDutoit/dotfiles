@@ -10,7 +10,6 @@ model: openrouter/~anthropic/claude-opus-latest
 permission:
   skill:
     "*": "allow"
-    "multi-review*": "deny"
     "sdlc-*": "allow"
 ---
 

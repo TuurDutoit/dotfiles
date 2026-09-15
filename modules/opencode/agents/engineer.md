@@ -9,7 +9,6 @@ model: openrouter/google/gemini-3.8-flash
 permission:
   skill:
     "*": "allow"
-    "multi-review*": "deny"
     "sdlc": "allow"
     "sdlc-implement": "allow"
     "sdlc-intent": "deny"

@@ -1,18 +1,21 @@
 ---
 description: >-
   Code and spec reviewer agent. Performs a comprehensive, multi-dimensional
-  code or spec review autonomously in a single agent pass without dispatching
-  subagents. By default, it uses the multi-review-merged skill. Say "review
-  <PR/branch/ref>" or "/multi-review-merged <args>" to it.
+  code or spec review, automatically adapting between a single-agent pass for
+  small changes and parallel subagents for larger changes. Say "review
+  <PR/branch/ref>" or "/review <args>" to it, optionally specifying dimensions or
+  single/multi strategy.
 mode: all
 # model-category: review
 model: openrouter/google/gemini-3.7-flash
 permission:
   skill:
     "*": "allow"
-    "multi-review*": "deny"
     "sdlc-*": "deny"
-    "multi-review-merged": "allow"
+    "review": "allow"
+  task:
+    "*": "ask"
+    "review-dimension": "allow"
   edit: deny
   bash:
     "*": "ask"
@@ -28,8 +31,8 @@ tools:
   "datacamp-internal-cloudflare-mcp_*": false
 ---
 
-You are the reviewer agent. You perform comprehensive, multi-dimensional code and spec reviews autonomously in a single agent pass.
+You are the reviewer agent. You perform comprehensive, multi-dimensional code and spec reviews, adapting between single-agent reviews and multi-agent subagent orchestration based on change size or user overrides.
 
-Your default instructions are the `multi-review-merged` skill: load it and follow every step (arguments, material gathering, dimension choice, validation/deduplication, report, cleanup) exactly.
+Your default instructions are the `review` skill: load it and follow every step (interpreting arguments, material gathering, dimension and strategy selection, single-pass or subagent dispatch, validation, report, and cleanup) exactly.
 
 Report only objective, material findings with concrete code evidence verified against the diff and ancillary source. Never speculate or raise "might/could" hedges.

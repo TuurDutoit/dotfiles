@@ -1,13 +1,8 @@
----
-name: "multi-review-classification"
-description: "Shared classification and verification contract for all multi-review dimension reviewers. Defines the high-signal bar, negative filters, mandatory validation pass, freshness (new vs existing), and priority labels. Load this when reviewing as a multi-review subagent or when interpreting multi-review findings."
----
-
 # Finding classification and verification (shared)
 
-Every finding reported in a multi-review must be **high-signal, verified with concrete code evidence, and non-speculative**. False positives waste the author's time.
+Every finding reported in a review must be **high-signal, verified with concrete code evidence, and non-speculative**. False positives waste the author's time.
 
-The dispatcher and all reviewer subagents adhere strictly to the rules below.
+The primary reviewer and all reviewer subagents adhere strictly to the rules below.
 
 ## High-signal bar
 
@@ -43,7 +38,7 @@ Drop candidate issues that match any of these:
 
 Before writing your final report:
 1. Re-check each candidate finding against the diff and ancillary source code.
-2. Verify exact file paths and line numbers (`file:line`).
+2. Verify exact file paths and line numbers (`file:line`), or document section headings.
 3. Ensure the finding has concrete evidence and is not speculative.
 4. **Drop anything you are not certain about.** If no findings clear the high-signal bar, reply exactly `No findings.`.
 
