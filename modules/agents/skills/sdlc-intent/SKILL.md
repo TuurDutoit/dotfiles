@@ -6,8 +6,8 @@ description: "Capture the intent for an SDLC task — write intent.md in the ori
 # Stage 1 — Intent
 
 You are running one stage of the SDLC process. Load the `sdlc` skill for the
-process context — artifact location, review loop, stage gate, handoff — and
-run this stage inside it.
+process context — session naming, artifact location, review loop, stage gate,
+handoff — and run this stage inside it.
 
 Write the problem in the originator's own terms — what is wanted, why,
 constraints, open questions. No formal language required. Capture it from

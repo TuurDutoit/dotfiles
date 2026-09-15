@@ -6,8 +6,8 @@ description: "Write the spec for an accepted SDLC intent — the user experience
 # Stage 2 — Spec
 
 You are running one stage of the SDLC process. Load the `sdlc` skill for the
-process context — artifact location, review loop, stage gate, handoff — and
-run this stage inside it.
+process context — session naming, artifact location, review loop, stage gate,
+handoff — and run this stage inside it.
 
 Start from the accepted `<task dir>/intent.md`.
 

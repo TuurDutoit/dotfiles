@@ -6,8 +6,8 @@ description: "Implement and verify an accepted SDLC plan — write the code per 
 # Stage 5 — Implement and verify
 
 You are running the final stage of the SDLC process. Load the `sdlc` skill
-for the process context — review loop, stage gate — and run this stage
-inside it.
+for the process context — session naming, review loop, stage gate — and run
+this stage inside it.
 
 Start from the accepted `<task dir>/plan.md`.
 

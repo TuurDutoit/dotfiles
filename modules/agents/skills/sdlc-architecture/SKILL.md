@@ -6,8 +6,8 @@ description: "Write the architecture for an accepted SDLC spec — the boundarie
 # Stage 3 — Architecture
 
 You are running one stage of the SDLC process. Load the `sdlc` skill for the
-process context — artifact location, review loop, stage gate, handoff — and
-run this stage inside it.
+process context — session naming, artifact location, review loop, stage gate,
+handoff — and run this stage inside it.
 
 Start from the accepted `<task dir>/spec.md`.
 

@@ -6,8 +6,8 @@ description: "Write the implementation plan for an accepted SDLC spec/architectu
 # Stage 4 — Plan
 
 You are running one stage of the SDLC process. Load the `sdlc` skill for the
-process context — artifact location, review loop, stage gate, handoff — and
-run this stage inside it.
+process context — session naming, artifact location, review loop, stage gate,
+handoff — and run this stage inside it.
 
 Start from the accepted `<task dir>/spec.md` and (when the stage ran)
 `<task dir>/architecture.md`.

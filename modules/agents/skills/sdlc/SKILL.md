@@ -70,6 +70,21 @@ the stage's `sdlc-*` skill for the stage instructions. The `sdlc-*` skills are
 restricted to the `spec` and `engineer` agents — if you are any other agent,
 don't execute a stage yourself; make the handoff below instead.
 
+### Session naming
+
+When an agent loads this skill and determines which step it is running, it must
+rename its own session to:
+
+```
+<project_slug> - <step> - <issue_name>
+```
+
+Example: `learn-hub - intent - AI Tutor user restrictions`
+
+- **`<project_slug>`**: Resolved from the git remote (e.g. `https://github.com/datacamp-engineering/learn-hub` or `git@github.com:datacamp-engineering/learn-hub.git` → `learn-hub`). With no remote, fall back to the canonical checkout directory name.
+- **`<step>`**: The step currently being executed, one of: `intent`, `spec`, `architecture`, `plan`, `implementation`.
+- **`<issue_name>`**: A short descriptive name based on the ticket passed or the changes requested.
+
 ## Artifact location
 
 Every task gets its own directory holding `intent.md`, `spec.md`,
