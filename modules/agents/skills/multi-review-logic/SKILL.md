@@ -50,11 +50,17 @@ Then, for each piece of the change that handles input, data, API boundaries, or 
 
 ## What to look for
 
-Real behavioral defects, design holes, and concrete unhandled cases a user or external system could actually hit — not hypothetical hardening. Do **not** report style, naming, performance, or security concerns; other dimensions own those. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole; read the relevant source files at the checkout path for context. Verify every finding by reading the source (or the document) before reporting — the diff alone lacks context, and a defect visible on the base branch may already be fixed at the head.
+Real behavioral defects, logic errors, and concrete unhandled cases a user or external system could actually hit — not hypothetical hardening or speculative "might" scenarios. Do **not** report style, naming, performance, or security concerns; other dimensions own those. Do **not** report issues that a compiler/typechecker or linter would catch, or theoretical edge cases that upstream guards or types already make impossible.
 
-## Output contract
+The **diff is the primary source of truth** for what changed; use the checkout path only as ancillary context to trace real call sites, return types, and imports.
 
-Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and apply its freshness and priority rules exactly.
+## Validation pass and output contract
+
+Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and perform a **mandatory validation pass**:
+1. Re-check each candidate finding against the diff and ancillary source code.
+2. Confirm the issue causes actual incorrect runtime behavior or broken logic.
+3. If a claim cannot be verified with concrete code evidence, **drop it**.
+4. Apply freshness and priority rules exactly.
 
 Your final message is your report and nothing else:
 
@@ -63,4 +69,4 @@ Your final message is your report and nothing else:
 - Each bullet: `file:line` (diff mode) or the document section heading (spec/plan mode), plus a one-sentence description.
 - Optional sub-bullet: `Suggested fix: <brief fix>`.
 - Freshness verification (diff mode): when unsure whether an issue is new, check `git show <merge-base>:<path>` — if it exists there, it is `(existing)`.
-- If you have no findings, reply exactly `No findings.`
+- If you have no verified findings, reply exactly `No findings.`

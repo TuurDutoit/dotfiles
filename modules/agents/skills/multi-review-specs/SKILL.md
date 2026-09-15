@@ -43,11 +43,15 @@ You review the document itself, as the unit under review:
 
 ## What to look for
 
-Divergences between what was promised and what was produced (or between the document and itself). If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole. Verify every finding by reading the source at the provided checkout path (diff mode) or re-reading the relevant document section before reporting.
+Objective divergences between what was promised and what was produced (or between the document and itself). Do **not** speculate or invent requirements not in the spec. The **diff is the primary source of truth** for what was changed; verify each divergence against the spec and the source at the checkout path.
 
-## Output contract
+## Validation pass and output contract
 
-Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and apply its freshness and priority rules exactly.
+Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and perform a **mandatory validation pass**:
+1. Re-check each candidate finding against the spec, the diff, and the source.
+2. Confirm the requirement mismatch is objective and verifiable.
+3. If a finding cannot be proven with concrete evidence from the spec and diff, **drop it**.
+4. Apply freshness and priority rules exactly.
 
 Your final message is your report and nothing else:
 
@@ -56,4 +60,4 @@ Your final message is your report and nothing else:
 - Each bullet: `file:line` (diff mode) or the document section heading (spec/plan mode), plus a one-sentence description.
 - Optional sub-bullet: `Suggested fix: <brief fix>`.
 - Freshness verification (diff mode): when unsure whether an issue is new, check `git show <merge-base>:<path>` — if it exists there, it is `(existing)`.
-- If you have no findings, reply exactly `No findings.`
+- If you have no verified findings, reply exactly `No findings.`

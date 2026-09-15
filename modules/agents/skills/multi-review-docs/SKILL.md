@@ -31,11 +31,15 @@ You may read the docs but must not edit anything — report gaps only.
 
 ## What to look for
 
-Documentation that the change invalidates or a learning worth recording. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole. Verify each claim by reading the doc at the provided checkout path before reporting — a doc you haven't opened may already cover the new behavior.
+Documentation that the change directly invalidates or makes stale. Do **not** report speculative documentation requests or generic "could add more docs" suggestions without a concrete broken doc. Verify each claim by reading the doc at the provided checkout path before reporting.
 
-## Output contract
+## Validation pass and output contract
 
-Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and apply its freshness and priority rules exactly.
+Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and perform a **mandatory validation pass**:
+1. Re-check each candidate finding against the diff and the actual doc text.
+2. Confirm the doc is directly contradicted or made stale by the change.
+3. If a claim cannot be verified against the doc, **drop it**.
+4. Apply freshness and priority rules exactly.
 
 Your final message is your report and nothing else:
 
@@ -44,4 +48,4 @@ Your final message is your report and nothing else:
 - Each bullet: `file:line` (or the doc page/Confluence URL if the gap is outside the repo), plus a one-sentence description.
 - Optional sub-bullet: `Suggested fix: <brief fix>`.
 - Freshness verification: when unsure whether an issue is new, check `git show <merge-base>:<path>` — if it exists there, it is `(existing)`.
-- If you have no findings, reply exactly `No findings.`
+- If you have no verified findings, reply exactly `No findings.`

@@ -24,24 +24,39 @@ Work along two tracks.
 
 ### Track 1 — documented standards (hard findings)
 
-Read the repo's documented coding standards — `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, whichever exist at the checkout path — and report every place the diff violates one, **citing the standard (file + rule)**. A documented standard outranks everything on track 2: where a documented standard endorses something a smell would flag, the repo wins.
+Read the repo's documented coding standards — `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CODING_STANDARDS.md`, whichever exist at the checkout path — and report every place the diff violates one, **citing the exact standard (file + rule)**.
+- Do **not** report a violation if the rule is explicitly silenced in the code (e.g. via an ignore comment, disable directive, or documented exception).
+- Do **not** report missing tests / coverage gaps unless the documented standard explicitly requires them for the changed area.
+- A documented standard outranks everything on track 2: where a documented standard endorses something a smell would flag, the repo wins.
 
 ### Track 2 — smell baseline and generic quality (judgement calls)
 
-The smell baseline is in `smell-baseline.md` in this skill's references. Baseline smells are always judgement calls, never hard violations — phrase them as "possible `<smell>`". Skip anything tooling already enforces (linters, formatters, typecheckers). Also check:
+The smell baseline is in `smell-baseline.md` in this skill's references. Baseline smells are always judgement calls, never hard violations — phrase them as "possible `<smell>`".
 
-- Unnecessary new abstractions.
-- Code that can be removed, merged, or simplified.
-- Naming (variables, functions, types) inconsistent across the changed files or with the codebase's conventions.
-- Code that is hard to understand; intent not clear from the code or commit messages.
+**Negative filters — do NOT report:**
+- Anything tooling already enforces (linters, formatters like `oxfmt`/`prettier`, typecheckers like `tsc`).
+- Pedantic nitpicks a senior engineer would not flag.
+- Subjective style preferences not explicitly mandated in documented repo standards.
+- Speculative "might be confusing" complaints without concrete clarity defects.
+
+Also check:
+- Unnecessary new abstractions that add indirection without value.
+- Code that can be removed, merged, or simplified directly in this diff.
+- Naming (variables, functions, types) demonstrably inconsistent across the changed files or with existing codebase conventions.
+- Obfuscated code whose intent is genuinely unclear.
 
 ## What to look for
 
-Quality issues in the changed code itself. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole; read the relevant source files at the checkout path for context. Verify every finding by reading the source before reporting — the diff alone lacks context, and an issue visible on the base branch may already be fixed at the head.
+Quality issues in the changed code itself. The **diff is the primary source of truth** for what changed; read the relevant source files at the checkout path for context.
 
-## Output contract
+## Validation pass and output contract
 
-Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and apply its freshness and priority rules exactly.
+Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and perform a **mandatory validation pass**:
+1. Re-check each candidate finding against the diff and source.
+2. Ensure every Track 1 finding cites the exact standard file and rule.
+3. Drop any finding that is a linter catch, subjective style preference, or pedantic nitpick.
+4. **Drop anything you are not certain about.**
+5. Apply freshness and priority rules exactly.
 
 Your final message is your report and nothing else:
 
@@ -50,4 +65,4 @@ Your final message is your report and nothing else:
 - Each bullet: `file:line`, plus a one-sentence description.
 - Optional sub-bullet: `Suggested fix: <brief fix>`.
 - Freshness verification: when unsure whether an issue is new, check `git show <merge-base>:<path>` — if it exists there, it is `(existing)`.
-- If you have no findings, reply exactly `No findings.`
+- If you have no verified findings, reply exactly `No findings.`

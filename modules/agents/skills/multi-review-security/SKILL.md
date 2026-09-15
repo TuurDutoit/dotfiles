@@ -31,13 +31,17 @@ Examine every point where the change crosses or handles a trust boundary:
 - **Cross-boundary data**: data from other services/users treated as trusted; mass assignment; SSRF via user-supplied URLs.
 - **Session/auth cookies**: new endpoints/flags that weaken session handling.
 
-Judge severity by exploitability and blast radius in this codebase's context, not by abstract paranoia. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole; read the relevant source files at the checkout path for context. Verify every finding by reading the source (or the document) before reporting — the diff alone lacks context, and a defect visible on the base branch may already be fixed at the head.
+Judge severity by **concrete exploitability and blast radius** in this codebase's context, not by abstract paranoia or theoretical "might" concerns without a reachable vector. Verify every finding by tracing data flow in the diff and reading ancillary source files at the checkout path before reporting — if an apparent issue cannot be exploited or reached given existing middleware, types, or routing, **drop it**.
 
 **Spec/plan mode.** Only if the design touches auth, trust boundaries, user data, or external input: does the plan state the security model — who may do what, what is validated where, how secrets are handled — and are those statements complete enough to implement safely?
 
-## Output contract
+## Validation pass and output contract
 
-Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and apply its freshness and priority rules exactly.
+Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and perform a **mandatory validation pass**:
+1. Re-check each candidate finding against the diff and ancillary source code.
+2. Confirm the security vulnerability is real, reachable, and introduced/affected by this change.
+3. If exploitability cannot be proven with concrete code evidence, **drop it**.
+4. Apply freshness and priority rules exactly.
 
 Your final message is your report and nothing else:
 
@@ -46,4 +50,4 @@ Your final message is your report and nothing else:
 - Each bullet: `file:line` (diff mode) or the document section heading (spec/plan mode), plus a one-sentence description.
 - Optional sub-bullet: `Suggested fix: <brief fix>`.
 - Freshness verification (diff mode): when unsure whether an issue is new, check `git show <merge-base>:<path>` — if it exists there, it is `(existing)`.
-- If you have no findings, reply exactly `No findings.`
+- If you have no verified findings, reply exactly `No findings.`

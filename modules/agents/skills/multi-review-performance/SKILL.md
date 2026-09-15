@@ -32,17 +32,21 @@ Focus on hot paths, data volume, and data growth:
 - **Rendering/UI**: work re-run on every render/keystroke that could be memoized or moved out.
 - **Data growth**: will this get slower as the dataset, user count, or time horizon grows? What happens at 10× current volume?
 
-Judge relative to the codebase's existing standards — don't flag micro-optimizations the codebase never bothers with, and don't demand caching where none exists and the workload doesn't need it.
+Judge relative to the codebase's existing standards — do **not** flag micro-optimizations the codebase never bothers with, do **not** demand caching where none exists and the workload doesn't need it, and do **not** raise speculative "might be slow" claims without concrete evidence that the code path handles large volume or hot execution.
 
 **Spec/plan mode.** Only if the design plausibly touches hot paths, large data sets, or data growth: does the plan address scaling, batching, pagination, caching, or indexes where its own scale assumptions require them?
 
 ## What to look for
 
-Measurable, plausible regressions or capacity risks introduced (or overlooked) by this change. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole; read the relevant source files at the checkout path for context. Verify every finding by reading the source (or the document) before reporting — the diff alone lacks context, and a defect visible on the base branch may already be fixed at the head.
+Measurable, concrete regressions or capacity risks introduced (or overlooked) by this change. The **diff is the primary source of truth** for what changed; use the checkout path only as ancillary context to verify real execution frequency and data structures.
 
-## Output contract
+## Validation pass and output contract
 
-Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and apply its freshness and priority rules exactly.
+Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and perform a **mandatory validation pass**:
+1. Re-check each candidate finding against the diff and ancillary source code.
+2. Confirm the performance defect is concrete, measurable, and on an actual hot path / significant data size.
+3. If an issue is speculative or a micro-optimization, **drop it**.
+4. Apply freshness and priority rules exactly.
 
 Your final message is your report and nothing else:
 
@@ -51,4 +55,4 @@ Your final message is your report and nothing else:
 - Each bullet: `file:line` (diff mode) or the document section heading (spec/plan mode), plus a one-sentence description.
 - Optional sub-bullet: `Suggested fix: <brief fix>`.
 - Freshness verification (diff mode): when unsure whether an issue is new, check `git show <merge-base>:<path>` — if it exists there, it is `(existing)`.
-- If you have no findings, reply exactly `No findings.`
+- If you have no verified findings, reply exactly `No findings.`

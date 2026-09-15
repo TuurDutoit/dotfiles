@@ -149,22 +149,31 @@ The contract is stated on both sides: here, and in the `multi-review-dimension` 
    - Spec/plan mode: the absolute path of the document plus its full text when reasonable to inline; no merge-base, no worktree.
 4. **Output contract reminder** (verbatim):
 
-   > Return your findings as your final message and nothing else. Follow the output contract in your dimension skill and the shared multi-review-classification skill: one flat bulleted list, each bullet starting with a priority prefix (`Blocker:`, `Recommendation:`, `Suggestion:`, `Question:`, `Nit:`, `Note:`) followed by a freshness tag `(new)`/`(existing)` — omit the freshness tag in spec/plan mode. Each bullet includes `file:line` (or the document section heading in spec/plan mode) and a one-sentence description, with an optional sub-bullet for a suggested fix. If you have no findings, reply exactly `No findings.`.
+   > Return your findings as your final message and nothing else. Follow the output contract in your dimension skill and the shared multi-review-classification skill:
+   > - High-signal bar only: report only objective, material issues with concrete evidence in the diff + ancillary repo context. No speculation, no "might/could" hedges, no pedantic nits, no linter/typechecker catches, no unverified claims.
+   > - Run the mandatory validation pass: re-check each candidate finding against the diff and source before reporting; drop anything uncertain.
+   > - Output format: one flat bulleted list, each bullet starting with a priority prefix (`Blocker:`, `Recommendation:`, `Suggestion:`, `Question:`, `Nit:`, `Note:`) followed by a freshness tag `(new)`/`(existing)` — omit the freshness tag in spec/plan mode. Each bullet includes `file:line` (or the document section heading in spec/plan mode) and a one-sentence description, with an optional sub-bullet for a suggested fix. If you have no verified findings, reply exactly `No findings.`.
 
 Never add dimension-specific review guidance to the dispatch prompt yourself — that guidance lives in each dimension skill, so each subagent sees only its own domain without the noise of the others.
 
-## Step 4 — Deduplicate, classify, and merge
+## Step 4 — Deduplicate, filter, and merge
 
 When all subagents have returned:
 
 1. **Collect** every finding into one flat list, tagging each with its source dimension(s). Treat a subagent that returned `No findings.` as contributing nothing.
-2. **Deduplicate** findings targeting the same `file:line` (or the same logical issue across adjacent lines / same document section) describing the same underlying problem. When merging:
+2. **Filter out low-signal noise and unverified claims**:
+   - Drop any finding based on speculation ("might", "could", "potential") without concrete code evidence.
+   - Drop formatting, syntax, or typing issues that linters, formatters, or typecheckers catch automatically.
+   - Drop subjective style preferences not explicitly required by documented repo standards (`AGENTS.md`, `CLAUDE.md`, etc.).
+   - Drop claims about rules that are explicitly silenced in the code (e.g. via ignore comments or documented exceptions).
+   - Drop missing test / coverage complaints unless documented standards explicitly mandate tests for that specific area.
+3. **Deduplicate** findings targeting the same `file:line` (or the same logical issue across adjacent lines / same document section) describing the same underlying problem. When merging:
    - Keep the strongest priority (Blocker > Recommendation > Suggestion > Question > Nit > Note).
    - Prefer `(new)` over `(existing)` when freshness disagrees — and record the disagreement.
    - Combine descriptions into the clearest single sentence.
    - List all dimensions that flagged it, e.g. `_(security, logic)_`.
    - If reviewers genuinely disagree about severity or describe distinct concerns at the same location, keep them as separate entries rather than forcing a merge.
-3. **Sort**: New findings first (Blocker → Recommendation → Suggestion → Question → Nit → Note), then Existing (same order); within a group, by file path then line number. In spec/plan mode: one list, by priority then document-section order.
+4. **Sort**: New findings first (Blocker → Recommendation → Suggestion → Question → Nit → Note), then Existing (same order); within a group, by file path then line number. In spec/plan mode: one list, by priority then document-section order.
 
 ## Step 5 — Report
 

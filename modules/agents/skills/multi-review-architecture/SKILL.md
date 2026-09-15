@@ -36,11 +36,15 @@ Evaluate structure, not line-level correctness:
 
 ## What to look for
 
-Structural risks: changes that will be hard to change later, break contracts, or erode established boundaries. If the diff file is large, search it (Grep for `diff --git`, `@@` hunks, or file paths) instead of reading it whole; read the relevant source files at the checkout path for context. Verify every finding by reading the source (or the document) before reporting — the diff alone lacks context, and a problem visible on the base branch may already be fixed at the head.
+Structural risks: concrete changes that break public contracts, violate existing module boundaries, or couple previously independent components. Do **not** report subjective architectural dogma, speculative future requirements, or personal preferences. The **diff is the primary source of truth** for what changed; use the checkout path only as ancillary context to trace contracts and import boundaries.
 
-## Output contract
+## Validation pass and output contract
 
-Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and apply its freshness and priority rules exactly.
+Before reporting, read the shared `multi-review-classification` skill (/Users/tuur/.agents/skills/multi-review-classification/SKILL.md) and perform a **mandatory validation pass**:
+1. Re-check each candidate finding against the diff and ancillary source code.
+2. Confirm the structural issue or contract violation is objective and introduced/aggravated by this diff.
+3. If an architectural concern cannot be proven with concrete code evidence, **drop it**.
+4. Apply freshness and priority rules exactly.
 
 Your final message is your report and nothing else:
 
@@ -49,4 +53,4 @@ Your final message is your report and nothing else:
 - Each bullet: `file:line` (diff mode) or the document section heading (spec/plan mode), plus a one-sentence description.
 - Optional sub-bullet: `Suggested fix: <brief fix>`.
 - Freshness verification (diff mode): when unsure whether an issue is new, check `git show <merge-base>:<path>` — if it exists there, it is `(existing)`.
-- If you have no findings, reply exactly `No findings.`
+- If you have no verified findings, reply exactly `No findings.`
