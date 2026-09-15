@@ -10,8 +10,8 @@ testable statements.>
 ## User experience
 
 <What this looks and feels like for the user: surfaces, flows, states,
-permissions as the user meets them. No references to the code — internals
-belong to architecture.md and plan.md.>
+permissions as the user meets them. No references to the code — external boundaries
+belong to architecture.md and internal structure belongs to plan.md.>
 
 ## QA scenarios & test cases
 

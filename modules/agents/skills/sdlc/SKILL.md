@@ -19,18 +19,18 @@ Scale the stages to the task: a stage's doc may be only a few lines when
 little needs saying, and a stage with nothing to say is skipped entirely —
 no file. A new tool for an AI agent, for example, needs a spec of just a
 few lines: how the tool shows up in the conversation, how its permissions
-work. A small UI tweak touches no boundary and skips the architecture doc.
+work. A small UI tweak touches no external boundary and records a one-sentence note in the architecture doc (or skips it).
 
 Keep every artifact brief and to the point, written in plain language for
 a reader with no context — no jargon; explain technical terms simply. For
 a simple feature that means an intent of only a few lines, a short spec,
-and an architecture that is little more than the schema diffs.
+and an architecture that focuses on external boundaries and schema diffs.
 
 | Stage | Produces | Runs as |
 | --- | --- | --- |
 | 1 Intent | `intent.md` — the problem in the originator's own terms | `spec` — `sdlc-intent` |
 | 2 Spec | `spec.md` — the user experience (flows, requirements, QA test cases, Cucumber/e2e specs) | `spec` — `sdlc-spec` |
-| 3 Architecture | `architecture.md` — the boundaries: API / DB / config schemas, boundary conditions & dependencies, data flows, packages, env vars, auth | `spec` — `sdlc-architecture` |
+| 3 Architecture | `architecture.md` — external boundaries: outside-world impact & dependencies (or inter-app boundaries in monorepos) | `spec` — `sdlc-architecture` |
 | 4 Plan | `plan.md` — files that change, naming, order of work, risks, proof | `spec` — `sdlc-plan` |
 | 5 Implement + verify | working code, tests alongside it, statuses closed out | `engineer` — `sdlc-implement` |
 
@@ -48,7 +48,7 @@ spec. Each stage stays inside its scope:
 | --- | --- | --- | --- |
 | Intent | the originator and their sources (tickets, docs) — never the codebase | the problem and wanted outcome, in the originator's terms | what the originator can answer |
 | Spec | the product as users meet it; existing e2e/Cucumber specs; code only to see how it works today | behavior the user can observe; QA scenarios & test cases; Cucumber / e2e specs to add or update | what the experience should be, what to QA, and how user-level specs reflect it |
-| Architecture | code, systems, and cross-repo callers / dependencies (via an `explore` agent) | boundaries: API / DB / config schemas, data flows, boundary condition checks (consumer usage, live prerequisites), packages, env vars, auth | interfaces: shapes, auth, config, boundary conditions, dependency readiness |
+| Architecture | systems, outside-world interfaces, cross-repo callers / dependencies (via an `explore` agent); monorepo inter-app boundaries | external boundaries: outside-world impact & dependencies, API / DB / event schemas, monorepo inter-app boundaries, boundary condition checks (consumer usage, live prerequisites), packages, env vars, auth | external interfaces: shapes, auth, config, boundary conditions, dependency readiness |
 | Plan | the codebase, thoroughly | the change: files, naming, order of work, risks, proof | how to build it |
 | Implement | the code, per the plan | the code and its tests | nothing new — departures update the plan |
 
@@ -58,8 +58,8 @@ its scope, or by asking Tuur. A question outside the stage's scope is not
 parked there: the artifact routes it to the stage that owns it, and it
 gates that stage instead. In practice: the intent names systems, not
 files; the spec describes behavior, not modules; the architecture names
-interfaces, not the files implementing them; the plan is the first
-artifact allowed to name files.
+external interfaces and outside-world/monorepo boundaries, not internal
+app structure or files; the plan is the first artifact allowed to name files.
 
 ## One stage per session
 

@@ -28,8 +28,8 @@ Stay inside the spec stage's scope (the scope table in the `sdlc` skill):
 the artifact talks about behavior the user can observe. Reading code is
 allowed only to see how the app works today and how existing user-facing specs
 are structured — never to decide how to change implementation code — and the spec
-itself names no internal implementation details: internals belong to the
-architecture and the plan. Answer every behavioral question (what should
+itself names no internal implementation details: external boundaries belong to the
+architecture and internal structure belongs to the plan. Answer every behavioral question (what should
 happen when X) before the gate; boundary questions route to the
 architecture stage.
 

@@ -2,12 +2,22 @@
 
 From spec: `./spec.md`. Status: draft.
 
-## Boundaries
+<!--
+NOTE ON ARCHITECTURE SCOPE:
+Architecture documents how this change affects or is affected by other services / the outside world (or inter-app boundaries in monorepos). It does NOT document internal app structure or code (which belongs in plan.md).
 
-<Every interface this feature adds or touches, with exact names and shapes:
-API endpoints and payloads, DB tables and migrations, events, config schema, env
-vars, auth and permissions. Packages to install. Describe the interfaces
-themselves with diagrams — no references to the code.>
+For internal-only changes (e.g. simple UI changes, internal refactoring, localized bug fixes):
+Replace the entire document with a single sentence explaining why no architecture refinement is necessary:
+"This change is entirely internal to <app> (UI/internal logic) and does not touch any external APIs, shared schemas, or external services, so no architecture refinement is required."
+-->
+
+## External boundaries
+
+<Every external interface this change adds, touches, or consumes, with exact names and shapes:
+- External/public API endpoints and payloads
+- Shared DB tables, event streams, or message queues
+- Third-party integrations, external packages, env vars, auth & permissions
+- For monorepos: document internal inter-app APIs (e.g. backend API changes) and what they mean for consumer apps (e.g. frontend), at a high level with no implementation code. Describe interfaces with diagrams where helpful — no code references.>
 
 ## Boundary conditions & dependencies
 
@@ -20,18 +30,19 @@ themselves with diagrams — no references to the code.>
 
 ## Data flows
 
-<How data moves across those boundaries — in, out, and where it rests. Use diagrams.>
+<How data moves across those external or inter-app boundaries — in, out, and where it rests. Use diagrams where helpful.>
 
 ## Areas of concern
 
-<Flagged points: contradictions, risks, things needing a decision.
+<Flagged points: external risks, breaking changes, integration decisions needing resolution.
 Resolve each with the requester before the plan; note resolutions here.>
 
 ## Documentation
-<Documentation references that need to be updated: repo docs, openapi schemas, Confluence pages, etc.>
+
+<External documentation to update: API specs (OpenAPI), developer portals, shared contracts, Confluence pages, etc.>
 
 ## Open questions
 
-<Questions routed to the plan, such as file-level choices. Interface
-and boundary condition questions are answered in Boundaries, Boundary conditions & dependencies,
+<Questions routed to the plan (internal file/code choices) or back to spec. External boundary
+and dependency questions are answered in External boundaries, Boundary conditions & dependencies,
 and Data flows before the gate opens.>
