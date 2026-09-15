@@ -5,7 +5,6 @@ allowed-tools:
   - Bash(git *)
   - Bash(gh *)
   - Bash(mkdir *)
-  - Bash(mktemp *)
   - Bash(wc *)
   - Bash(cd *)
   - Bash(pwd)
@@ -15,7 +14,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.5.0'
+  version: '3.6.0'
 ---
 
 # Multi-agent code review (dispatcher)
@@ -89,12 +88,13 @@ Run these in the current working directory:
    - Context: current branch name and latest commit subject.
 5. **PR-ref case**:
    - `gh pr view <ref> --json title,body,headRefName,baseRefName,headRefOid` for context. Capture `headRefOid` (the PR head SHA).
-   - Locate a local clone of the PR's repo, in this order: (a) current working directory inside a clone of the same repo; (b) `~/projects/<repo-name>`; (c) otherwise fall back to the `$DIFF_FILE` written by `gh pr diff` and tell each reviewer that file reads are unavailable.
-   - `git -C <host-clone> fetch origin pull/<N>/head` if the SHA isn't already present locally.
-   - Create a fresh detached worktree at the PR head: `WORKTREE=$(mktemp -d -t multi-review)` then `git -C <host-clone> worktree add --detach "$WORKTREE" <headRefOid>`. **This worktree path is what every reviewer uses as the repo root** — it reflects the PR head exactly.
-   - Remember `<host-clone>`, `$WORKTREE`, and `$DIFF_FILE` for Step 6.
+   - Verify the current working directory is the PR's repository and has the PR head checked out:
+     - Check `git rev-parse HEAD`.
+     - If the current commit does not match `headRefOid` (or if not inside a git repo for that PR), **stop and bail out immediately**. Tell the user that the current directory has commit `<current-sha>` (or branch `<current-branch>`) checked out, while PR `<ref>` expects `<headRefOid>`, and ask them to check out the PR branch/commit first.
+   - Reviewer repo root: the current working directory (`pwd`).
+   - Context: PR title and body, branch name, and `headRefOid`.
 
-If the diff is empty, stop and report "No changes to review." (Remove the empty diff file and clean up the worktree if created.)
+If the diff is empty, stop and report "No changes to review." (Remove the empty diff file.)
 
 **Reading the diff.** The `--stat` output plus context (PR body, commit subjects) is usually enough to choose dimensions. Read `$DIFF_FILE` only when the stat isn't enough, and only if it is small (< ~2000 lines). For a large diff, never read it whole — **search** it instead (Grep for `diff --git a/<path>` to see per-file changes, `^+++` / `^---` for touched files, `@@` hunks by keyword) and read the relevant source files at the checkout path for real context.
 
@@ -218,11 +218,7 @@ Omit rows for dimensions not run. If there are zero findings overall, replace th
 
 Do **not** apply fixes automatically. Leave that for the user to decide after reading the report.
 
-## Step 6 — Clean up the temporary worktree
+## Step 6 — Clean up temporary resources
 
-After the report is written, clean up temporary resources:
-
-- PR-ref case: `git -C <host-clone> worktree remove --force "$WORKTREE"`, falling back to `rm -rf "$WORKTREE"` if the worktree command failed.
 - The diff file under `/Users/tuur/Documents/Obsidian/DataCamp/Agents/Diffs` is kept as a durable artifact in Obsidian — do not delete it.
-
-Skip the worktree cleanup in no-arg and spec/plan modes (no worktree was created).
+- No temporary worktrees or directories are created.
