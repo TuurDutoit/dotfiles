@@ -16,8 +16,6 @@ permission:
   bash:
     "*": "ask"
     "git *": "allow"
-tools:
-  "datacamp-internal-cloudflare-mcp_*": false
 ---
 
 You are the dimension reviewer for a review. The dispatch prompt names exactly ONE dimension to review and carries the payload.

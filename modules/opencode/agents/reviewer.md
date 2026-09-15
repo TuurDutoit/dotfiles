@@ -27,8 +27,6 @@ permission:
     "ls *": "allow"
     "pwd": "allow"
     "cd *": "allow"
-tools:
-  "datacamp-internal-cloudflare-mcp_*": false
 ---
 
 You are the reviewer agent. You perform comprehensive, multi-dimensional code and spec reviews, adapting between single-agent reviews and multi-agent subagent orchestration based on change size or user overrides.

@@ -89,6 +89,7 @@ Run these checks in the current working directory:
      - Capture `headRefOid` and verify current checkout: `git rev-parse HEAD`.
      - If current commit does not match `headRefOid`, **stop and bail out immediately**. Tell the user which commit is checked out and ask them to check out the PR head branch/commit first.
      - Context: PR title, PR body, branch name, `headRefOid`.
+     - **Jira tickets as specs**: Find linked Jira ticket key(s) in the PR body/description (e.g. `https://datacamp.atlassian.net/browse/KEY-123` or keys like `LX-1234`), PR title, or branch name. The linked Jira ticket(s) are the specs to review against — the PR description itself is the author's summary of what was done, not what the specs reviewer reviews against. Fetch the ticket details for the review.
 
 If the diff is empty, stop and report "No changes to review." (Remove the empty diff file.)
 
@@ -110,7 +111,7 @@ If the user provided a dimension override, honor it directly. Otherwise, select 
 #### Diff-mode dimension table
 | Dimension | Key | Include when |
 | --- | --- | --- |
-| Specs | `specs` | A spec, ticket, issue, or PR description states requirements. Skip if no spec-like input exists. |
+| Specs | `specs` | Linked Jira ticket(s), issue tracker, or spec document states requirements. (When reviewing a PR, locate the linked Jira ticket(s) in the PR description — the PR description itself describes what was done, not the spec). Skip if no spec exists. |
 | Logic | `logic` | Almost always. Any behavior change, input handling, state transitions, API boundaries. |
 | Performance | `performance` | Touches hot paths, loops, DB queries, large datasets, or rendering. Skip for small config/UI copy. |
 | Security | `security` | Touches auth, user input, secrets, queries, HTML rendering, or trust boundaries. |
@@ -185,7 +186,7 @@ When running in multi-agent mode:
    - Run the mandatory validation pass before reporting; drop anything uncertain.
    - Output format: one flat bulleted list, each bullet starting with priority prefix (Blocker:, Recommendation:, Suggestion:, Question:, Nit:, Note:) followed by freshness tag (new)/(existing) — omit freshness in spec/plan mode. Include file:line (or document section heading) and a one-sentence description, with an optional sub-bullet for suggested fix. If no verified findings, reply exactly "No findings.".
    ```
-   *(Note: If `<dimension>` is `quality`, also tell the subagent to read `references/smell-baseline.md`.)*
+   *(Notes: If `<dimension>` is `quality`, also tell the subagent to read `references/smell-baseline.md`. If `<dimension>` is `specs` when reviewing a PR, include the linked Jira ticket key(s) / details in the context payload, and emphasize that the Jira ticket is the spec to review against, not the PR description.)*
 
 2. **Collect and filter subagent responses**:
    - Collect findings from all subagents. Treat `No findings.` as contributing nothing.
