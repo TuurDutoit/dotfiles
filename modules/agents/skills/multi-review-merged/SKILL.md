@@ -1,6 +1,6 @@
 ---
-name: multi-review-merged
-description: Perform a comprehensive, multi-dimensional code or spec review in a single agent without dispatching subagents. Reviews diffs (current branch, PR, or git ref) or spec/plan documents across logic, specs, architecture, code quality, security, performance, and docs. Usage — `/multi-review-merged` for current branch vs merge-base; `/multi-review-merged <PR_URL_or_number>` for a specific PR; `/multi-review-merged <git-ref>` to review HEAD since a fixed point (commit, branch, or tag); `/multi-review-merged <path-to-spec-or-plan>` to review a spec or implementation plan. Supports dimension overrides like `/multi-review-merged #123 for performance and security`.
+name: "multi-review-merged"
+description: "Perform a comprehensive, multi-dimensional code or spec review in a single agent without dispatching subagents. Reviews diffs (current branch, PR, or git ref) or spec/plan documents across logic, specs, architecture, code quality, security, performance, and docs. Usage — `/multi-review-merged` for current branch vs merge-base; `/multi-review-merged <PR_URL_or_number>` for a specific PR; `/multi-review-merged <git-ref>` to review HEAD since a fixed point (commit, branch, or tag); `/multi-review-merged <path-to-spec-or-plan>` to review a spec or implementation plan. Supports dimension overrides like `/multi-review-merged #123 for performance and security`."
 allowed-tools:
   - Bash(git *)
   - Bash(gh *)
@@ -13,7 +13,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '1.1.0'
+  version: "1.1.0"
 ---
 
 # Unified multi-dimensional code & spec review

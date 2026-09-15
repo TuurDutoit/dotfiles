@@ -1,6 +1,6 @@
 ---
-name: campus-api
-description: Use when working with the campus-api to fetch course, chapter, lesson, or exercise data from DataCamp's content platform. Covers all endpoints, response shapes, and how entities link together.
+name: "campus-api"
+description: "Use when working with the campus-api to fetch course, chapter, lesson, or exercise data from DataCamp's content platform. Covers all endpoints, response shapes, and how entities link together."
 ---
 
 # Campus API

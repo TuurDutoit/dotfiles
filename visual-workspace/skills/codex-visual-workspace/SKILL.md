@@ -1,6 +1,6 @@
 ---
-name: codex-visual-workspace
-description: Use the local Visual Workspace MCP tools to create, review, and safely update a shared visual plan when work spans multiple files, decisions, risks, architecture, data flow, or UI behavior.
+name: "codex-visual-workspace"
+description: "Use the local Visual Workspace MCP tools to create, review, and safely update a shared visual plan when work spans multiple files, decisions, risks, architecture, data flow, or UI behavior."
 ---
 
 # Visual Workspace for Codex

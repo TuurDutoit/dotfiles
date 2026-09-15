@@ -27,3 +27,4 @@ This applies to any file under `/Users/tuur/.dotfiles`, including:
 - Use `git -C /Users/tuur/.dotfiles <cmd>` so commands work regardless of the current directory.
 - Respect global rules from `/Users/tuur/.codex/AGENTS.md`: never use `--no-verify`, never force-push without explicit permission, never commit `.env*` files or secrets.
 - If a hook blocks a commit, fix the underlying issue and create a new commit instead of amending.
+- Always quote frontmatter string fields in skills and agent files (`name: "my-name"`, `description: "..."`) with double quotes. Never leave descriptions unquoted or containing unescaped quotes or colons (`:`), as colons in unquoted YAML values cause parsing errors in tools like OpenChamber.

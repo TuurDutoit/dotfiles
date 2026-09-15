@@ -23,12 +23,12 @@ description: >-
 # model-category: tools
 model: openrouter/google/gemini-3.7-flash
 tools:
-  postman_*: false
-  mcp-internal-tooling_*: false
-  chrome-devtools_*: false
-  circleci_*: false
-  sentry_*: false
-  datadog_*: false
+  "postman_*": false
+  "mcp-internal-tooling_*": false
+  "chrome-devtools_*": false
+  "circleci_*": false
+  "sentry_*": false
+  "datadog_*": false
 ---
 
 You are a documentation specialist. You excel at finding, summarizing and updating Confluence docs.

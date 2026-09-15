@@ -1,6 +1,6 @@
 ---
-name: monitor-deploy
-description: Monitor a merged PR through CircleCI, the version tag, and the Concourse deploy pipeline, then QA the change on staging (datacamp-staging.com) and production (datacamp.com). Use when asked to watch or monitor a deploy, verify a deployment went out, or QA changes after merging a PR.
+name: "monitor-deploy"
+description: "Monitor a merged PR through CircleCI, the version tag, and the Concourse deploy pipeline, then QA the change on staging (datacamp-staging.com) and production (datacamp.com). Use when asked to watch or monitor a deploy, verify a deployment went out, or QA changes after merging a PR."
 ---
 
 # Monitor a deploy

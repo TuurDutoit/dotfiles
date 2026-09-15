@@ -1,6 +1,6 @@
 ---
-name: multi-review-security
-description: Security-reviewer subagent for the multi-review dispatcher. Reviews the change against injection, authz/authn flaws, secret handling, and trust-boundary violations. Dispatched by the multi-review skill.
+name: "multi-review-security"
+description: "Security-reviewer subagent for the multi-review dispatcher. Reviews the change against injection, authz/authn flaws, secret handling, and trust-boundary violations. Dispatched by the multi-review skill."
 ---
 
 # Security reviewer

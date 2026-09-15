@@ -1,6 +1,6 @@
 ---
-name: multi-review-specs
-description: Specs-reviewer subagent for the multi-review dispatcher. Checks implementation against the spec (completeness, correctness, scope) or reviews a spec document itself. Dispatched by the multi-review skill.
+name: "multi-review-specs"
+description: "Specs-reviewer subagent for the multi-review dispatcher. Checks implementation against the spec (completeness, correctness, scope) or reviews a spec document itself. Dispatched by the multi-review skill."
 ---
 
 # Specs reviewer

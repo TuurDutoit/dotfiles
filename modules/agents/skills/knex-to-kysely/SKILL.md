@@ -1,6 +1,6 @@
 ---
-name: knex-to-kysely
-description: Migrate a Node.js/TypeScript backend from Knex to Kysely. Use when the user asks to "migrate from Knex to Kysely", "replace Knex with Kysely", "switch to Kysely", or mentions migrating a query builder.
+name: "knex-to-kysely"
+description: "Migrate a Node.js/TypeScript backend from Knex to Kysely. Use when the user asks to \"migrate from Knex to Kysely\", \"replace Knex with Kysely\", \"switch to Kysely\", or mentions migrating a query builder."
 ---
 
 # Migrate from Knex to Kysely

@@ -1,6 +1,6 @@
 ---
-name: braintrust-cli
-description: Reference and operate the installed `bt` Braintrust CLI. Use when Codex needs an exact `bt` command, argument, flag, help topic, authentication detail, project or organization scope, or workflow for projects, Topics, datasets, prompts, functions, tools, scorers, experiments, evaluations, SQL, logs, or synchronization.
+name: "braintrust-cli"
+description: "Reference and operate the installed `bt` Braintrust CLI. Use when Codex needs an exact `bt` command, argument, flag, help topic, authentication detail, project or organization scope, or workflow for projects, Topics, datasets, prompts, functions, tools, scorers, experiments, evaluations, SQL, logs, or synchronization."
 ---
 
 # Braintrust CLI

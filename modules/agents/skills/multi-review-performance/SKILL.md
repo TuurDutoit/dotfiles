@@ -1,6 +1,6 @@
 ---
-name: multi-review-performance
-description: Performance-reviewer subagent for the multi-review dispatcher. Reviews the change for latency, algorithmic complexity, memory, N+1 queries, and data-growth regressions. Dispatched by the multi-review skill.
+name: "multi-review-performance"
+description: "Performance-reviewer subagent for the multi-review dispatcher. Reviews the change for latency, algorithmic complexity, memory, N+1 queries, and data-growth regressions. Dispatched by the multi-review skill."
 ---
 
 # Performance reviewer

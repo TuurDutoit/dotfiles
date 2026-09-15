@@ -1,6 +1,6 @@
 ---
-name: sdlc-plan
-description: Write the implementation plan for an accepted SDLC spec/architecture — files that change, naming, order of work, risks, and proof (command checks + QA plan) in plan.md, then hand off to the `engineer` agent. Use when asked to write or update a plan.md. Runs as the plan stage in the `spec` agent.
+name: "sdlc-plan"
+description: "Write the implementation plan for an accepted SDLC spec/architecture — files that change, naming, order of work, risks, and proof (command checks + QA plan) in plan.md, then hand off to the `engineer` agent. Use when asked to write or update a plan.md. Runs as the plan stage in the `spec` agent."
 ---
 
 # Stage 4 — Plan

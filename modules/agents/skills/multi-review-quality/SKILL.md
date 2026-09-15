@@ -1,6 +1,6 @@
 ---
-name: multi-review-quality
-description: Quality-reviewer subagent for the multi-review dispatcher. Reviews code quality — documented coding standards, the smell baseline, abstractions, simplification, naming, and clarity. Dispatched by the multi-review skill.
+name: "multi-review-quality"
+description: "Quality-reviewer subagent for the multi-review dispatcher. Reviews code quality — documented coding standards, the smell baseline, abstractions, simplification, naming, and clarity. Dispatched by the multi-review skill."
 ---
 
 # Quality reviewer

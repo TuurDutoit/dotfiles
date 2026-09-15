@@ -1,6 +1,6 @@
 ---
-name: sdlc-spec
-description: Write the spec for an accepted SDLC intent — the user experience (requirements, surfaces, flows, states, permissions) in spec.md, then hand off to the architecture. Use when asked to write or update a spec.md. Runs as the spec stage in the `spec` agent.
+name: "sdlc-spec"
+description: "Write the spec for an accepted SDLC intent — the user experience (requirements, surfaces, flows, states, permissions) in spec.md, then hand off to the architecture. Use when asked to write or update a spec.md. Runs as the spec stage in the `spec` agent."
 ---
 
 # Stage 2 — Spec

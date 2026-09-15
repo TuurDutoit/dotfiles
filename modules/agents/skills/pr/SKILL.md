@@ -1,6 +1,6 @@
 ---
-name: pr
-description: Create a PR and babysit CI until green. Combines dc-create-pr and dc-babysit-pr.
+name: "pr"
+description: "Create a PR and babysit CI until green. Combines dc-create-pr and dc-babysit-pr."
 ---
 
 # PR

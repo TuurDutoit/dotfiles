@@ -1,12 +1,6 @@
 ---
-name: opencode-config
-description: >-
-  Manage OpenCode configuration in this dotfiles repo: the managed settings
-  file (/Library/Application Support/opencode/opencode.json), the user config
-  (~/.config/opencode/opencode.jsonc), MCP servers, agent tool allowlists, and
-  symlinks via setup.zsh. Use when adding/disabling an MCP server, changing
-  agent tools, updating OpenCode config, or debugging config load or
-  permission errors.
+name: "opencode-config"
+description: "Manage OpenCode configuration in this dotfiles repo: the managed settings file (/Library/Application Support/opencode/opencode.json), the user config (~/.config/opencode/opencode.jsonc), MCP servers, agent tool allowlists, and symlinks via setup.zsh. Use when adding/disabling an MCP server, changing agent tools, updating OpenCode config, or debugging config load or permission errors."
 ---
 
 # OpenCode config in this repo

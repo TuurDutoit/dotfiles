@@ -1,6 +1,6 @@
 ---
-name: mission
-description: Turn ideas or rough notes into concrete mission, vision, strategy, goals, and roadmap docs through an iterative interview process, writing the output to the project's strategy docs.
+name: "mission"
+description: "Turn ideas or rough notes into concrete mission, vision, strategy, goals, and roadmap docs through an iterative interview process, writing the output to the project's strategy docs."
 ---
 
 # Mission → Vision → Strategy → Goals → Roadmap

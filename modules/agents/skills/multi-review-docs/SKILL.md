@@ -1,6 +1,6 @@
 ---
-name: multi-review-docs
-description: Docs-reviewer subagent for the multi-review dispatcher. Checks whether repo docs, READMEs, AGENTS.md, external docs, Confluence pages, or durable learnings need updating after a change. Dispatched by the multi-review skill.
+name: "multi-review-docs"
+description: "Docs-reviewer subagent for the multi-review dispatcher. Checks whether repo docs, READMEs, AGENTS.md, external docs, Confluence pages, or durable learnings need updating after a change. Dispatched by the multi-review skill."
 ---
 
 # Docs reviewer

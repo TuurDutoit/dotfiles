@@ -10,6 +10,7 @@
 - Use the `bt` CLI to interact with Braintrust (reference: `braintrust-cli` skill)
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
   - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
+  - Always quote frontmatter string fields (`name: "my-name"`, `description: "..."`) with double quotes to prevent YAML parsing issues with colons (`:`).
 - Handoff documents are stored under ~/Documents/Obsidian/DataCamp/Agents/Handoffs
 - Multi-review diffs are stored under ~/Documents/Obsidian/DataCamp/Agents/Diffs
 

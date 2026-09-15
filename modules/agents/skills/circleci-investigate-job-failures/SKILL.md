@@ -1,6 +1,6 @@
 ---
-name: circleci-investigate-job-failures
-description: Investigate failed CircleCI runs, workflows, or jobs through the CircleCI MCP server. Use when a CircleCI pipeline failed and an agent must identify the failing job or step, read build output, inspect uploaded test results, artifacts, or resource usage, and report root-cause evidence.
+name: "circleci-investigate-job-failures"
+description: "Investigate failed CircleCI runs, workflows, or jobs through the CircleCI MCP server. Use when a CircleCI pipeline failed and an agent must identify the failing job or step, read build output, inspect uploaded test results, artifacts, or resource usage, and report root-cause evidence."
 ---
 
 # Investigate CircleCI job failures

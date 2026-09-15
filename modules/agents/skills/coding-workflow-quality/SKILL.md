@@ -1,6 +1,6 @@
 ---
-name: coding-workflow-quality
-description: Use when implementing code — as the implementation step of the `sdlc` workflow, or for smaller coding tasks that don't follow the full `sdlc` workflow. Covers subagent delegation, workflow steps, QA against the running app, review, and code-quality practices.
+name: "coding-workflow-quality"
+description: "Use when implementing code — as the implementation step of the `sdlc` workflow, or for smaller coding tasks that don't follow the full `sdlc` workflow. Covers subagent delegation, workflow steps, QA against the running app, review, and code-quality practices."
 ---
 
 This skill covers the implementation step of the `sdlc` workflow (run by the

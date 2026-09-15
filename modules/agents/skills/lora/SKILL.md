@@ -1,6 +1,6 @@
 ---
-name: lora
-description: Use when running local apps that need staging domain routing, setting up worktrees with dev servers, or dynamically binding ports to *.datacamp-staging.com subdomains via Lora
+name: "lora"
+description: "Use when running local apps that need staging domain routing, setting up worktrees with dev servers, or dynamically binding ports to *.datacamp-staging.com subdomains via Lora"
 ---
 
 # Lora

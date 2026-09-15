@@ -1,6 +1,6 @@
 ---
-name: sdlc
-description: AI-native SDLC process — capture intent, write spec, write architecture, write plan, implement and verify, one stage per agent session in the `spec` (intent, spec, architecture, plan) or `engineer` (implement) agent. Use when starting any new task (feature, bug fix, refactor, chore), when writing or updating intent.md, spec.md, architecture.md, or plan.md, or when recording an architecture decision as an ADR.
+name: "sdlc"
+description: "AI-native SDLC process — capture intent, write spec, write architecture, write plan, implement and verify, one stage per agent session in the `spec` (intent, spec, architecture, plan) or `engineer` (implement) agent. Use when starting any new task (feature, bug fix, refactor, chore), when writing or updating intent.md, spec.md, architecture.md, or plan.md, or when recording an architecture decision as an ADR."
 ---
 
 # SDLC: intent → spec → architecture → plan → implement → verify

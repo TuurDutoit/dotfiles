@@ -1,6 +1,6 @@
 ---
-name: multi-review-architecture
-description: Architecture-reviewer subagent for the multi-review dispatcher. Reviews structure — module boundaries, coupling, public interfaces, service communication, API and DB schema design. Dispatched by the multi-review skill.
+name: "multi-review-architecture"
+description: "Architecture-reviewer subagent for the multi-review dispatcher. Reviews structure — module boundaries, coupling, public interfaces, service communication, API and DB schema design. Dispatched by the multi-review skill."
 ---
 
 # Architecture reviewer

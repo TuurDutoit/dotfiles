@@ -1,6 +1,6 @@
 ---
-name: git-github-workflow
-description: Use when working with Git, GitHub, commits, branches, pull requests, review comments, or CI checks. Follow the required repository workflow and pull request description standards.
+name: "git-github-workflow"
+description: "Use when working with Git, GitHub, commits, branches, pull requests, review comments, or CI checks. Follow the required repository workflow and pull request description standards."
 ---
 
 ## Git & GitHub

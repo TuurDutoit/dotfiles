@@ -1,6 +1,6 @@
 ---
-name: multi-review
-description: Run reviewer subagents in parallel to review a diff (current branch, a given PR, or a fixed point) or a spec/implementation plan, choosing which review dimensions fit the input. Local approximation of /ultrareview. Usage — `/multi-review` for current branch vs merge-base; `/multi-review <PR_URL_or_number>` for a specific PR; `/multi-review <git-ref>` to review HEAD since a fixed point (commit, branch, or tag); `/multi-review <path-to-spec-or-plan>` to review a spec or implementation plan.
+name: "multi-review"
+description: "Run reviewer subagents in parallel to review a diff (current branch, a given PR, or a fixed point) or a spec/implementation plan, choosing which review dimensions fit the input. Local approximation of /ultrareview. Usage — `/multi-review` for current branch vs merge-base; `/multi-review <PR_URL_or_number>` for a specific PR; `/multi-review <git-ref>` to review HEAD since a fixed point (commit, branch, or tag); `/multi-review <path-to-spec-or-plan>` to review a spec or implementation plan."
 allowed-tools:
   - Bash(git *)
   - Bash(gh *)
@@ -14,7 +14,7 @@ allowed-tools:
   - Grep
   - Glob
 metadata:
-  version: '3.6.0'
+  version: "3.6.0"
 ---
 
 # Multi-agent code review (dispatcher)

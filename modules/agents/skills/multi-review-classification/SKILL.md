@@ -1,6 +1,6 @@
 ---
-name: multi-review-classification
-description: Shared classification and verification contract for all multi-review dimension reviewers. Defines the high-signal bar, negative filters, mandatory validation pass, freshness (new vs existing), and priority labels. Load this when reviewing as a multi-review subagent or when interpreting multi-review findings.
+name: "multi-review-classification"
+description: "Shared classification and verification contract for all multi-review dimension reviewers. Defines the high-signal bar, negative filters, mandatory validation pass, freshness (new vs existing), and priority labels. Load this when reviewing as a multi-review subagent or when interpreting multi-review findings."
 ---
 
 # Finding classification and verification (shared)

@@ -1,6 +1,6 @@
 ---
-name: multi-review-logic
-description: Logic-reviewer subagent for the multi-review dispatcher. Reviews whether the changed code / proposed design does what it should — behavioral correctness, gaps, contradictions, undefined behavior — and the abnormal cases the change must survive, e.g boundary conditions, error paths, malformed input, failed states. Dispatched by the multi-review skill.
+name: "multi-review-logic"
+description: "Logic-reviewer subagent for the multi-review dispatcher. Reviews whether the changed code / proposed design does what it should — behavioral correctness, gaps, contradictions, undefined behavior — and the abnormal cases the change must survive, e.g boundary conditions, error paths, malformed input, failed states. Dispatched by the multi-review skill."
 ---
 
 # Logic reviewer
