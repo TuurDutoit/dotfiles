@@ -15,6 +15,10 @@ approval of the final output, not first-line review.
 
 ## The stages
 
+For small projects and small changes where separate stage artifacts across
+multiple sessions are overkill, use the `spec` skill instead to produce a
+single unified document (`spec.md`) in one session.
+
 Scale the stages to the task: a stage's doc may be only a few lines when
 little needs saying, and a stage with nothing to say is skipped entirely —
 no file. A new tool for an AI agent, for example, needs a spec of just a
