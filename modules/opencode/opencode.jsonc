@@ -20,6 +20,11 @@
       "command": ["/Users/tuur/.local/bin/cua-driver", "mcp"],
       "enabled": true
     },
+    "one-password": {
+      "type": "local",
+      "command": ["1password-mcp"],
+      "enabled": true
+    },
     "incident-io": {
       "enabled": false
     },
