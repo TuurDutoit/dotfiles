@@ -69,6 +69,16 @@ DISABLE_TELEMETRY=1 npx skills add mattpocock/skills \
   && success 'Matt Pocock agent skills installed' \
   || fail 'failed to install Matt Pocock agent skills'
 
+DISABLE_TELEMETRY=1 npx skills add humanlayer/skills \
+  --global \
+  --agent opencode \
+  --skill \
+    show-me \
+  --full-depth \
+  --yes \
+  && success 'HumanLayer agent skills installed' \
+  || fail 'failed to install HumanLayer agent skills'
+
 skills_source="$DOTFILES/modules/agents/skills"
 skills_target="$HOME/.agents/skills"
 mkdir -p "$skills_target"
@@ -87,26 +97,6 @@ do
     && success "linked agent skill $skill" \
     || fail "failed to link agent skill $skill"
 done
-
-info 'installing diagram-design skill'
-
-diagram_design_repo="$HOME/Projects/diagram-design"
-
-if [ -d "$diagram_design_repo/.git" ]
-then
-  git -C "$diagram_design_repo" pull --ff-only \
-    && success 'diagram-design repo updated' \
-    || fail 'failed to update diagram-design repo'
-else
-  mkdir -p "$HOME/Projects"
-  git clone https://github.com/cathrynlavery/diagram-design.git "$diagram_design_repo" \
-    && success 'diagram-design repo cloned' \
-    || fail 'failed to clone diagram-design repo'
-fi
-
-ln -sfn "$diagram_design_repo/skills/diagram-design" "$skills_target/diagram-design" \
-  && success 'linked diagram-design skill' \
-  || fail 'failed to link diagram-design skill'
 
 info 'installing rtk'
 rtk init -g --opencode
