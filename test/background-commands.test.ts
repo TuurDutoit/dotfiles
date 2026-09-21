@@ -110,21 +110,16 @@ test("Schema and Argument Validation", async (t) => {
     )
   })
 
-  await t.test("Validates zod schema bounds on args", () => {
+  await t.test("Validates JSON schema bounds on args", () => {
     const { args } = background_run
-    assert.doesNotThrow(() => args.lines.parse(0))
-    assert.doesNotThrow(() => args.lines.parse(20))
-    assert.doesNotThrow(() => args.lines.parse(100))
-    assert.throws(() => args.lines.parse(-1))
-    assert.throws(() => args.lines.parse(101))
-
-    assert.doesNotThrow(() => args.interval.parse(10))
-    assert.doesNotThrow(() => args.interval.parse(20))
-    assert.throws(() => args.interval.parse(9))
-
-    assert.doesNotThrow(() => args.mode.parse("on_completion"))
-    assert.doesNotThrow(() => args.mode.parse("monitor"))
-    assert.throws(() => args.mode.parse("invalid_mode"))
+    assert.equal(args.command.type, "string")
+    assert.equal(args.mode.type, "string")
+    assert.deepEqual(args.mode.enum, ["on_completion", "monitor"])
+    assert.equal(args.interval.type, "integer")
+    assert.equal(args.interval.minimum, 10)
+    assert.equal(args.lines.type, "integer")
+    assert.equal(args.lines.minimum, 0)
+    assert.equal(args.lines.maximum, 100)
   })
 })
 

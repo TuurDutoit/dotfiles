@@ -1,5 +1,4 @@
 import type { Plugin } from "@opencode-ai/plugin"
-import { z } from "zod"
 import child_process from "node:child_process"
 import fs from "node:fs"
 import os from "node:os"
@@ -51,7 +50,7 @@ export interface SessionQueue {
 export function tool<
   T extends {
     description: string
-    args: Record<string, z.ZodTypeAny>
+    args: Record<string, any>
     execute: (args: any, context: any) => Promise<any>
   },
 >(def: T): T {
@@ -469,56 +468,71 @@ process.on("SIGINT", cleanupAllCommands)
 process.on("SIGTERM", cleanupAllCommands)
 process.on("exit", cleanupAllCommands)
 
-export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) => {
+export const BackgroundCommandsPlugin: Plugin = async (input?: any) => {
+  const client = input?.client
+  const directory = input?.directory
   const logDir = getLogDir()
   pruneOldLogs(logDir)
 
   return {
     tool: {
-      background_run: tool({
+      background_run: {
         description:
           "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use 'on_completion' mode (default) for CI checks (e.g. gh pr checks --watch), builds, or migrations to be notified once upon exit. Use 'monitor' mode to stream batched updates of new matching output at periodic intervals (e.g. for dev servers, watch runners). Automatic system notifications delivered to the conversation are marked with [System Notification: Background Command ...] and reflect machine output.",
         args: {
-          command: z.string().describe("Shell command to execute in the background."),
-          mode: z
-            .enum(["on_completion", "monitor"])
-            .default("on_completion")
-            .describe(
+          command: {
+            type: "string",
+            description: "Shell command to execute in the background.",
+          },
+          mode: {
+            type: "string",
+            enum: ["on_completion", "monitor"],
+            default: "on_completion",
+            description:
               "Notification delivery mode: 'on_completion' notifies once on exit; 'monitor' streams periodic progress updates of new output plus exit notice.",
-            ),
-          interval: z
-            .number()
-            .int()
-            .min(10)
-            .default(20)
-            .describe("In 'monitor' mode, seconds between periodic progress notifications (default: 20s, min: 10s)."),
-          pattern: z
-            .string()
-            .optional()
-            .describe(
+          },
+          interval: {
+            type: "integer",
+            minimum: 10,
+            default: 20,
+            description: "In 'monitor' mode, seconds between periodic progress notifications (default: 20s, min: 10s).",
+          },
+          pattern: {
+            type: "string",
+            description:
               "Optional regex pattern or substring filter for 'monitor' mode. When set, only newly produced log lines matching the pattern trigger progress notifications and appear in preview updates. (The log file still records all output).",
-            ),
-          lines: z
-            .number()
-            .int()
-            .min(0)
-            .max(100)
-            .default(20)
-            .describe(
+          },
+          lines: {
+            type: "integer",
+            minimum: 0,
+            maximum: 100,
+            default: 20,
+            description:
               "Maximum number of recent output lines to include in progress update previews and completion notices (default: 20, min: 0, max: 100). Output is capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output previews.",
-            ),
-          workdir: z.string().optional().describe("Optional working directory. Defaults to the session directory."),
-          timeout: z
-            .number()
-            .int()
-            .min(1)
-            .optional()
-            .describe("Optional maximum execution duration in milliseconds before automatic SIGTERM/SIGKILL termination."),
+          },
+          workdir: {
+            type: "string",
+            description: "Optional working directory. Defaults to the session directory.",
+          },
+          timeout: {
+            type: "integer",
+            minimum: 1,
+            description: "Optional maximum execution duration in milliseconds before automatic SIGTERM/SIGKILL termination.",
+          },
         },
         async execute(args, context) {
           if (!isInteractiveSession()) {
             throw new Error("Background commands are only supported in interactive sessions.")
           }
+
+          if (typeof args?.command !== "string" || !args.command.trim()) {
+            throw new Error("Parameter 'command' is required and must be a non-empty string.")
+          }
+
+          const mode = args.mode ?? "on_completion"
+          const interval = typeof args.interval === "number" ? Math.max(10, args.interval) : 20
+          const lines = typeof args.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
+          const timeout = typeof args.timeout === "number" && args.timeout > 0 ? args.timeout : undefined
 
           const resolvedWorkdir = args.workdir
             ? path.resolve(context?.directory ?? directory ?? process.cwd(), args.workdir)
@@ -581,11 +595,11 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
             workdir: resolvedWorkdir,
             pgid,
             logPath,
-            mode: args.mode,
-            interval: args.interval,
+            mode,
+            interval,
             pattern: regexPattern,
-            lines: args.lines,
-            timeout: args.timeout,
+            lines,
+            timeout,
             status: "running",
             exitCode: null,
             lastReadOffset: 0,
@@ -609,7 +623,7 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
                 status: "failed",
                 exitCode: 1,
                 logPath,
-                lines: args.lines,
+                lines,
                 preview: `Spawn error: ${err.message}`,
                 truncated: false,
               },
@@ -631,7 +645,7 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
             record.status = finalStatus
             record.exitCode = code !== null ? code : signal ? 128 : 1
 
-            const previewData = readTailPreview(logPath, args.lines, MAX_OUTPUT_CHARS)
+            const previewData = readTailPreview(logPath, lines, MAX_OUTPUT_CHARS)
             enqueueEvent(
               sessionID,
               {
@@ -641,7 +655,7 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
                 status: finalStatus,
                 exitCode: record.exitCode,
                 logPath,
-                lines: args.lines,
+                lines,
                 preview: previewData.text,
                 truncated: previewData.truncated,
                 totalLines: previewData.totalLines,
@@ -650,7 +664,7 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
             )
           })
 
-          if (args.timeout && args.timeout > 0) {
+          if (timeout && timeout > 0) {
             record.timeoutTimer = setTimeout(() => {
               if (record.status !== "running") return
               record.status = "timed_out"
@@ -658,7 +672,7 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
               clearRecordTimers(record)
               record.sigkillTimer = terminateProcessGroup(pgid, 2000)
 
-              const previewData = readTailPreview(logPath, args.lines, MAX_OUTPUT_CHARS)
+              const previewData = readTailPreview(logPath, lines, MAX_OUTPUT_CHARS)
               enqueueEvent(
                 sessionID,
                 {
@@ -668,25 +682,25 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
                   status: "timed_out",
                   exitCode: null,
                   logPath,
-                  lines: args.lines,
+                  lines,
                   preview: previewData.text,
                   truncated: previewData.truncated,
-                  timeoutMs: args.timeout,
+                  timeoutMs: timeout,
                   totalLines: previewData.totalLines,
                 },
                 client,
               )
-            }, args.timeout)
+            }, timeout)
 
             if (typeof record.timeoutTimer.unref === "function") {
               record.timeoutTimer.unref()
             }
           }
 
-          if (args.mode === "monitor") {
+          if (mode === "monitor") {
             record.monitorTimer = setInterval(() => {
               if (record.status !== "running") return
-              const slice = readLogSlice(logPath, record.lastReadOffset, args.lines, MAX_OUTPUT_CHARS, regexPattern)
+              const slice = readLogSlice(logPath, record.lastReadOffset, lines, MAX_OUTPUT_CHARS, regexPattern)
               record.lastReadOffset = slice.newOffset
               if (slice.text && (slice.matchedLines > 0 || !regexPattern)) {
                 enqueueEvent(
@@ -698,14 +712,14 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
                     status: "running",
                     exitCode: null,
                     logPath,
-                    lines: args.lines,
+                    lines,
                     preview: slice.text,
                     truncated: false,
                   },
                   client,
                 )
               }
-            }, args.interval * 1000)
+            }, interval * 1000)
 
             if (typeof record.monitorTimer.unref === "function") {
               record.monitorTimer.unref()
@@ -720,32 +734,35 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
             initial_output: "",
           }
         },
-      }),
+      },
 
-      background_status: tool({
+      background_status: {
         description:
           "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id.",
         args: {
-          command_id: z.string().describe("The handle of the background command to inspect."),
-          lines: z
-            .number()
-            .int()
-            .min(0)
-            .max(100)
-            .default(20)
-            .describe(
+          command_id: {
+            type: "string",
+            description: "The handle of the background command to inspect.",
+          },
+          lines: {
+            type: "integer",
+            minimum: 0,
+            maximum: 100,
+            default: 20,
+            description:
               "Number of most recent lines to return from the log (default: 20, min: 0, max: 100). Always capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output (returns empty string).",
-            ),
+          },
         },
         async execute(args, context) {
           const sessionID = context?.sessionID ?? "default"
+          const lines = typeof args?.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
           const record = commandRegistry.get(args.command_id)
 
           if (!record || record.sessionID !== sessionID) {
             throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
           }
 
-          const preview = readTailPreview(record.logPath, args.lines, MAX_OUTPUT_CHARS)
+          const preview = readTailPreview(record.logPath, lines, MAX_OUTPUT_CHARS)
 
           return {
             command_id: record.command_id,
@@ -756,13 +773,16 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
             truncated: preview.truncated,
           }
         },
-      }),
+      },
 
-      background_stop: tool({
+      background_stop: {
         description:
           "Terminates a running background command and its spawned process group (SIGTERM escalating to SIGKILL) and suppresses asynchronous completion notices. Calling on an already finished command is idempotent and returns its recorded terminal status.",
         args: {
-          command_id: z.string().describe("The handle of the command to terminate."),
+          command_id: {
+            type: "string",
+            description: "The handle of the command to terminate.",
+          },
         },
         async execute(args, context) {
           const sessionID = context?.sessionID ?? "default"
@@ -803,7 +823,7 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
             message: "Process group terminated successfully.",
           }
         },
-      }),
+      },
     },
 
     event: async (input: any) => {
