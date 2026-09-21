@@ -60,22 +60,22 @@ Follow these steps in order:
 Work through each section of `spec.md` sequentially. For each part:
 1. **Interview**: Ask targeted questions (using the `question` tool or structured prompts) to uncover unknowns, probe assumptions, clarify ambiguities, and explore trade-offs.
    - **Interview rules**:
-     - Ask 2–4 focused questions per round.
+     - Ask questions as needed (usually 2–4 questions per round), and ask follow-up questions across multiple rounds until everything is cleared up.
      - Always provide recommendations, candidate drafts, or concrete options for Tuur to react to rather than open-ended questions.
      - Find technical facts from the codebase first; save questions for requirements, decisions, and trade-offs.
 2. **Write**: Update that specific part in `spec.md` immediately with the clarified information and decisions.
 3. **Rinse & Repeat**: Move to the next part until all sections are written.
 
 #### Part 1: Intent
-- **Interview**: Probe the core problem, why it matters, affected users/systems, proposed outcomes, hard constraints, and non-goals.
+- **Interview**: Probe the core problem, why it matters, affected users/systems, hard constraints, and non-goals.
 - **Write**: Fill out `## 1. Intent` in `spec.md`.
 
 #### Part 2: User-Focused Spec
-- **Interview**: Probe observable behaviors, user flows, UI/UX states, error feedback, edge cases, acceptance criteria, QA scenarios (Given/When/Then), and any executable/e2e specs.
+- **Interview**: Probe proposed outcomes, observable behaviors, user flows, UI/UX states, error feedback, edge cases, acceptance criteria, QA scenarios (Given/When/Then), and any executable/e2e specs.
 - **Write**: Fill out `## 2. User-Focused Spec` in `spec.md`.
 
 #### Part 3: Technical Architecture & Plan
-- **Interview**: Check external boundaries/APIs/schemas, confirm no broken downstream consumers, and discuss affected files, ordered implementation steps, and command-based / manual verification checks.
+- **Interview**: Check external boundaries/APIs/schemas, confirm no broken downstream consumers, and discuss key schemas, types, interfaces, signatures, ordered implementation steps, and command-based / manual verification checks.
 - **Write**: Fill out `## 3. Technical Architecture & Plan` and `## 4. Open Questions & Decisions` in `spec.md`.
 
 ### 3. Review the Document
