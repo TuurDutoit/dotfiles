@@ -1,6 +1,6 @@
 ---
 name: "pr"
-description: "Create a PR and babysit CI until green. Combines dc-create-pr and dc-babysit-pr."
+description: "Create a PR and babysit CI until green; merging a PR also triggers deploy monitoring and staging/prod QA via monitor-deploy. Combines dc-create-pr and dc-babysit-pr."
 ---
 
 # PR
@@ -57,6 +57,12 @@ When the user says that a draft PR is ready (for example, “the PR is ready” 
 
 If the PR is already ready for review, do not repeat the GitHub state change;
 still complete any requested or missing Jira/Slack handoff actions.
+
+## Merging a PR
+
+When the user asks you to merge a PR, merge it, then run **`/monitor-deploy`**
+for that PR: watch the deploy through to production and QA the change on
+staging and production before reporting back.
 
 ## Handoff Rules
 
