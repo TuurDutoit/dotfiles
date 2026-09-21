@@ -344,6 +344,19 @@ function getOrCreateSessionQueue(sessionID: string): SessionQueue {
   return queue
 }
 
+// Discard all queued notifications for one command so the session is not
+// re-woken with information it already has (e.g. after background_status).
+function discardQueuedEvents(sessionID: string, command_id: string): void {
+  const queue = sessionQueues.get(sessionID)
+  if (!queue) return
+  queue.items = queue.items.filter((item) => item.command_id !== command_id)
+  if (queue.items.length === 0 && queue.debounceTimer) {
+    clearTimeout(queue.debounceTimer)
+    queue.debounceTimer = null
+    queue.timerExpired = false
+  }
+}
+
 function clearRecordTimers(record: CommandRecord): void {
   if (record.timeoutTimer) {
     clearTimeout(record.timeoutTimer)
@@ -499,7 +512,7 @@ export const BackgroundCommandsPlugin: Plugin & {
       tool: {
         background_run: tool({
           description:
-            "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. After this call returns, END YOUR TURN (or continue unrelated work) — never wait on it with a synchronous shell command, and never spawn a second shell to cat/tail/poll the log file. The plugin wakes you up automatically: notifications are pushed into the conversation as [System Notification: Background Command ...] messages and reflect machine output. In 'on_completion' mode (default) you are woken once when the command exits — use for CI checks (e.g. gh pr checks --watch), builds, or migrations. In 'monitor' mode you are additionally woken with batched progress updates of new matching output every `interval` seconds — use for dev servers, watch runners, or long logs where you want to steer early. If you have nothing else to do, simply stop; the notification resumes you. To check output on demand, call background_status — do not read the log file with shell commands.",
+            "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use this tool ONLY fire-and-forget: after the call returns, END YOUR TURN (or continue unrelated work) — never wait on the command with a synchronous shell command, and never spawn a second shell to cat/tail/poll the log file. If you need to block until a command finishes or poll it repeatedly, use the bash tool instead — do NOT use background_run for that. The plugin wakes you up automatically: notifications are pushed into the conversation as [System Notification: Background Command ...] messages and reflect machine output. In 'on_completion' mode (default) you are woken once when the command exits — use for CI checks (e.g. gh pr checks --watch), builds, or migrations. In 'monitor' mode you are additionally woken with batched progress updates of new matching output every `interval` seconds — use for dev servers, watch runners, or long logs where you want to steer early. If you have nothing else to do, simply stop; the notification resumes you. background_status is not for polling: use it only to check up on the job after doing other work; if the job is still running and you have no other work, END YOUR TURN and wait for the notification.",
           args: {
             command: {
               type: "string",
@@ -763,7 +776,7 @@ export const BackgroundCommandsPlugin: Plugin & {
 
         background_status: tool({
           description:
-            "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id. This is the ONLY supported way to read output outside the automatic [System Notification: Background Command ...] updates — do not open a synchronous shell to cat/tail the log file. Prefer waiting for the next notification; call this only when you need a decision right now (e.g. stopping a stuck command).",
+            "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id. This is a check-up tool, NOT a polling tool: call it only when you have done other work and want a quick look at the job; each call discards the job's queued notifications so you will not be re-woken with information you already have. If the job is still running and you have no more other work, END YOUR TURN and wait for the [System Notification: Background Command ...] update — do NOT call this repeatedly to wait for completion (to block or poll, use the bash tool), and never read the log file with shell commands.",
           args: {
             command_id: {
               type: "string",
@@ -786,6 +799,10 @@ export const BackgroundCommandsPlugin: Plugin & {
             if (!record || record.sessionID !== sessionID) {
               throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
             }
+
+            // The agent now has first-hand status/output for this job; drop any
+            // queued notifications for it so it is not re-woken with duplicates.
+            discardQueuedEvents(sessionID, record.command_id)
 
             const preview = readTailPreview(record.logPath, lines, MAX_OUTPUT_CHARS)
 
@@ -837,16 +854,8 @@ export const BackgroundCommandsPlugin: Plugin & {
             record.status = "stopped"
             clearRecordTimers(record)
 
-            // Purge any pending progress notifications for this command
-            const queue = sessionQueues.get(sessionID)
-            if (queue) {
-              queue.items = queue.items.filter((item) => item.command_id !== args.command_id)
-              if (queue.items.length === 0 && queue.debounceTimer) {
-                clearTimeout(queue.debounceTimer)
-                queue.debounceTimer = null
-                queue.timerExpired = false
-              }
-            }
+            // Purge any pending notifications for this command
+            discardQueuedEvents(sessionID, args.command_id)
 
             terminateProcessGroup(record.pgid, 2000)
 

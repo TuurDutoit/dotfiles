@@ -460,6 +460,87 @@ test("Status Inspection & Session Isolation", async () => {
   )
 })
 
+test("background_status discards queued notifications for the queried job", async () => {
+  const dispatchedPrompts: string[] = []
+  const mockClient = {
+    session: {
+      promptAsync: async (req: any) => {
+        dispatchedPrompts.push(req.body.parts[0].text)
+      },
+    },
+  }
+
+  const plugin = await BackgroundCommandsPlugin({
+    client: mockClient as any,
+    directory: process.cwd(),
+    project: {} as any,
+    worktree: process.cwd(),
+    experimental_workspace: { register: () => {} },
+    serverUrl: new URL("http://localhost"),
+    $: {} as any,
+  })
+
+  const { background_run, background_status } = plugin.tool!
+
+  const sessionID = "session-status-purge"
+  const queue = getOrCreateSessionQueue(sessionID)
+  queue.isIdle = false // simulate busy session: terminal events stay queued
+
+  // Queue an unrelated job's notification first; it must survive the purge
+  enqueueEvent(
+    sessionID,
+    {
+      type: "progress",
+      command_id: "bg-unrelated-1",
+      command: "npm test",
+      status: "running",
+      exitCode: null,
+      logPath: "/path/log",
+      lines: 20,
+      preview: "Unrelated job output",
+      truncated: false,
+    },
+    mockClient,
+  )
+
+  const runRes = parseResult(
+    await background_run.execute(
+      { command: 'echo "status purge test"', mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+    ),
+  )
+
+  await waitFor(() => {
+    const rec = getCommandRegistry().get(runRes.command_id)
+    return rec?.status === "completed"
+  })
+
+  // Terminal event is queued for later delivery
+  assert.equal(queue.items.some((item) => item.command_id === runRes.command_id), true)
+  assert.equal(dispatchedPrompts.length, 0)
+
+  // Agent checks the job's status directly
+  const statusRes = parseResult(
+    await background_status.execute(
+      { command_id: runRes.command_id, lines: 5 },
+      { sessionID } as any,
+    ),
+  )
+  assert.equal(statusRes.status, "completed")
+
+  // Queued notification for this job was discarded; the unrelated item survives
+  assert.equal(queue.items.some((item) => item.command_id === runRes.command_id), false)
+  assert.equal(queue.items.some((item) => item.command_id === "bg-unrelated-1"), true)
+
+  // Going idle still flushes other jobs, but delivers nothing about the queried one
+  await plugin.event!({
+    event: { type: "session.status", properties: { sessionID, status: { type: "idle" } } } as any,
+  })
+  assert.equal(dispatchedPrompts.length, 1)
+  assert.ok(dispatchedPrompts[0].includes("Unrelated job output"))
+  assert.ok(!dispatchedPrompts[0].includes(runRes.command_id))
+})
+
 test("Manual Stop & Idempotency", async () => {
   const dispatchedPrompts: string[] = []
   const mockClient = {
