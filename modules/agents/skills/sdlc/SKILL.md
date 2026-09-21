@@ -30,6 +30,12 @@ a reader with no context — no jargon; explain technical terms simply. For
 a simple feature that means an intent of only a few lines, a short spec,
 and an architecture that focuses on external boundaries and schema diffs.
 
+Communicate with Tuur through the `show-me` skill — both when talking to
+him in the conversation (interview and open-questions rounds, stage
+summaries for approval) and when writing the artifacts (`intent.md`,
+`spec.md`, `architecture.md`, `plan.md` — flows, boundaries, and plans
+become concise diagrams or sketches, not prose alone).
+
 | Stage | Produces | Runs as |
 | --- | --- | --- |
 | 1 Intent | `intent.md` — the problem in the originator's own terms | `spec` — `sdlc-intent` |

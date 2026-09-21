@@ -48,6 +48,11 @@ Artifacts inside the repository are committed once accepted.
 
 Follow these steps in order:
 
+Communicate with Tuur through the `show-me` skill — both when talking to
+him in the conversation (interview options, trade-offs, review summaries)
+and when writing `spec.md` (flows, UI states, and architecture boundaries
+become concise diagrams or sketches, not prose alone).
+
 ### 1. Ingest, Explore & Initialize
 
 - Review the user's prompt, tickets, and existing conversation context.
