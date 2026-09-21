@@ -13,16 +13,26 @@
     },
     "chrome-devtools": {
       "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--no-usage-statistics"
+      ]
     },
     "cua-driver": {
       "type": "local",
-      "command": ["/Users/tuur/.local/bin/cua-driver", "mcp"],
+      "command": [
+        "/Users/tuur/.local/bin/cua-driver",
+        "mcp"
+      ],
       "enabled": true
     },
     "one-password": {
       "type": "local",
-      "command": ["1password-mcp"],
+      "command": [
+        "1password-mcp"
+      ],
       "enabled": true
     },
     "incident-io": {
@@ -70,7 +80,7 @@
     "circleci_*": false,
     "sentry_*": false,
     "atlassian_*": false,
-    "datacamp-internal-cloudflare-mcp_*": true,
+    "datacamp-internal-cloudflare-mcp_*": true
   },
   "permission": {
     "read": {
@@ -97,7 +107,6 @@
   },
   "plugin": [
     "@datacamp/opencode-auto-approve",
-    "@datacamp/opencode-openrouter-usage",
-    "./plugins/background-commands.ts"
+    "@datacamp/opencode-openrouter-usage"
   ]
 }

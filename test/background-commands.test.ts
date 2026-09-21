@@ -5,6 +5,10 @@ import path from "node:path"
 import os from "node:os"
 import {
   BackgroundCommandsPlugin,
+  type NotificationEvent,
+} from "../modules/opencode/plugins/background-commands.ts"
+
+const {
   getCommandRegistry,
   getSessionQueues,
   cleanupAllCommands,
@@ -18,8 +22,7 @@ import {
   getOrCreateSessionQueue,
   enqueueEvent,
   flushSessionQueue,
-  type NotificationEvent,
-} from "../modules/opencode/plugins/background-commands.ts"
+} = BackgroundCommandsPlugin
 
 // Helper to wait for a condition
 async function waitFor(

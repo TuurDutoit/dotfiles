@@ -60,19 +60,11 @@ function tool<
 const MAX_OUTPUT_CHARS = 10000
 const LOG_PRUNE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
 
-// In-memory registries (internal to module, accessed via functions)
+// In-memory registries (internal to module)
 const commandRegistry = new Map<string, CommandRecord>()
 const sessionQueues = new Map<string, SessionQueue>()
 let commandCounter = 0
 let activeClient: any = null
-
-export function getCommandRegistry(): Map<string, CommandRecord> {
-  return commandRegistry
-}
-
-export function getSessionQueues(): Map<string, SessionQueue> {
-  return sessionQueues
-}
 
 function getLogDir(): string {
   const logDir = path.join(os.homedir(), ".opencode", "logs")
@@ -84,7 +76,7 @@ function getLogDir(): string {
   return logDir
 }
 
-export function pruneOldLogs(logDir = getLogDir()): void {
+function pruneOldLogs(logDir = getLogDir()): void {
   try {
     if (!fs.existsSync(logDir)) return
     const files = fs.readdirSync(logDir)
@@ -106,14 +98,14 @@ export function pruneOldLogs(logDir = getLogDir()): void {
   }
 }
 
-export function isInteractiveSession(): boolean {
+function isInteractiveSession(): boolean {
   if (process.env.OPENCODE_RUN === "1" || process.env.OPENCODE_RUN === "true") {
     return false
   }
   return true
 }
 
-export function terminateProcessGroup(
+function terminateProcessGroup(
   pgid: number,
   graceMs = 2000,
 ): NodeJS.Timeout | undefined {
@@ -144,7 +136,7 @@ export function terminateProcessGroup(
   return sigkillTimer
 }
 
-export function readLogSlice(
+function readLogSlice(
   logPath: string,
   fromOffset: number,
   maxLines: number,
@@ -214,7 +206,7 @@ export function readLogSlice(
   }
 }
 
-export function readTailPreview(
+function readTailPreview(
   logPath: string,
   maxLines: number,
   maxChars = MAX_OUTPUT_CHARS,
@@ -255,7 +247,7 @@ export function readTailPreview(
 const SYSTEM_NOTICE_BANNER =
   "Notice: This message was generated automatically by the background command watcher, not by human input."
 
-export function formatSingleEvent(event: NotificationEvent): string {
+function formatSingleEvent(event: NotificationEvent): string {
   const { type, command_id, command, status, exitCode, logPath, lines, preview, truncated, timeoutMs, totalLines } = event
 
   let statusText = status
@@ -299,7 +291,7 @@ ${linesHeader}
 ${preview}`.trim()
 }
 
-export function formatBatchedEvents(events: NotificationEvent[]): string {
+function formatBatchedEvents(events: NotificationEvent[]): string {
   if (events.length === 1) {
     return formatSingleEvent(events[0])
   }
@@ -338,7 +330,7 @@ ${SYSTEM_NOTICE_BANNER}
 ${sections.join("\n\n---\n\n")}`.trim()
 }
 
-export function getOrCreateSessionQueue(sessionID: string): SessionQueue {
+function getOrCreateSessionQueue(sessionID: string): SessionQueue {
   let queue = sessionQueues.get(sessionID)
   if (!queue) {
     queue = {
@@ -367,7 +359,7 @@ function clearRecordTimers(record: CommandRecord): void {
   }
 }
 
-export async function flushSessionQueue(
+async function flushSessionQueue(
   sessionID: string,
   client?: any,
 ): Promise<void> {
@@ -418,7 +410,7 @@ export async function flushSessionQueue(
   }
 }
 
-export function enqueueEvent(
+function enqueueEvent(
   sessionID: string,
   event: NotificationEvent,
   client?: any,
@@ -454,7 +446,7 @@ export function enqueueEvent(
   }
 }
 
-export function cleanupAllCommands(): void {
+function cleanupAllCommands(): void {
   for (const record of commandRegistry.values()) {
     clearRecordTimers(record)
     if (record.status === "running" && record.pgid > 0) {
@@ -479,432 +471,463 @@ process.on("SIGINT", cleanupAllCommands)
 process.on("SIGTERM", cleanupAllCommands)
 process.on("exit", cleanupAllCommands)
 
-export const BackgroundCommandsPlugin: Plugin = async (input?: any) => {
-  const client = input?.client ?? activeClient
-  if (input?.client) {
-    activeClient = input.client
-  }
-  const directory = input?.directory
-  const logDir = getLogDir()
-  pruneOldLogs(logDir)
+export const BackgroundCommandsPlugin: Plugin & {
+  getCommandRegistry: () => Map<string, CommandRecord>
+  getSessionQueues: () => Map<string, SessionQueue>
+  pruneOldLogs: typeof pruneOldLogs
+  isInteractiveSession: typeof isInteractiveSession
+  terminateProcessGroup: typeof terminateProcessGroup
+  readLogSlice: typeof readLogSlice
+  readTailPreview: typeof readTailPreview
+  formatSingleEvent: typeof formatSingleEvent
+  formatBatchedEvents: typeof formatBatchedEvents
+  getOrCreateSessionQueue: typeof getOrCreateSessionQueue
+  flushSessionQueue: typeof flushSessionQueue
+  enqueueEvent: typeof enqueueEvent
+  cleanupAllCommands: typeof cleanupAllCommands
+} = Object.assign(
+  async (input?: any) => {
+    const client = input?.client ?? activeClient
+    if (input?.client) {
+      activeClient = input.client
+    }
+    const directory = input?.directory
+    const logDir = getLogDir()
+    pruneOldLogs(logDir)
 
-  return {
-    tool: {
-      background_run: {
-        description:
-          "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use 'on_completion' mode (default) for CI checks (e.g. gh pr checks --watch), builds, or migrations to be notified once upon exit. Use 'monitor' mode to stream batched updates of new matching output at periodic intervals (e.g. for dev servers, watch runners). Automatic system notifications delivered to the conversation are marked with [System Notification: Background Command ...] and reflect machine output.",
-        args: {
-          command: {
-            type: "string",
-            description: "Shell command to execute in the background.",
+    return {
+      tool: {
+        background_run: tool({
+          description:
+            "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use 'on_completion' mode (default) for CI checks (e.g. gh pr checks --watch), builds, or migrations to be notified once upon exit. Use 'monitor' mode to stream batched updates of new matching output at periodic intervals (e.g. for dev servers, watch runners). Automatic system notifications delivered to the conversation are marked with [System Notification: Background Command ...] and reflect machine output.",
+          args: {
+            command: {
+              type: "string",
+              description: "Shell command to execute in the background.",
+            },
+            mode: {
+              type: "string",
+              enum: ["on_completion", "monitor"],
+              default: "on_completion",
+              description:
+                "Notification delivery mode: 'on_completion' notifies once on exit; 'monitor' streams periodic progress updates of new output plus exit notice.",
+            },
+            interval: {
+              type: "integer",
+              minimum: 10,
+              default: 20,
+              description: "In 'monitor' mode, seconds between periodic progress notifications (default: 20s, min: 10s).",
+            },
+            pattern: {
+              type: "string",
+              description:
+                "Optional regex pattern or substring filter for 'monitor' mode. When set, only newly produced log lines matching the pattern trigger progress notifications and appear in preview updates. (The log file still records all output).",
+            },
+            lines: {
+              type: "integer",
+              minimum: 0,
+              maximum: 100,
+              default: 20,
+              description:
+                "Maximum number of recent output lines to include in progress update previews and completion notices (default: 20, min: 0, max: 100). Output is capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output previews.",
+            },
+            workdir: {
+              type: "string",
+              description: "Optional working directory. Defaults to the session directory.",
+            },
+            timeout: {
+              type: "integer",
+              minimum: 1,
+              description: "Optional maximum execution duration in milliseconds before automatic SIGTERM/SIGKILL termination.",
+            },
           },
-          mode: {
-            type: "string",
-            enum: ["on_completion", "monitor"],
-            default: "on_completion",
-            description:
-              "Notification delivery mode: 'on_completion' notifies once on exit; 'monitor' streams periodic progress updates of new output plus exit notice.",
-          },
-          interval: {
-            type: "integer",
-            minimum: 10,
-            default: 20,
-            description: "In 'monitor' mode, seconds between periodic progress notifications (default: 20s, min: 10s).",
-          },
-          pattern: {
-            type: "string",
-            description:
-              "Optional regex pattern or substring filter for 'monitor' mode. When set, only newly produced log lines matching the pattern trigger progress notifications and appear in preview updates. (The log file still records all output).",
-          },
-          lines: {
-            type: "integer",
-            minimum: 0,
-            maximum: 100,
-            default: 20,
-            description:
-              "Maximum number of recent output lines to include in progress update previews and completion notices (default: 20, min: 0, max: 100). Output is capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output previews.",
-          },
-          workdir: {
-            type: "string",
-            description: "Optional working directory. Defaults to the session directory.",
-          },
-          timeout: {
-            type: "integer",
-            minimum: 1,
-            description: "Optional maximum execution duration in milliseconds before automatic SIGTERM/SIGKILL termination.",
-          },
-        },
-        async execute(args, context) {
-          if (!isInteractiveSession()) {
-            throw new Error("Background commands are only supported in interactive sessions.")
-          }
+          async execute(args: any, context: any) {
+            if (!isInteractiveSession()) {
+              throw new Error("Background commands are only supported in interactive sessions.")
+            }
 
-          if (typeof args?.command !== "string" || !args.command.trim()) {
-            throw new Error("Parameter 'command' is required and must be a non-empty string.")
-          }
+            if (typeof args?.command !== "string" || !args.command.trim()) {
+              throw new Error("Parameter 'command' is required and must be a non-empty string.")
+            }
 
-          const mode = args.mode ?? "on_completion"
-          const interval = typeof args.interval === "number" ? Math.max(10, args.interval) : 20
-          const lines = typeof args.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
-          const timeout = typeof args.timeout === "number" && args.timeout > 0 ? args.timeout : undefined
+            const mode = args.mode ?? "on_completion"
+            const interval = typeof args.interval === "number" ? Math.max(10, args.interval) : 20
+            const lines = typeof args.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
+            const timeout = typeof args.timeout === "number" && args.timeout > 0 ? args.timeout : undefined
 
-          const resolvedWorkdir = args.workdir
-            ? path.resolve(context?.directory ?? directory ?? process.cwd(), args.workdir)
-            : (context?.directory ?? directory ?? process.cwd())
+            const resolvedWorkdir = args.workdir
+              ? path.resolve(context?.directory ?? directory ?? process.cwd(), args.workdir)
+              : (context?.directory ?? directory ?? process.cwd())
 
-          try {
-            const stat = fs.statSync(resolvedWorkdir)
-            if (!stat.isDirectory()) {
+            try {
+              const stat = fs.statSync(resolvedWorkdir)
+              if (!stat.isDirectory()) {
+                throw new Error(`Working directory does not exist or is not a directory: ${resolvedWorkdir}`)
+              }
+            } catch (err: any) {
               throw new Error(`Working directory does not exist or is not a directory: ${resolvedWorkdir}`)
             }
-          } catch (err: any) {
-            throw new Error(`Working directory does not exist or is not a directory: ${resolvedWorkdir}`)
-          }
 
-          let regexPattern: RegExp | undefined
-          if (args.pattern) {
-            try {
-              regexPattern = new RegExp(args.pattern)
-            } catch (err: any) {
-              throw new Error(`Invalid regular expression pattern: ${args.pattern} (${err.message})`)
+            let regexPattern: RegExp | undefined
+            if (args.pattern) {
+              try {
+                regexPattern = new RegExp(args.pattern)
+              } catch (err: any) {
+                throw new Error(`Invalid regular expression pattern: ${args.pattern} (${err.message})`)
+              }
             }
-          }
 
-          if (typeof context?.ask === "function") {
-            await context.ask({
-              permission: "bash",
-              patterns: [args.command],
-              always: [args.command],
-              metadata: { command: args.command },
+            if (typeof context?.ask === "function") {
+              await context.ask({
+                permission: "bash",
+                patterns: [args.command],
+                always: [args.command],
+                metadata: { command: args.command },
+              })
+            }
+
+            const sessionID = context?.sessionID ?? "default"
+            getOrCreateSessionQueue(sessionID)
+
+            const timestamp = Math.floor(Date.now() / 1000)
+            const command_id = `bg-${timestamp}-${++commandCounter}`
+            const logPath = path.join(logDir, `${command_id}.log`)
+
+            const logFd = fs.openSync(logPath, "w", 0o600)
+
+            const child = child_process.spawn(args.command, {
+              shell: true,
+              detached: true,
+              cwd: resolvedWorkdir,
+              stdio: ["ignore", logFd, logFd],
             })
-          }
 
-          const sessionID = context?.sessionID ?? "default"
-          getOrCreateSessionQueue(sessionID)
+            fs.closeSync(logFd)
 
-          const timestamp = Math.floor(Date.now() / 1000)
-          const command_id = `bg-${timestamp}-${++commandCounter}`
-          const logPath = path.join(logDir, `${command_id}.log`)
-
-          const logFd = fs.openSync(logPath, "w", 0o600)
-
-          const child = child_process.spawn(args.command, {
-            shell: true,
-            detached: true,
-            cwd: resolvedWorkdir,
-            stdio: ["ignore", logFd, logFd],
-          })
-
-          fs.closeSync(logFd)
-
-          const pgid = child.pid ?? 0
-          if (typeof child.unref === "function") {
-            child.unref()
-          }
-
-          const record: CommandRecord = {
-            command_id,
-            sessionID,
-            command: args.command,
-            workdir: resolvedWorkdir,
-            pgid,
-            logPath,
-            mode,
-            interval,
-            pattern: regexPattern,
-            lines,
-            timeout,
-            status: "running",
-            exitCode: null,
-            lastReadOffset: 0,
-            stoppedByUser: false,
-            childProcess: child,
-          }
-
-          commandRegistry.set(command_id, record)
-
-          child.on("error", (err) => {
-            if (record.stoppedByUser) return
-            record.status = "failed"
-            record.exitCode = 1
-            clearRecordTimers(record)
-            enqueueEvent(
-              sessionID,
-              {
-                type: "failed",
-                command_id,
-                command: args.command,
-                status: "failed",
-                exitCode: 1,
-                logPath,
-                lines,
-                preview: `Spawn error: ${err.message}`,
-                truncated: false,
-              },
-              client,
-            )
-          })
-
-          child.on("close", (code, signal) => {
-            if (record.stoppedByUser) return
-            if (record.status !== "running") return
-            if (record.sigkillTimer) {
-              clearTimeout(record.sigkillTimer)
-              record.sigkillTimer = undefined
+            const pgid = child.pid ?? 0
+            if (typeof child.unref === "function") {
+              child.unref()
             }
 
-            clearRecordTimers(record)
-            const isSuccess = code === 0
-            const finalStatus = isSuccess ? "completed" : "failed"
-            record.status = finalStatus
-            record.exitCode = code !== null ? code : signal ? 128 : 1
-
-            const previewData = readTailPreview(logPath, lines, MAX_OUTPUT_CHARS)
-            enqueueEvent(
+            const record: CommandRecord = {
+              command_id,
               sessionID,
-              {
-                type: finalStatus,
-                command_id,
-                command: args.command,
-                status: finalStatus,
-                exitCode: record.exitCode,
-                logPath,
-                lines,
-                preview: previewData.text,
-                truncated: previewData.truncated,
-                totalLines: previewData.totalLines,
-              },
-              client,
-            )
-          })
+              command: args.command,
+              workdir: resolvedWorkdir,
+              pgid,
+              logPath,
+              mode,
+              interval,
+              pattern: regexPattern,
+              lines,
+              timeout,
+              status: "running",
+              exitCode: null,
+              lastReadOffset: 0,
+              stoppedByUser: false,
+              childProcess: child,
+            }
 
-          if (timeout && timeout > 0) {
-            record.timeoutTimer = setTimeout(() => {
-              if (record.status !== "running") return
-              record.status = "timed_out"
-              record.exitCode = null
+            commandRegistry.set(command_id, record)
+
+            child.on("error", (err) => {
+              if (record.stoppedByUser) return
+              record.status = "failed"
+              record.exitCode = 1
               clearRecordTimers(record)
-              record.sigkillTimer = terminateProcessGroup(pgid, 2000)
+              enqueueEvent(
+                sessionID,
+                {
+                  type: "failed",
+                  command_id,
+                  command: args.command,
+                  status: "failed",
+                  exitCode: 1,
+                  logPath,
+                  lines,
+                  preview: `Spawn error: ${err.message}`,
+                  truncated: false,
+                },
+                client,
+              )
+            })
+
+            child.on("close", (code, signal) => {
+              if (record.stoppedByUser) return
+              if (record.status !== "running") return
+              if (record.sigkillTimer) {
+                clearTimeout(record.sigkillTimer)
+                record.sigkillTimer = undefined
+              }
+
+              clearRecordTimers(record)
+              const isSuccess = code === 0
+              const finalStatus = isSuccess ? "completed" : "failed"
+              record.status = finalStatus
+              record.exitCode = code !== null ? code : signal ? 128 : 1
 
               const previewData = readTailPreview(logPath, lines, MAX_OUTPUT_CHARS)
               enqueueEvent(
                 sessionID,
                 {
-                  type: "timed_out",
+                  type: finalStatus,
                   command_id,
                   command: args.command,
-                  status: "timed_out",
-                  exitCode: null,
+                  status: finalStatus,
+                  exitCode: record.exitCode,
                   logPath,
                   lines,
                   preview: previewData.text,
                   truncated: previewData.truncated,
-                  timeoutMs: timeout,
                   totalLines: previewData.totalLines,
                 },
                 client,
               )
-            }, timeout)
+            })
 
-            if (typeof record.timeoutTimer.unref === "function") {
-              record.timeoutTimer.unref()
-            }
-          }
+            if (timeout && timeout > 0) {
+              record.timeoutTimer = setTimeout(() => {
+                if (record.status !== "running") return
+                record.status = "timed_out"
+                record.exitCode = null
+                clearRecordTimers(record)
+                record.sigkillTimer = terminateProcessGroup(pgid, 2000)
 
-          if (mode === "monitor") {
-            record.monitorTimer = setInterval(() => {
-              if (record.status !== "running") return
-              const slice = readLogSlice(logPath, record.lastReadOffset, lines, MAX_OUTPUT_CHARS, regexPattern)
-              record.lastReadOffset = slice.newOffset
-              if (slice.text && (slice.matchedLines > 0 || !regexPattern)) {
+                const previewData = readTailPreview(logPath, lines, MAX_OUTPUT_CHARS)
                 enqueueEvent(
                   sessionID,
                   {
-                    type: "progress",
+                    type: "timed_out",
                     command_id,
                     command: args.command,
-                    status: "running",
+                    status: "timed_out",
                     exitCode: null,
                     logPath,
                     lines,
-                    preview: slice.text,
-                    truncated: false,
+                    preview: previewData.text,
+                    truncated: previewData.truncated,
+                    timeoutMs: timeout,
+                    totalLines: previewData.totalLines,
                   },
                   client,
                 )
+              }, timeout)
+
+              if (typeof record.timeoutTimer.unref === "function") {
+                record.timeoutTimer.unref()
               }
-            }, interval * 1000)
-
-            if (typeof record.monitorTimer.unref === "function") {
-              record.monitorTimer.unref()
             }
-          }
 
-          const payload = {
-            command_id,
-            status: "running",
-            workdir: resolvedWorkdir,
-            log_path: logPath,
-            initial_output: "",
-          }
-          return {
-            output: JSON.stringify(payload, null, 2),
-            metadata: payload,
-          }
-        },
-      },
+            if (mode === "monitor") {
+              record.monitorTimer = setInterval(() => {
+                if (record.status !== "running") return
+                const slice = readLogSlice(logPath, record.lastReadOffset, lines, MAX_OUTPUT_CHARS, regexPattern)
+                record.lastReadOffset = slice.newOffset
+                if (slice.text && (slice.matchedLines > 0 || !regexPattern)) {
+                  enqueueEvent(
+                    sessionID,
+                    {
+                      type: "progress",
+                      command_id,
+                      command: args.command,
+                      status: "running",
+                      exitCode: null,
+                      logPath,
+                      lines,
+                      preview: slice.text,
+                      truncated: false,
+                    },
+                    client,
+                  )
+                }
+              }, interval * 1000)
 
-      background_status: {
-        description:
-          "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id.",
-        args: {
-          command_id: {
-            type: "string",
-            description: "The handle of the background command to inspect.",
-          },
-          lines: {
-            type: "integer",
-            minimum: 0,
-            maximum: 100,
-            default: 20,
-            description:
-              "Number of most recent lines to return from the log (default: 20, min: 0, max: 100). Always capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output (returns empty string).",
-          },
-        },
-        async execute(args, context) {
-          const sessionID = context?.sessionID ?? "default"
-          const lines = typeof args?.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
-          const record = commandRegistry.get(args.command_id)
+              if (typeof record.monitorTimer.unref === "function") {
+                record.monitorTimer.unref()
+              }
+            }
 
-          if (!record || record.sessionID !== sessionID) {
-            throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
-          }
-
-          const preview = readTailPreview(record.logPath, lines, MAX_OUTPUT_CHARS)
-
-          const payload = {
-            command_id: record.command_id,
-            status: record.status,
-            exit_code: record.exitCode,
-            log_path: record.logPath,
-            recent_output: preview.text,
-            truncated: preview.truncated,
-          }
-          return {
-            output: JSON.stringify(payload, null, 2),
-            metadata: payload,
-          }
-        },
-      },
-
-      background_stop: {
-        description:
-          "Terminates a running background command and its spawned process group (SIGTERM escalating to SIGKILL) and suppresses asynchronous completion notices. Calling on an already finished command is idempotent and returns its recorded terminal status.",
-        args: {
-          command_id: {
-            type: "string",
-            description: "The handle of the command to terminate.",
-          },
-        },
-        async execute(args, context) {
-          const sessionID = context?.sessionID ?? "default"
-          const record = commandRegistry.get(args.command_id)
-
-          if (!record || record.sessionID !== sessionID) {
-            throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
-          }
-
-          if (record.status !== "running") {
             const payload = {
-              command_id: record.command_id,
-              status: record.status,
-              message: "Process is already terminated.",
+              command_id,
+              status: "running",
+              workdir: resolvedWorkdir,
+              log_path: logPath,
+              initial_output: "",
             }
             return {
               output: JSON.stringify(payload, null, 2),
               metadata: payload,
             }
-          }
+          },
+        }),
 
-          record.stoppedByUser = true
-          record.status = "stopped"
-          clearRecordTimers(record)
+        background_status: tool({
+          description:
+            "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id.",
+          args: {
+            command_id: {
+              type: "string",
+              description: "The handle of the background command to inspect.",
+            },
+            lines: {
+              type: "integer",
+              minimum: 0,
+              maximum: 100,
+              default: 20,
+              description:
+                "Number of most recent lines to return from the log (default: 20, min: 0, max: 100). Always capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output (returns empty string).",
+            },
+          },
+          async execute(args: any, context: any) {
+            const sessionID = context?.sessionID ?? "default"
+            const lines = typeof args?.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
+            const record = commandRegistry.get(args.command_id)
 
-          // Purge any pending progress notifications for this command
-          const queue = sessionQueues.get(sessionID)
-          if (queue) {
-            queue.items = queue.items.filter((item) => item.command_id !== args.command_id)
-            if (queue.items.length === 0 && queue.debounceTimer) {
-              clearTimeout(queue.debounceTimer)
-              queue.debounceTimer = null
-              queue.timerExpired = false
+            if (!record || record.sessionID !== sessionID) {
+              throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
             }
-          }
 
-          terminateProcessGroup(record.pgid, 2000)
+            const preview = readTailPreview(record.logPath, lines, MAX_OUTPUT_CHARS)
 
-          const payload = {
-            command_id: record.command_id,
-            status: "stopped",
-            message: "Process group terminated successfully.",
-          }
-          return {
-            output: JSON.stringify(payload, null, 2),
-            metadata: payload,
-          }
-        },
+            const payload = {
+              command_id: record.command_id,
+              status: record.status,
+              exit_code: record.exitCode,
+              log_path: record.logPath,
+              recent_output: preview.text,
+              truncated: preview.truncated,
+            }
+            return {
+              output: JSON.stringify(payload, null, 2),
+              metadata: payload,
+            }
+          },
+        }),
+
+        background_stop: tool({
+          description:
+            "Terminates a running background command and its spawned process group (SIGTERM escalating to SIGKILL) and suppresses asynchronous completion notices. Calling on an already finished command is idempotent and returns its recorded terminal status.",
+          args: {
+            command_id: {
+              type: "string",
+              description: "The handle of the command to terminate.",
+            },
+          },
+          async execute(args: any, context: any) {
+            const sessionID = context?.sessionID ?? "default"
+            const record = commandRegistry.get(args.command_id)
+
+            if (!record || record.sessionID !== sessionID) {
+              throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
+            }
+
+            if (record.status !== "running") {
+              const payload = {
+                command_id: record.command_id,
+                status: record.status,
+                message: "Process is already terminated.",
+              }
+              return {
+                output: JSON.stringify(payload, null, 2),
+                metadata: payload,
+              }
+            }
+
+            record.stoppedByUser = true
+            record.status = "stopped"
+            clearRecordTimers(record)
+
+            // Purge any pending progress notifications for this command
+            const queue = sessionQueues.get(sessionID)
+            if (queue) {
+              queue.items = queue.items.filter((item) => item.command_id !== args.command_id)
+              if (queue.items.length === 0 && queue.debounceTimer) {
+                clearTimeout(queue.debounceTimer)
+                queue.debounceTimer = null
+                queue.timerExpired = false
+              }
+            }
+
+            terminateProcessGroup(record.pgid, 2000)
+
+            const payload = {
+              command_id: record.command_id,
+              status: "stopped",
+              message: "Process group terminated successfully.",
+            }
+            return {
+              output: JSON.stringify(payload, null, 2),
+              metadata: payload,
+            }
+          },
+        }),
       },
-    },
 
-    event: async (input: any) => {
-      const eventType = input?.event?.type
-      const props = input?.event?.properties
+      event: async (input: any) => {
+        const eventType = input?.event?.type
+        const props = input?.event?.properties
 
-      if (eventType === "session.idle") {
-        const sessionID = props?.sessionID
-        if (sessionID) {
-          const queue = getOrCreateSessionQueue(sessionID)
-          queue.isIdle = true
-          await flushSessionQueue(sessionID, client)
-        }
-      } else if (eventType === "session.status") {
-        const sessionID = props?.sessionID
-        const statusType = props?.status?.type
-        if (sessionID) {
-          const queue = getOrCreateSessionQueue(sessionID)
-          if (statusType === "idle") {
+        if (eventType === "session.idle") {
+          const sessionID = props?.sessionID
+          if (sessionID) {
+            const queue = getOrCreateSessionQueue(sessionID)
             queue.isIdle = true
             await flushSessionQueue(sessionID, client)
-          } else if (statusType === "busy") {
-            queue.isIdle = false
           }
-        }
-      } else if (eventType === "session.deleted") {
-        const sessionID = props?.info?.id ?? props?.sessionID
-        if (sessionID) {
-          for (const [cmdId, rec] of commandRegistry.entries()) {
-            if (rec.sessionID === sessionID) {
-              clearRecordTimers(rec)
-              if (rec.status === "running") {
-                terminateProcessGroup(rec.pgid, 2000)
-                rec.status = "stopped"
-              }
-              commandRegistry.delete(cmdId)
+        } else if (eventType === "session.status") {
+          const sessionID = props?.sessionID
+          const statusType = props?.status?.type
+          if (sessionID) {
+            const queue = getOrCreateSessionQueue(sessionID)
+            if (statusType === "idle") {
+              queue.isIdle = true
+              await flushSessionQueue(sessionID, client)
+            } else if (statusType === "busy") {
+              queue.isIdle = false
             }
           }
-          const queue = sessionQueues.get(sessionID)
-          if (queue?.debounceTimer) {
-            clearTimeout(queue.debounceTimer)
+        } else if (eventType === "session.deleted") {
+          const sessionID = props?.info?.id ?? props?.sessionID
+          if (sessionID) {
+            for (const [cmdId, rec] of commandRegistry.entries()) {
+              if (rec.sessionID === sessionID) {
+                clearRecordTimers(rec)
+                if (rec.status === "running") {
+                  terminateProcessGroup(rec.pgid, 2000)
+                  rec.status = "stopped"
+                }
+                commandRegistry.delete(cmdId)
+              }
+            }
+            const queue = sessionQueues.get(sessionID)
+            if (queue?.debounceTimer) {
+              clearTimeout(queue.debounceTimer)
+            }
+            sessionQueues.delete(sessionID)
           }
-          sessionQueues.delete(sessionID)
         }
-      }
-    },
+      },
 
-    dispose: async () => {
-      cleanupAllCommands()
-    },
-  }
-}
+      dispose: async () => {
+        cleanupAllCommands()
+      },
+    }
+  },
+  {
+    getCommandRegistry: () => commandRegistry,
+    getSessionQueues: () => sessionQueues,
+    pruneOldLogs,
+    isInteractiveSession,
+    terminateProcessGroup,
+    readLogSlice,
+    readTailPreview,
+    formatSingleEvent,
+    formatBatchedEvents,
+    getOrCreateSessionQueue,
+    flushSessionQueue,
+    enqueueEvent,
+    cleanupAllCommands,
+  },
+)
 
 export default BackgroundCommandsPlugin
