@@ -499,7 +499,7 @@ export const BackgroundCommandsPlugin: Plugin & {
       tool: {
         background_run: tool({
           description:
-            "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use 'on_completion' mode (default) for CI checks (e.g. gh pr checks --watch), builds, or migrations to be notified once upon exit. Use 'monitor' mode to stream batched updates of new matching output at periodic intervals (e.g. for dev servers, watch runners). Automatic system notifications delivered to the conversation are marked with [System Notification: Background Command ...] and reflect machine output.",
+            "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. After this call returns, END YOUR TURN (or continue unrelated work) — never wait on it with a synchronous shell command, and never spawn a second shell to cat/tail/poll the log file. The plugin wakes you up automatically: notifications are pushed into the conversation as [System Notification: Background Command ...] messages and reflect machine output. In 'on_completion' mode (default) you are woken once when the command exits — use for CI checks (e.g. gh pr checks --watch), builds, or migrations. In 'monitor' mode you are additionally woken with batched progress updates of new matching output every `interval` seconds — use for dev servers, watch runners, or long logs where you want to steer early. If you have nothing else to do, simply stop; the notification resumes you. To check output on demand, call background_status — do not read the log file with shell commands.",
           args: {
             command: {
               type: "string",
@@ -763,7 +763,7 @@ export const BackgroundCommandsPlugin: Plugin & {
 
         background_status: tool({
           description:
-            "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id.",
+            "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id. This is the ONLY supported way to read output outside the automatic [System Notification: Background Command ...] updates — do not open a synchronous shell to cat/tail the log file. Prefer waiting for the next notification; call this only when you need a decision right now (e.g. stopping a stuck command).",
           args: {
             command_id: {
               type: "string",
@@ -806,7 +806,7 @@ export const BackgroundCommandsPlugin: Plugin & {
 
         background_stop: tool({
           description:
-            "Terminates a running background command and its spawned process group (SIGTERM escalating to SIGKILL) and suppresses asynchronous completion notices. Calling on an already finished command is idempotent and returns its recorded terminal status.",
+            "Terminates a running background command and its spawned process group (SIGTERM escalating to SIGKILL) and suppresses asynchronous completion notices — after stopping, you will not be woken again for this command. Calling on an already finished command is idempotent and returns its recorded terminal status.",
           args: {
             command_id: {
               type: "string",
