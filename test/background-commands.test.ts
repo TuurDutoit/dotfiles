@@ -35,6 +35,25 @@ async function waitFor(
   throw new Error(`waitFor timed out after ${timeoutMs}ms`)
 }
 
+function parseResult(res: any): any {
+  if (res?.metadata) return res.metadata
+  if (typeof res === "string") {
+    try {
+      return JSON.parse(res)
+    } catch {
+      return res
+    }
+  }
+  if (res?.output) {
+    try {
+      return JSON.parse(res.output)
+    } catch {
+      return res.output
+    }
+  }
+  return res
+}
+
 test.beforeEach(() => {
   cleanupAllCommands()
   delete process.env.OPENCODE_RUN
@@ -156,9 +175,11 @@ test("Permission Check Hook Integration", async () => {
     },
   }
 
-  const res = await background_run.execute(
-    { command: "echo perm-test", mode: "on_completion", interval: 20, lines: 20 },
-    mockContext as any,
+  const res = parseResult(
+    await background_run.execute(
+      { command: "echo perm-test", mode: "on_completion", interval: 20, lines: 20 },
+      mockContext as any,
+    ),
   )
 
   assert.equal(askCalled, true)
@@ -214,9 +235,11 @@ test("Process Lifecycle & Log Isolation", async () => {
   const queue = getOrCreateSessionQueue(sessionID)
   queue.isIdle = true // enable immediate flush on exit
 
-  const runRes = await background_run.execute(
-    { command: 'echo "hello background" && echo "second line"', mode: "on_completion", interval: 20, lines: 20 },
-    { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+  const runRes = parseResult(
+    await background_run.execute(
+      { command: 'echo "hello background" && echo "second line"', mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+    ),
   )
 
   assert.ok(runRes.command_id.startsWith("bg-"))
@@ -245,9 +268,11 @@ test("Process Lifecycle & Log Isolation", async () => {
   assert.ok(dispatchedPrompts[0].includes("Notice: This message was generated automatically"))
 
   // 2. Failure lifecycle (non-zero exit)
-  const failRes = await background_run.execute(
-    { command: 'echo "failing now" >&2 && exit 42', mode: "on_completion", interval: 20, lines: 20 },
-    { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+  const failRes = parseResult(
+    await background_run.execute(
+      { command: 'echo "failing now" >&2 && exit 42', mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+    ),
   )
 
   await waitFor(() => {
@@ -289,9 +314,11 @@ test("Timeout Handling", async () => {
   const queue = getOrCreateSessionQueue(sessionID)
   queue.isIdle = true
 
-  const runRes = await background_run.execute(
-    { command: "sleep 10", mode: "on_completion", interval: 20, lines: 20, timeout: 200 },
-    { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+  const runRes = parseResult(
+    await background_run.execute(
+      { command: "sleep 10", mode: "on_completion", interval: 20, lines: 20, timeout: 200 },
+      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+    ),
   )
 
   await waitFor(() => {
@@ -373,9 +400,11 @@ test("Status Inspection & Session Isolation", async () => {
 
   const { background_run, background_status } = plugin.tool!
 
-  const res = await background_run.execute(
-    { command: 'echo "status test line 1" && echo "status test line 2"', mode: "on_completion", interval: 20, lines: 20 },
-    { sessionID: "session-alpha", directory: process.cwd(), ask: async () => {} } as any,
+  const res = parseResult(
+    await background_run.execute(
+      { command: 'echo "status test line 1" && echo "status test line 2"', mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID: "session-alpha", directory: process.cwd(), ask: async () => {} } as any,
+    ),
   )
 
   await waitFor(() => {
@@ -384,9 +413,11 @@ test("Status Inspection & Session Isolation", async () => {
   })
 
   // Same session status inspection
-  const statusRes = await background_status.execute(
-    { command_id: res.command_id, lines: 10 },
-    { sessionID: "session-alpha" } as any,
+  const statusRes = parseResult(
+    await background_status.execute(
+      { command_id: res.command_id, lines: 10 },
+      { sessionID: "session-alpha" } as any,
+    ),
   )
 
   assert.equal(statusRes.command_id, res.command_id)
@@ -395,9 +426,11 @@ test("Status Inspection & Session Isolation", async () => {
   assert.ok(statusRes.recent_output.includes("status test line 1"))
 
   // lines: 0 inspection
-  const statusZero = await background_status.execute(
-    { command_id: res.command_id, lines: 0 },
-    { sessionID: "session-alpha" } as any,
+  const statusZero = parseResult(
+    await background_status.execute(
+      { command_id: res.command_id, lines: 0 },
+      { sessionID: "session-alpha" } as any,
+    ),
   )
   assert.equal(statusZero.recent_output, "")
 
@@ -450,15 +483,19 @@ test("Manual Stop & Idempotency", async () => {
   const queue = getOrCreateSessionQueue(sessionID)
   queue.isIdle = true
 
-  const runRes = await background_run.execute(
-    { command: "sleep 60", mode: "on_completion", interval: 20, lines: 20 },
-    { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+  const runRes = parseResult(
+    await background_run.execute(
+      { command: "sleep 60", mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+    ),
   )
 
   // Terminate running command
-  const stopRes = await background_stop.execute(
-    { command_id: runRes.command_id },
-    { sessionID } as any,
+  const stopRes = parseResult(
+    await background_stop.execute(
+      { command_id: runRes.command_id },
+      { sessionID } as any,
+    ),
   )
 
   assert.equal(stopRes.command_id, runRes.command_id)
@@ -469,9 +506,11 @@ test("Manual Stop & Idempotency", async () => {
   assert.equal(record.stoppedByUser, true)
 
   // Verify subsequent stop is idempotent
-  const secondStop = await background_stop.execute(
-    { command_id: runRes.command_id },
-    { sessionID } as any,
+  const secondStop = parseResult(
+    await background_stop.execute(
+      { command_id: runRes.command_id },
+      { sessionID } as any,
+    ),
   )
   assert.equal(secondStop.status, "stopped")
 
@@ -596,9 +635,11 @@ test("Session Lifecycle Events Handling", async () => {
 
   // Test session.deleted cleanup
   const { background_run } = plugin.tool!
-  const runRes = await background_run.execute(
-    { command: "sleep 30", mode: "on_completion", interval: 20, lines: 20 },
-    { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+  const runRes = parseResult(
+    await background_run.execute(
+      { command: "sleep 30", mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+    ),
   )
 
   assert.equal(commandRegistry.has(runRes.command_id), true)
@@ -635,9 +676,11 @@ test("Resilience to promptAsync transient dispatch errors", async () => {
   const queue = getOrCreateSessionQueue(sessionID)
   queue.isIdle = true
 
-  const runRes = await background_run.execute(
-    { command: "sleep 5", mode: "on_completion", interval: 20, lines: 20 },
-    { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+  const runRes = parseResult(
+    await background_run.execute(
+      { command: "sleep 5", mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+    ),
   )
 
   // Enqueue a progress event which triggers flush

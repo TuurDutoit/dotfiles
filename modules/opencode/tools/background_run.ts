@@ -47,7 +47,12 @@ export default {
     },
   },
   async execute(args: any, context: any) {
-    const plugin = await pluginPromise
-    return plugin.tool.background_run.execute(args, context)
+    try {
+      const plugin = await pluginPromise
+      return await plugin.tool.background_run.execute(args, context)
+    } catch (err: any) {
+      console.error("[background_run tool error]", err?.stack ?? err)
+      throw err
+    }
   },
 }

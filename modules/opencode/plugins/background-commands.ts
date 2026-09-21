@@ -726,12 +726,16 @@ export const BackgroundCommandsPlugin: Plugin = async (input?: any) => {
             }
           }
 
-          return {
+          const payload = {
             command_id,
             status: "running",
             workdir: resolvedWorkdir,
             log_path: logPath,
             initial_output: "",
+          }
+          return {
+            output: JSON.stringify(payload, null, 2),
+            metadata: payload,
           }
         },
       },
@@ -764,13 +768,17 @@ export const BackgroundCommandsPlugin: Plugin = async (input?: any) => {
 
           const preview = readTailPreview(record.logPath, lines, MAX_OUTPUT_CHARS)
 
-          return {
+          const payload = {
             command_id: record.command_id,
             status: record.status,
             exit_code: record.exitCode,
             log_path: record.logPath,
             recent_output: preview.text,
             truncated: preview.truncated,
+          }
+          return {
+            output: JSON.stringify(payload, null, 2),
+            metadata: payload,
           }
         },
       },
@@ -793,10 +801,14 @@ export const BackgroundCommandsPlugin: Plugin = async (input?: any) => {
           }
 
           if (record.status !== "running") {
-            return {
+            const payload = {
               command_id: record.command_id,
               status: record.status,
               message: "Process is already terminated.",
+            }
+            return {
+              output: JSON.stringify(payload, null, 2),
+              metadata: payload,
             }
           }
 
@@ -817,10 +829,14 @@ export const BackgroundCommandsPlugin: Plugin = async (input?: any) => {
 
           terminateProcessGroup(record.pgid, 2000)
 
-          return {
+          const payload = {
             command_id: record.command_id,
             status: "stopped",
             message: "Process group terminated successfully.",
+          }
+          return {
+            output: JSON.stringify(payload, null, 2),
+            metadata: payload,
           }
         },
       },
