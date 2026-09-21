@@ -52,22 +52,36 @@ Two version levels coexist: the **manifest snapshot number** (e.g. 365) and the 
 
 ## 6. QA on staging
 
-Derive the test spec from context first: a shared plan, the Jira ticket if it's already in context, or the PR description may already state the intended change and acceptance criteria — use that. Ask the user only when no test spec exists in context, and for anything you need to run it (credentials, feature flags). Then exercise the change against `https://www.datacamp-staging.com` — pick the right tool per surface:
+Derive the test spec from context first: a shared plan, the Jira ticket if it's already in context, or the PR description may already state the intended change and acceptance criteria — use that. Ask the user only when no test spec exists in context, and for anything you need to run it (credentials, feature flags).
 
-- **OpenChamber browser** for UI flows.
-- **webfetch** for simple GETs.
-- **curl** for anything webfetch can't do: POST/PUT with bodies, auth headers, cookies, or checking API responses the change touches. Never print secrets in logs.
+Then dispatch the `tester` subagent with a structured QA plan — you never run the tests yourself. Write the plan once; step 8 reuses it verbatim with only the base URL swapped. Each test in the plan specifies:
 
-- **QA fails** → report exactly what failed (steps, evidence, error messages) and stop.
-- **QA passes** → proceed to step 7.
+- **name** — short id used in the report, e.g. `exercise-search-filters`
+- **tool** — `openchamber-browser` for UI flows, `webfetch` for simple GETs, `curl` for anything webfetch can't do: POST/PUT with bodies, auth headers, cookies, or checking API responses the change touches
+- **URL** — the exact path or endpoint, relative to the environment's base URL (staging: `https://www.datacamp-staging.com`)
+- **steps** — what to do, in order
+- **assertions** — what must be true to pass: HTTP status, visible text, JSON shape or field values
+- **setup** — credentials, cookies, feature flags, or a login flow the tester needs (reference env vars or credential sources; never embed raw secrets in the plan)
+
+The `tester` agent only executes the plan and reports per-test PASS/FAIL with evidence — it does not investigate or fix failures. Triage is yours (see below).
+
+- **All tests pass** → proceed to step 7.
+- **Any test fails or is blocked** → failure triage:
+
+### Failure triage
+
+The tester reports findings; you judge them. For each failure, make a simple causal estimate from the context of the changes: did this PR touch the code paths, routes, templates, or config the failing test exercises? One sentence is enough, e.g. "not likely related to the changes: this PR only touched X, and the failure is in Y".
+
+- **Likely caused by the changes** → report exactly what failed (test, steps, evidence, error messages) plus your estimate, and stop.
+- **Not likely caused by the changes** → report the failure, your estimate, and the deployed tag, then ask the user whether to proceed anyway or investigate separately. Do not rerun QA hoping for a different result.
 
 ## 7. Production
 
 Most apps auto-promote: the `deploy <app> in prod` build starts ~1–2 minutes after staging succeeds. Some critical apps require a manual promote — if no prod build appears for your tag after staging QA passed, the app is in that category.
 
 - **Auto-promote**: watch the prod build succeed with your tag (same log check as step 5), then go to step 8.
-- **Manual promote**: tell the user QA on staging passed — say **what** you tested and **how** — and that they can promote to prod. Wait for them to confirm the promotion, then continue to step 8.
+- **Manual promote**: tell the user QA on staging passed — summarize the QA plan results — and that they can promote to prod. Wait for them to confirm the promotion, then continue to step 8.
 
 ## 8. QA on production
 
-Repeat the same test set from step 6 against `https://www.datacamp.com`, then report the final result: what was deployed (tag, commit), what was verified on staging and prod, and any residual caveats.
+Rerun the QA plan from step 6 with the `tester` subagent against `https://www.datacamp.com`, apply the same failure triage, then report the final result: what was deployed (tag, commit), what was verified on staging and prod, and any residual caveats.
