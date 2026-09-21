@@ -670,12 +670,6 @@ test("Resilience to promptAsync transient dispatch errors", async () => {
   assert.equal(record?.status, "running")
 })
 
-test("RTK plugin export check", async () => {
-  const mod = await import("../modules/opencode/plugins/rtk.ts")
-  assert.equal(typeof mod.default, "function")
-  assert.equal(typeof mod.RtkOpenCodePlugin, "function")
-})
-
 test("Old Logs Pruning (> 7 days)", () => {
   const tmpLogDir = path.join(os.tmpdir(), `test-prune-logs-${Date.now()}`)
   fs.mkdirSync(tmpLogDir, { recursive: true })

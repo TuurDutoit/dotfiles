@@ -477,7 +477,7 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
     tool: {
       background_run: tool({
         description:
-          "Spawns a shell command in the background, attaches log streaming to an isolated log file, and notifies the session upon completion or at periodic monitor intervals.",
+          "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use 'on_completion' mode (default) for CI checks (e.g. gh pr checks --watch), builds, or migrations to be notified once upon exit. Use 'monitor' mode to stream batched updates of new matching output at periodic intervals (e.g. for dev servers, watch runners). Automatic system notifications delivered to the conversation are marked with [System Notification: Background Command ...] and reflect machine output.",
         args: {
           command: z.string().describe("Shell command to execute in the background."),
           mode: z
@@ -723,7 +723,8 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
       }),
 
       background_status: tool({
-        description: "Queries the current status and reads recent output for an active or completed background command.",
+        description:
+          "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id.",
         args: {
           command_id: z.string().describe("The handle of the background command to inspect."),
           lines: z
@@ -758,7 +759,8 @@ export const BackgroundCommandsPlugin: Plugin = async ({ client, directory }) =>
       }),
 
       background_stop: tool({
-        description: "Terminates an active background process group and suppresses asynchronous completion notices.",
+        description:
+          "Terminates a running background command and its spawned process group (SIGTERM escalating to SIGKILL) and suppresses asynchronous completion notices. Calling on an already finished command is idempotent and returns its recorded terminal status.",
         args: {
           command_id: z.string().describe("The handle of the command to terminate."),
         },

@@ -2,3 +2,4 @@ gitconfig.local.symlink
 out/
 node_modules/
 **/*.local.zsh
+modules/opencode/plugins/rtk.ts

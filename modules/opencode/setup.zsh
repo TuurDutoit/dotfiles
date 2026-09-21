@@ -38,3 +38,9 @@ do
     && success "linked OpenCode $name" \
     || fail "failed to link OpenCode $name"
 done
+
+if command -v rtk > /dev/null
+then
+  rtk init -g --opencode
+  success 'initialized rtk OpenCode plugin'
+fi
