@@ -6,6 +6,7 @@
 - Use the `git-github-workflow` skill for all Git, GitHub, and pull request work.
 - Use the `pr` skill when opening a PR
 - Use the `circleci-investigate-job-failures` skill to investigate CircleCI failures
+- Use the `show-me` skill when writing docs, specs, or plans, or when explaining things to me (diagrams, code sketches, focused artifacts)
 
 - Use the `bt` CLI to interact with Braintrust (reference: `braintrust-cli` skill)
 - My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
