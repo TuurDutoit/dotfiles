@@ -1,17 +1,11 @@
 ---
 name: "spec"
-description: "Simple single-document specification for small projects and small changes — captures intent (problem statement & context), user-focused specs, and technical architecture in a single spec.md file. Use when planning smaller tasks, bug fixes, or features where multi-stage SDLC is overkill."
+description: "Simple single-document specification — captures intent (problem statement & context), user-focused specs, and technical architecture in a single spec.md file through an iterative interview workflow."
 ---
 
 # Spec: Intent → User Spec → Technical Architecture
 
-A lightweight, single-agent specification skill for small projects and small
-changes. Instead of splitting work across four separate stages and sessions
-(`intent.md` → `spec.md` → `architecture.md` → `plan.md`), 1 agent in 1 session
-produces **1 unified document** (`spec.md`).
-
-For large projects where each stage requires deep independent refinement,
-explore subagents, and separate reviews, use the `sdlc` skill instead.
+A lightweight specification skill that produces **1 unified document** (`spec.md`) through an iterative interview workflow.
 
 ## The Document: `spec.md`
 
@@ -30,17 +24,6 @@ The single artifact combines:
    verification checks.
 
 Start from `references/templates/spec.md` in this skill.
-
-## Session Naming
-
-When starting a session with this skill, rename the session to:
-
-```
-<project_slug> - spec - <issue_name>
-```
-
-- **`<project_slug>`:** Resolved from the git remote (e.g. `learn-hub` from `git@github.com:datacamp-engineering/learn-hub.git`). With no remote, fall back to the canonical checkout directory name.
-- **`<issue_name>`:** Short descriptive name based on the ticket or request.
 
 ## Artifact Location
 
@@ -65,56 +48,52 @@ Artifacts inside the repository are committed once accepted.
 
 Follow these steps in order:
 
-### 1. Understand & Explore
+### 1. Ingest, Explore & Initialize
 
-- Review the user's request, tickets, and conversation context.
-- Explore the codebase using `grep`, `glob`, and `read` to understand existing
-  behavior, components, interfaces, and testing patterns. Delegate bulk searches
-  to an `explore` subagent if broad exploration is needed.
-- Check external boundaries:
-  - If changing/removing APIs or schemas, verify whether any consumers exist
-    across the org (e.g. GitHub search in `datacamp-engineering`).
-  - If dependent on external services or prior PRs, verify they are live.
+- Review the user's prompt, tickets, and existing conversation context.
+- Explore the codebase using `grep`, `glob`, and `read` to understand existing behavior, components, interfaces, and testing patterns. Check technical facts yourself first before asking questions.
+- Resolve the destination path for `spec.md` following the [Artifact Location](#artifact-location) rules.
+- Initialize `spec.md` at the resolved path from `references/templates/spec.md`.
 
-### 2. Draft `spec.md`
+### 2. Part-by-Part Interview & Write (Iterative Loop)
 
-- Copy `references/templates/spec.md` to the resolved artifact location.
-- Fill out all three core sections (Intent, User Spec, Technical Architecture & Plan).
-- Keep descriptions plain and concise. Avoid unnecessary jargon.
-- Flag any open questions, ambiguities, or trade-offs in the "Open Questions & Decisions" section.
+Work through each section of `spec.md` sequentially. For each part:
+1. **Interview**: Ask targeted questions (using the `question` tool or structured prompts) to uncover unknowns, probe assumptions, clarify ambiguities, and explore trade-offs.
+   - **Interview rules**:
+     - Ask 2–4 focused questions per round.
+     - Always provide recommendations, candidate drafts, or concrete options for Tuur to react to rather than open-ended questions.
+     - Find technical facts from the codebase first; save questions for requirements, decisions, and trade-offs.
+2. **Write**: Update that specific part in `spec.md` immediately with the clarified information and decisions.
+3. **Rinse & Repeat**: Move to the next part until all sections are written.
 
-### 3. Open-Questions Loop
+#### Part 1: Intent
+- **Interview**: Probe the core problem, why it matters, affected users/systems, proposed outcomes, hard constraints, and non-goals.
+- **Write**: Fill out `## 1. Intent` in `spec.md`.
 
-Before requesting review, resolve all open questions:
+#### Part 2: User-Focused Spec
+- **Interview**: Probe observable behaviors, user flows, UI/UX states, error feedback, edge cases, acceptance criteria, QA scenarios (Given/When/Then), and any executable/e2e specs.
+- **Write**: Fill out `## 2. User-Focused Spec` in `spec.md`.
 
-1. Gather open questions identified during drafting.
-2. Ask Tuur using the `question` tool — batching questions in a single call with concrete options where possible.
-3. Update `spec.md` with the answers, moving questions to resolved decisions.
-4. Repeat until no open questions remain.
+#### Part 3: Technical Architecture & Plan
+- **Interview**: Check external boundaries/APIs/schemas, confirm no broken downstream consumers, and discuss affected files, ordered implementation steps, and command-based / manual verification checks.
+- **Write**: Fill out `## 3. Technical Architecture & Plan` and `## 4. Open Questions & Decisions` in `spec.md`.
 
-### 4. Review Loop
+### 3. Review the Document
 
-Once open questions are resolved, run the review loop via a subagent:
+Once all sections are drafted:
+- Review the complete `spec.md` document for consistency, completeness, and clarity across logic, specs, and architecture (or dispatch the `reviewer` subagent via the `task` tool if a deeper review is helpful).
+- Fix any inconsistencies, gaps, or unresolved ambiguities identified during review in `spec.md`.
 
-1. Dispatch the `reviewer` agent through the `task` tool:
-   > Review `<path to spec.md>` with these dimensions: Logic, Specs, Architecture. Your findings go back to the dispatching agent — the comments come from another agent, not the user.
-2. Address the reviewer's findings in `spec.md`.
-3. Resume the reviewer subagent using its `task_id` with a summary of changes made for each finding.
-4. Repeat until the reviewer reports no important findings.
+### 4. Sign-Off & Approval
 
-### 5. Stage Gate & Approval
+- Present the completed `spec.md` (and a concise summary) to Tuur for review.
+- Get Tuur's explicit review and sign-off.
+- If Tuur requests changes, update `spec.md` and re-confirm.
+- Once approved:
+  - If `spec.md` is inside the repository, commit it.
 
-The spec is ready only when all three conditions are satisfied:
+### 5. Handoff for Implementation
 
-1. **Reviewer accepted:** The reviewer subagent confirms the output is acceptable (or Tuur explicitly overrides).
-2. **No open questions:** Every question is answered and recorded in the document.
-3. **Tuur approved:** Tuur has explicitly reviewed and approved `spec.md`.
+Once signed off, hand off to the `engineer` agent to implement the spec:
 
-Once approved:
-- If `spec.md` is inside the repository, commit it.
-
-### 6. Handoff
-
-When the spec is approved, hand off to the `engineer` agent to implement the spec:
-
-> Implement this spec: `<task dir>/spec.md`
+> Implement this spec: `<path to spec.md>`
