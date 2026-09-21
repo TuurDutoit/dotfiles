@@ -5,8 +5,8 @@ import path from "node:path"
 import os from "node:os"
 import {
   BackgroundCommandsPlugin,
-  commandRegistry,
-  sessionQueues,
+  getCommandRegistry,
+  getSessionQueues,
   cleanupAllCommands,
   readLogSlice,
   readTailPreview,
@@ -252,11 +252,11 @@ test("Process Lifecycle & Log Isolation", async () => {
 
   // Wait for process to complete
   await waitFor(() => {
-    const record = commandRegistry.get(runRes.command_id)
+    const record = getCommandRegistry().get(runRes.command_id)
     return record?.status === "completed"
   })
 
-  const record = commandRegistry.get(runRes.command_id)!
+  const record = getCommandRegistry().get(runRes.command_id)!
   assert.equal(record.status, "completed")
   assert.equal(record.exitCode, 0)
 
@@ -276,11 +276,11 @@ test("Process Lifecycle & Log Isolation", async () => {
   )
 
   await waitFor(() => {
-    const rec = commandRegistry.get(failRes.command_id)
+    const rec = getCommandRegistry().get(failRes.command_id)
     return rec?.status === "failed"
   })
 
-  const failRecord = commandRegistry.get(failRes.command_id)!
+  const failRecord = getCommandRegistry().get(failRes.command_id)!
   assert.equal(failRecord.status, "failed")
   assert.equal(failRecord.exitCode, 42)
 
@@ -322,11 +322,11 @@ test("Timeout Handling", async () => {
   )
 
   await waitFor(() => {
-    const record = commandRegistry.get(runRes.command_id)
+    const record = getCommandRegistry().get(runRes.command_id)
     return record?.status === "timed_out"
   }, 3000)
 
-  const record = commandRegistry.get(runRes.command_id)!
+  const record = getCommandRegistry().get(runRes.command_id)!
   assert.equal(record.status, "timed_out")
   assert.equal(record.exitCode, null)
 
@@ -408,7 +408,7 @@ test("Status Inspection & Session Isolation", async () => {
   )
 
   await waitFor(() => {
-    const rec = commandRegistry.get(res.command_id)
+    const rec = getCommandRegistry().get(res.command_id)
     return rec?.status === "completed"
   })
 
@@ -501,7 +501,7 @@ test("Manual Stop & Idempotency", async () => {
   assert.equal(stopRes.command_id, runRes.command_id)
   assert.equal(stopRes.status, "stopped")
 
-  const record = commandRegistry.get(runRes.command_id)!
+  const record = getCommandRegistry().get(runRes.command_id)!
   assert.equal(record.status, "stopped")
   assert.equal(record.stoppedByUser, true)
 
@@ -642,14 +642,14 @@ test("Session Lifecycle Events Handling", async () => {
     ),
   )
 
-  assert.equal(commandRegistry.has(runRes.command_id), true)
+  assert.equal(getCommandRegistry().has(runRes.command_id), true)
 
   await plugin.event!({
     event: { type: "session.deleted", properties: { info: { id: sessionID } } } as any,
   })
 
-  assert.equal(commandRegistry.has(runRes.command_id), false)
-  assert.equal(sessionQueues.has(sessionID), false)
+  assert.equal(getCommandRegistry().has(runRes.command_id), false)
+  assert.equal(getSessionQueues().has(sessionID), false)
 })
 
 test("Resilience to promptAsync transient dispatch errors", async () => {
@@ -703,7 +703,7 @@ test("Resilience to promptAsync transient dispatch errors", async () => {
   await new Promise((r) => setTimeout(r, 50))
 
   // Process should still be registered and running, not terminated
-  const record = commandRegistry.get(runRes.command_id)
+  const record = getCommandRegistry().get(runRes.command_id)
   assert.ok(record)
   assert.equal(record?.status, "running")
 })

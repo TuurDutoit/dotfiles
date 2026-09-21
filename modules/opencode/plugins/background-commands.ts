@@ -47,7 +47,7 @@ export interface SessionQueue {
   isIdle: boolean
 }
 
-export function tool<
+function tool<
   T extends {
     description: string
     args: Record<string, any>
@@ -60,10 +60,19 @@ export function tool<
 const MAX_OUTPUT_CHARS = 10000
 const LOG_PRUNE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
 
-// In-memory registries
-export const commandRegistry = new Map<string, CommandRecord>()
-export const sessionQueues = new Map<string, SessionQueue>()
+// In-memory registries (internal to module, accessed via functions)
+const commandRegistry = new Map<string, CommandRecord>()
+const sessionQueues = new Map<string, SessionQueue>()
 let commandCounter = 0
+let activeClient: any = null
+
+export function getCommandRegistry(): Map<string, CommandRecord> {
+  return commandRegistry
+}
+
+export function getSessionQueues(): Map<string, SessionQueue> {
+  return sessionQueues
+}
 
 function getLogDir(): string {
   const logDir = path.join(os.homedir(), ".opencode", "logs")
@@ -362,6 +371,7 @@ export async function flushSessionQueue(
   sessionID: string,
   client?: any,
 ): Promise<void> {
+  const c = client ?? activeClient
   const queue = sessionQueues.get(sessionID)
   if (!queue || queue.items.length === 0) return
 
@@ -394,9 +404,9 @@ export async function flushSessionQueue(
 
   const messageText = formatBatchedEvents(finalEvents)
 
-  if (client?.session?.promptAsync) {
+  if (c?.session?.promptAsync) {
     try {
-      await client.session.promptAsync({
+      await c.session.promptAsync({
         path: { id: sessionID },
         body: { parts: [{ type: "text", text: messageText }] },
       })
@@ -413,6 +423,7 @@ export function enqueueEvent(
   event: NotificationEvent,
   client?: any,
 ): void {
+  const c = client ?? activeClient
   const queue = getOrCreateSessionQueue(sessionID)
 
   // Coalesce within queue: if terminal event, replace any existing progress for this command
@@ -423,7 +434,7 @@ export function enqueueEvent(
 
   // Immediate flush if session is currently idle
   if (queue.isIdle) {
-    flushSessionQueue(sessionID, client)
+    flushSessionQueue(sessionID, c)
     return
   }
 
@@ -433,7 +444,7 @@ export function enqueueEvent(
       queue.timerExpired = true
       queue.debounceTimer = null
       if (queue.isIdle) {
-        flushSessionQueue(sessionID, client)
+        flushSessionQueue(sessionID, c)
       }
     }, 500)
 
@@ -469,7 +480,10 @@ process.on("SIGTERM", cleanupAllCommands)
 process.on("exit", cleanupAllCommands)
 
 export const BackgroundCommandsPlugin: Plugin = async (input?: any) => {
-  const client = input?.client
+  const client = input?.client ?? activeClient
+  if (input?.client) {
+    activeClient = input.client
+  }
   const directory = input?.directory
   const logDir = getLogDir()
   pruneOldLogs(logDir)
