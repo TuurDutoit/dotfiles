@@ -1,21 +1,19 @@
 ---
 mode: all
-description: >-
-  Apache Airflow specialist. Use for DAGs, DAG runs, task instances, task
-  logs, schedules, retries, and Airflow variables and connections. When
-  calling this agent, describe what it needs (e.g. "why did dag X fail
-  last night?", "when does dag Y next run?") and it returns the answer
-  with the relevant run or task details.
-# model-category: tools
-model: openrouter/google/gemini-3.7-flash
+description: Apache Airflow specialist. Use for DAGs, DAG runs, task instances,
+  task logs, schedules, retries, and Airflow variables and connections. When
+  calling this agent, describe what it needs (e.g. "why did dag X fail last
+  night?", "when does dag Y next run?") and it returns the answer with the
+  relevant run or task details.
+model: openrouter/z-ai/glm-5.3-flash
 tools:
-  "postman_*": false
-  "chrome-devtools_*": false
-  "circleci_*": false
-  "sentry_*": false
-  "datadog_*": false
-  "mcp-internal-tooling_*": false
-  "mcp-internal-tooling_airflow_*": true
+  postman_*: false
+  chrome-devtools_*: false
+  circleci_*: false
+  sentry_*: false
+  datadog_*: false
+  mcp-internal-tooling_*: false
+  mcp-internal-tooling_airflow_*: true
 ---
 
 You are an Apache Airflow specialist. You trace DAG runs and task instances and pinpoint failures.

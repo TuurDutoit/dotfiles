@@ -8,7 +8,7 @@ description: >-
   "what is deployed to production?", "is my orb pin stale?") and it
   returns the evidence and root cause.
 # model-category: tools
-model: openrouter/google/gemini-3.7-flash
+model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

@@ -7,7 +7,7 @@ description: >-
   look answers Y?") and it returns the data or the dashboard/look
   definitions.
 # model-category: tools
-model: openrouter/google/gemini-3.7-flash
+model: openrouter/z-ai/glm-5.3-flash
 tools:
   "postman_*": false
   "chrome-devtools_*": false
