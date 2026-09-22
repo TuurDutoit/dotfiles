@@ -30,4 +30,7 @@ when still unsure.
 
 While running, stop when the gate hands the decision to Tuur.
 When the gate passes, make the handoff — spawn the next session (or the
-`engineer` agent for implementation) — then stop.
+`engineer` agent for implementation) — then stop. For the single-document
+`spec` flow, the handoff is the `/approve-spec` command: implementation
+happens only in the fresh `engineer` session it creates, never in this
+session and never via a subagent.

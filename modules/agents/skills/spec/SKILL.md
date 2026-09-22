@@ -94,11 +94,16 @@ Once all sections are drafted:
 - Present the completed `spec.md` (and a concise summary) to Tuur for review.
 - Get Tuur's explicit review and sign-off.
 - If Tuur requests changes, update `spec.md` and re-confirm.
-- Once approved:
-  - If `spec.md` is inside the repository, commit it.
 
-### 5. Handoff for Implementation
+### 5. Approval & Handoff
 
-Once signed off, hand off to the `engineer` agent to implement the spec:
+Approval and handoff are one step, encoded in the `/approve-spec` command:
 
-> Implement this spec: `<path to spec.md>`
+- When Tuur types `/approve-spec` (with the path to `spec.md` as its
+  argument), the command text arrives as the prompt — follow it.
+- When Tuur approves in words, apply the command's same steps: mark the
+  spec accepted, commit it when it lives inside the repository, and create
+  a fresh `engineer` session carrying the implementation brief.
+
+Implementation happens only in the new `engineer` session — never in this
+session, never via a subagent or Task dispatch.
