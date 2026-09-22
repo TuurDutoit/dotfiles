@@ -79,3 +79,5 @@ brew "d2"
 # Safe, concurrent, practical language
 brew "rust"
 cask "todoist-app"
+# Git extension for versioning large files
+brew "git-lfs"
