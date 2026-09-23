@@ -28,6 +28,14 @@ description: "Use when working with Git, GitHub, commits, branches, pull request
 
 ## Pull Request Descriptions
 
+The description is written for reviewers, who see only the diff and the linked
+ticket. Include only what they need to review and QA the change, and only
+information derivable from the code or the linked Jira ticket — never from the
+spec, the plan, or the working conversation: decisions made during
+implementation ("D7 updated during implementation (Tuur's request)"), approach
+changes agreed along the way, or references to documents reviewers cannot
+open. If a decision changed the code, the diff already shows the result.
+
 Stay within the repo's PR template if there is one. Otherwise, use this concise, reviewer-focused structure. It should help reviewers understand the intent, evaluate the implementation, and verify the result; avoid file-by-file changelogs and minor details.
 
 ```md
@@ -35,30 +43,25 @@ Stay within the repo's PR template if there is one. Otherwise, use this concise,
 What changed and why. In one or two sentences, describe the user experience change or problem being solved; avoid implementation details.
 
 ## Context
-Relevant background, issue link, or problem being solved.
+Relevant background from the linked ticket, or the problem being solved.
 
 ## Changes
 Briefly describe the main implementation changes in one to three sentences or bullets. Give a high-level overview of the approach and any meaningful tradeoffs; do not list files or minor details.
 
 Call out external-service impact here, including API changes, database schema changes, new environment variables, or dependencies. State when there is no such impact.
 
-## Testing
-Explain how it was tested:
-- Automated tests run
-- Manual verification
-- Any tests not run, and why
+## QA plan
+Skip type checks, linting, and unit tests — CI already runs and gates them. Give reviewers a short QA plan instead: one titled line per case, in the form `As <user>, <action> -> <expected result>`, covering positive, negative, and regression cases. For example:
 
-Explain how reviewers can test the app for themselves. Keep it brief, including the minimum setup and a QA plan covering positive, negative, and regression cases.
+- As a B2C user, open the learn-hub home page -> credits balance is shown in the header
 
 ## Screenshots or recordings
-Include these for UI changes.
+Required whenever the diff changes anything visible (UI, styling, layout, emails): attach a screenshot, or a screen recording for interactions or animations.
 
 ## Risks and rollout
 Mention migrations, feature flags, backward compatibility, monitoring, or rollback considerations.
 
 ## Checklist:
-- [ ] Tests pass
-- [ ] Changes verified
 - [ ] Documentation updated, if needed
 - [ ] Analytics or monitoring added, if needed
 - [ ] Breaking changes called out

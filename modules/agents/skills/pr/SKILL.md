@@ -8,6 +8,10 @@ description: "Create a PR and babysit CI until green; merging a PR also triggers
 This skill creates a pull request, performs the matching review handoff, and
 then runs **`/dc-babysit-pr`** to monitor and fix CI until all checks pass.
 
+Every PR body this skill creates — in both modes — follows the **Pull Request
+Descriptions** rules in **`/git-github-workflow`**; they override
+**`/dc-create-pr`'s** drafting defaults.
+
 ## Modes
 
 Treat a standalone `draft` argument (for example, `/pr draft`) as the explicit
