@@ -58,9 +58,9 @@ Two version levels coexist: the **manifest snapshot number** (e.g. 365) and the 
 
 ## 7. QA on staging
 
-Derive the test spec from context first: a shared plan, the Jira ticket if it's already in context, or the PR description may already state the intended change and acceptance criteria — use that. Ask the user only when no test spec exists in context, and for anything you need to run it (credentials, feature flags).
+The QA plan comes from the spec doc for this change. Locate the full QA plan there and dispatch the `tester` subagent with it — you never run the tests yourself. Pass the plan verbatim and complete: every test, in the spec doc's own wording and order. Never interpret, subset, reword, or customize it — not even when the PR description or Jira ticket suggests different tests. The plan is written once, in the spec doc; step 9 reuses it verbatim with only the base URL swapped.
 
-Then dispatch the `tester` subagent with a structured QA plan — you never run the tests yourself. Write the plan once; step 9 reuses it verbatim with only the base URL swapped. Each test in the plan specifies:
+If there is no spec doc or it has no QA plan, ask the user for the plan — do not write one yourself. Also ask the user for anything you need to run it (credentials, feature flags). Each test in the plan specifies:
 
 - **name** — short id used in the report, e.g. `exercise-search-filters`
 - **tool** — `openchamber-browser` for UI flows, `webfetch` for simple GETs, `curl` for anything webfetch can't do: POST/PUT with bodies, auth headers, cookies, or checking API responses the change touches
@@ -92,7 +92,7 @@ Once the prod build has succeeded with your tag — and only then — transition
 
 ## 9. QA on production
 
-Rerun the QA plan from step 7 with the `tester` subagent against `https://www.datacamp.com`. The gate is absolute:
+Rerun the full QA plan from step 7, verbatim, with the `tester` subagent against `https://www.datacamp.com`. The gate is absolute:
 
 - **Every test executed and passed** → proceed to step 10.
 - **Anything failed or untestable** — a real failure, a blocked flow, a case needing a specific user or credential, a broken or stuck deployment — report exactly what failed or could not be tested and why, with evidence, then **stop** and let the user resolve it. Do not rerun QA hoping for a different result, and the staging failure-triage escape does not apply here: there is no "not likely related" pass on prod. Only when every QA case has been tested and passed does the next step open.
