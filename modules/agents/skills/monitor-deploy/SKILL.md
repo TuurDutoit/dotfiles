@@ -45,7 +45,7 @@ The run can take seconds to a minute after the tag to appear — poll.
 
 ## 6. Watch staging build the tag
 
-Track `generate manifest` (snapshot of source, infra config, env vars) then `deploy <app> in staging`. Builds deploy by **git tag**, so the version is what matters, not the build number: another merge that landed after yours deploys a newer tag first. Confirm this run carries *your* tag via `concourse_get_concourse_deploy_log {serviceName, environment, buildId, grep: "<tag>"}` — the build log prints the deployed version in its Ansible facts block:
+Track `generate manifest` (snapshot of source, infra config, env vars) then `deploy <app> in staging`. Builds deploy by **git tag**, so the version is what matters, not the build number: another merge that landed after yours deploys a newer tag first. Confirm this run carries _your_ tag via `concourse_get_concourse_deploy_log {serviceName, environment, buildId, grep: "<tag>"}` — the build log prints the deployed version in its Ansible facts block:
 
 ```
 "code_ci": {"commit_hash": "6eae…", "version": "1.0.324", …}
@@ -119,8 +119,8 @@ Then present the deploy report below — filled with your recorded tags, manifes
 | <name> | PASS | PASS |
 
 **Security review draft**
-- Could this change affect security? <draft: yes/no + why>
-- Security Impact and Mitigation Details: <draft: surface touched, exposure, mitigations>
+- Could this change affect security? <draft: yes/no>
+- Security Impact and Mitigation Details: <draft: *why* you selected yes or no - surface touched, exposure, mitigations>
 ```
 
 ## 11. Move the ticket to Done
