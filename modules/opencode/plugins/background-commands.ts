@@ -105,6 +105,25 @@ function isInteractiveSession(): boolean {
   return true
 }
 
+// Subagent sessions (spawned by the Task tool) always carry a parentID on their
+// session record (verified against opencode's tool/task.ts: sessions.create({
+// parentID: ctx.sessionID, ... })). Background jobs rely on async
+// notifications waking the owning session, which does not work in subagents —
+// they exit while waiting — so background_run must be rejected there. Fails
+// open when the session API is unavailable so the main session is never blocked.
+async function isSubagentSession(client: any, sessionID: string): Promise<boolean> {
+  try {
+    const res = await client?.session?.get?.({ path: { id: sessionID } })
+    return typeof res?.data?.parentID === "string" && res.data.parentID.length > 0
+  } catch (err: any) {
+    console.warn(
+      `[background-commands] Could not verify whether session ${sessionID} is a subagent:`,
+      err?.message ?? err,
+    )
+    return false
+  }
+}
+
 function terminateProcessGroup(
   pgid: number,
   graceMs = 2000,
@@ -489,6 +508,7 @@ export const BackgroundCommandsPlugin: Plugin & {
   getSessionQueues: () => Map<string, SessionQueue>
   pruneOldLogs: typeof pruneOldLogs
   isInteractiveSession: typeof isInteractiveSession
+  isSubagentSession: typeof isSubagentSession
   terminateProcessGroup: typeof terminateProcessGroup
   readLogSlice: typeof readLogSlice
   readTailPreview: typeof readTailPreview
@@ -512,7 +532,12 @@ export const BackgroundCommandsPlugin: Plugin & {
       tool: {
         background_run: tool({
           description:
-            "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use this tool ONLY fire-and-forget: after the call returns, END YOUR TURN (or continue unrelated work) — never wait on the command with a synchronous shell command, and never spawn a second shell to cat/tail/poll the log file. If you need to block until a command finishes or poll it repeatedly, use the bash tool instead — do NOT use background_run for that. The plugin wakes you up automatically: notifications are pushed into the conversation as [System Notification: Background Command ...] messages and reflect machine output. In 'on_completion' mode (default) you are woken once when the command exits — use for CI checks (e.g. gh pr checks --watch), builds, or migrations. In 'monitor' mode you are additionally woken with batched progress updates of new matching output every `interval` seconds — use for dev servers, watch runners, or long logs where you want to steer early. If you have nothing else to do, simply stop; the notification resumes you. background_status is not for polling: use it only to check up on the job after doing other work; if the job is still running and you have no other work, END YOUR TURN and wait for the notification.",
+            // Agent-facing background_status reference removed while that tool is
+            // temporarily disabled: "background_status is not for polling: use it
+            // only to check up on the job after doing other work; if the job is
+            // still running and you have no other work, END YOUR TURN and wait for
+            // the notification."
+            "Spawns a shell command in the background within an isolated process group and streams logs to ~/.opencode/logs/<command_id>.log. Use this tool ONLY fire-and-forget: after the call returns, END YOUR TURN (or continue unrelated work) — never wait on the command with a synchronous shell command, and never spawn a second shell to cat/tail/poll the log file. If you need to block until a command finishes or poll it repeatedly, use the bash tool instead — do NOT use background_run for that. The plugin wakes you up automatically: notifications are pushed into the conversation as [System Notification: Background Command ...] messages and reflect machine output. In 'on_completion' mode (default) you are woken once when the command exits — use for CI checks (e.g. gh pr checks --watch), builds, or migrations. In 'monitor' mode you are additionally woken with batched progress updates of new matching output every `interval` seconds — use for dev servers, watch runners, or long logs where you want to steer early. If you have nothing else to do, simply stop; the notification resumes you. If the job is still running and you have no other work, END YOUR TURN and wait for the notification.",
           args: {
             command: {
               type: "string",
@@ -563,6 +588,14 @@ export const BackgroundCommandsPlugin: Plugin & {
               throw new Error("Parameter 'command' is required and must be a non-empty string.")
             }
 
+            const sessionID = context?.sessionID ?? "default"
+
+            if (await isSubagentSession(client, sessionID)) {
+              throw new Error(
+                "Background commands are not supported in subagent sessions: a subagent exits while waiting and never receives the completion notification, so it would report the job as exited while it is still running. Run this command in the main session, or use the bash tool.",
+              )
+            }
+
             const mode = args.mode ?? "on_completion"
             const interval = typeof args.interval === "number" ? Math.max(10, args.interval) : 20
             const lines = typeof args.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
@@ -599,7 +632,6 @@ export const BackgroundCommandsPlugin: Plugin & {
               })
             }
 
-            const sessionID = context?.sessionID ?? "default"
             getOrCreateSessionQueue(sessionID)
 
             const timestamp = Math.floor(Date.now() / 1000)
@@ -774,52 +806,55 @@ export const BackgroundCommandsPlugin: Plugin & {
           },
         }),
 
-        background_status: tool({
-          description:
-            "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id. This is a check-up tool, NOT a polling tool: call it only when you have done other work and want a quick look at the job; each call discards the job's queued notifications so you will not be re-woken with information you already have. If the job is still running and you have no more other work, END YOUR TURN and wait for the [System Notification: Background Command ...] update — do NOT call this repeatedly to wait for completion (to block or poll, use the bash tool), and never read the log file with shell commands.",
-          args: {
-            command_id: {
-              type: "string",
-              description: "The handle of the background command to inspect.",
-            },
-            lines: {
-              type: "integer",
-              minimum: 0,
-              maximum: 100,
-              default: 20,
-              description:
-                "Number of most recent lines to return from the log (default: 20, min: 0, max: 100). Always capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output (returns empty string).",
-            },
-          },
-          async execute(args: any, context: any) {
-            const sessionID = context?.sessionID ?? "default"
-            const lines = typeof args?.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
-            const record = commandRegistry.get(args.command_id)
-
-            if (!record || record.sessionID !== sessionID) {
-              throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
-            }
-
-            // The agent now has first-hand status/output for this job; drop any
-            // queued notifications for it so it is not re-woken with duplicates.
-            discardQueuedEvents(sessionID, record.command_id)
-
-            const preview = readTailPreview(record.logPath, lines, MAX_OUTPUT_CHARS)
-
-            const payload = {
-              command_id: record.command_id,
-              status: record.status,
-              exit_code: record.exitCode,
-              log_path: record.logPath,
-              recent_output: preview.text,
-              truncated: preview.truncated,
-            }
-            return {
-              output: JSON.stringify(payload, null, 2),
-              metadata: payload,
-            }
-          },
-        }),
+        // DISABLED (temporary experiment): background_status was removed from the
+        // tool list because agents over-used it against its own instructions.
+        // Code kept here so it can be re-enabled by un-commenting.
+        // background_status: tool({
+        //   description:
+        //     "Inspects the live status ('running', 'completed', 'failed', 'timed_out', 'stopped'), exit code, log file path, and recent output preview for an active or finished background command by command_id. This is a check-up tool, NOT a polling tool: call it only when you have done other work and want a quick look at the job; each call discards the job's queued notifications so you will not be re-woken with information you already have. If the job is still running and you have no more other work, END YOUR TURN and wait for the [System Notification: Background Command ...] update — do NOT call this repeatedly to wait for completion (to block or poll, use the bash tool), and never read the log file with shell commands.",
+        //   args: {
+        //     command_id: {
+        //       type: "string",
+        //       description: "The handle of the background command to inspect.",
+        //     },
+        //     lines: {
+        //       type: "integer",
+        //       minimum: 0,
+        //       maximum: 100,
+        //       default: 20,
+        //       description:
+        //         "Number of most recent lines to return from the log (default: 20, min: 0, max: 100). Always capped at 10,000 characters, keeping the most recent output. Pass 0 to omit output (returns empty string).",
+        //     },
+        //   },
+        //   async execute(args: any, context: any) {
+        //     const sessionID = context?.sessionID ?? "default"
+        //     const lines = typeof args?.lines === "number" ? Math.max(0, Math.min(100, args.lines)) : 20
+        //     const record = commandRegistry.get(args.command_id)
+        //
+        //     if (!record || record.sessionID !== sessionID) {
+        //       throw new Error(`command_id_not_found: Handle '${args.command_id}' does not exist or belongs to another session.`)
+        //     }
+        //
+        //     // The agent now has first-hand status/output for this job; drop any
+        //     // queued notifications for it so it is not re-woken with duplicates.
+        //     discardQueuedEvents(sessionID, record.command_id)
+        //
+        //     const preview = readTailPreview(record.logPath, lines, MAX_OUTPUT_CHARS)
+        //
+        //     const payload = {
+        //       command_id: record.command_id,
+        //       status: record.status,
+        //       exit_code: record.exitCode,
+        //       log_path: record.logPath,
+        //       recent_output: preview.text,
+        //       truncated: preview.truncated,
+        //     }
+        //     return {
+        //       output: JSON.stringify(payload, null, 2),
+        //       metadata: payload,
+        //     }
+        //   },
+        // }),
 
         background_stop: tool({
           description:
@@ -927,6 +962,7 @@ export const BackgroundCommandsPlugin: Plugin & {
     getSessionQueues: () => sessionQueues,
     pruneOldLogs,
     isInteractiveSession,
+    isSubagentSession,
     terminateProcessGroup,
     readLogSlice,
     readTailPreview,

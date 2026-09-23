@@ -231,7 +231,8 @@ test("Process Lifecycle & Log Isolation", async () => {
     $: {} as any,
   })
 
-  const { background_run, background_status } = plugin.tool!
+  // background_status destructuring removed while the tool is disabled
+  const { background_run } = plugin.tool!
 
   // 1. Success lifecycle (exit 0)
   const sessionID = "session-lifecycle"
@@ -384,6 +385,9 @@ test("Tail Preview & Truncation", () => {
   fs.unlinkSync(tmpFile)
 })
 
+// DISABLED (temporary experiment): background_status tool is unregistered, so
+// these tests are commented out until it is re-enabled.
+/*
 test("Status Inspection & Session Isolation", async () => {
   const mockClient = {
     session: {
@@ -459,7 +463,76 @@ test("Status Inspection & Session Isolation", async () => {
     (err: any) => err.message.includes("command_id_not_found"),
   )
 })
+*/
 
+test("Subagent Session Rejection", async () => {
+  const dispatchedPrompts: string[] = []
+  const plugin = await BackgroundCommandsPlugin({
+    client: {
+      session: {
+        promptAsync: async (req: any) => {
+          dispatchedPrompts.push(req.body.parts[0].text)
+        },
+        get: async ({ path }: any) => {
+          if (path.id === "session-subagent") {
+            return { data: { id: "session-subagent", parentID: "session-parent" } }
+          }
+          if (path.id === "session-main") {
+            return { data: { id: "session-main" } }
+          }
+          throw new Error("Session lookup failed")
+        },
+      },
+    } as any,
+    directory: process.cwd(),
+    project: {} as any,
+    worktree: process.cwd(),
+    experimental_workspace: { register: () => {} },
+    serverUrl: new URL("http://localhost"),
+    $: {} as any,
+  })
+
+  const { background_run } = plugin.tool!
+
+  // Mark the main session idle so completion notifications flush immediately
+  getOrCreateSessionQueue("session-main").isIdle = true
+
+  // 1. Subagent session (parentID set) is rejected before spawning anything
+  await assert.rejects(
+    async () => {
+      await background_run.execute(
+        { command: "echo test", mode: "on_completion", interval: 20, lines: 20 },
+        { sessionID: "session-subagent", directory: process.cwd(), ask: async () => {} } as any,
+      )
+    },
+    (err: any) => err.message.includes("not supported in subagent sessions"),
+  )
+  assert.equal(getCommandRegistry().size, 0)
+
+  // 2. Main session (no parentID) proceeds normally
+  const runRes = parseResult(
+    await background_run.execute(
+      { command: "echo subagent-guard-ok", mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID: "session-main", directory: process.cwd(), ask: async () => {} } as any,
+    ),
+  )
+  assert.ok(runRes.command_id.startsWith("bg-"))
+  await waitFor(() => getCommandRegistry().get(runRes.command_id)?.status === "completed")
+  await waitFor(() => dispatchedPrompts.some((p) => p.includes("subagent-guard-ok")))
+
+  // 3. Session API failure fails open (never blocks the main session)
+  const failOpenRes = parseResult(
+    await background_run.execute(
+      { command: "echo fail-open", mode: "on_completion", interval: 20, lines: 20 },
+      { sessionID: "session-broken-api", directory: process.cwd(), ask: async () => {} } as any,
+    ),
+  )
+  assert.ok(failOpenRes.command_id.startsWith("bg-"))
+})
+
+// DISABLED (temporary experiment): background_status tool is unregistered, so
+// this test is commented out until it is re-enabled.
+/*
 test("background_status discards queued notifications for the queried job", async () => {
   const dispatchedPrompts: string[] = []
   const mockClient = {
@@ -540,6 +613,7 @@ test("background_status discards queued notifications for the queried job", asyn
   assert.ok(dispatchedPrompts[0].includes("Unrelated job output"))
   assert.ok(!dispatchedPrompts[0].includes(runRes.command_id))
 })
+*/
 
 test("Manual Stop & Idempotency", async () => {
   const dispatchedPrompts: string[] = []
@@ -561,7 +635,8 @@ test("Manual Stop & Idempotency", async () => {
     $: {} as any,
   })
 
-  const { background_run, background_stop, background_status } = plugin.tool!
+  // background_status destructuring removed while the tool is disabled
+  const { background_run, background_stop } = plugin.tool!
 
   const sessionID = "session-stop"
   const queue = getOrCreateSessionQueue(sessionID)
