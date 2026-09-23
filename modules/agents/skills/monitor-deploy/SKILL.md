@@ -101,6 +101,14 @@ Rerun the full QA plan from step 7, verbatim, with the `tester` subagent against
 
 Moving the ticket to **Done** requires two of its fields to be filled: **"Could this change affect security?"** and **"Security Impact and Mitigation Details"**. Before touching the ticket, draft a proposal for both from what the PR actually changed — the risk surface it touches (auth, user data, payments, endpoints, permissions, config) and what mitigates it (validation, tests, feature flags, monitoring, rollback path).
 
+Guidelines:
+- "Could this change affect security?":
+  - Select “Yes” when the change might pose a threat to DataCamp’s proprietary code or customer data. Examples include changes involving publicly exposed APIs, input fields accepting user data, use of external repositories, or NPM packages - especially when proper security mechanisms are not yet in place or require additional safeguards.
+  - Select “No” when the change clearly presents no security threat. Examples include documentation updates, unit tests, UI-only changes, or internal logic with no external dependencies or inputs.
+- "Security Impact and Mitigation Details" - provides supporting context for the answer in the previous field:
+  - If “Yes” was selected: explain how you evaluated the potential security risks and what was done to mitigate or prevent them.
+  - If “No” was selected: provide a brief justification for why the change poses no security risk (e.g., “This is a frontend-only UI update with no external input or data exposure.”)
+
 Then present the deploy report below — filled with your recorded tags, manifest versions, timestamps, and QA outcomes — together with the security draft, and wait for the user's explicit approval. Do not fill the fields or move the ticket without it.
 
 ```
