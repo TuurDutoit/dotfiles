@@ -39,6 +39,19 @@ do
     || fail "failed to link OpenCode $name"
 done
 
+# Ensure ~/.config/opencode/package.json declares the config dir as ESM
+# ("type": "module"): the loader resolves plugin files through the symlink
+# path, and an ambiguous module type can break plugin loading. Cheap
+# insurance; verified harmless.
+pkg="$opencode_home/package.json"
+if [ ! -f "$pkg" ] || ! grep -q '"type": *"module"' "$pkg"
+then
+  mkdir -p "$opencode_home"
+  printf '{\n  "dependencies": {\n    "@opencode/plugin": "*"\n  },\n  "type": "module"\n}\n' > "$pkg" \
+    && success 'declared ~/.config/opencode/package.json as ESM' \
+    || fail 'failed to write ~/.config/opencode/package.json'
+fi
+
 # rtk 0.49.0 still generates the V1 plugin API, which OpenCode 2 does not run.
 # plugins/rtk.ts is a tracked V2 port, so only bootstrap it when absent;
 # delete it and re-run this script once rtk ships a V2-native template.
