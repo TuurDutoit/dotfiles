@@ -85,7 +85,10 @@ To make a skill available to one agent only (e.g. `sdlc-intent`/`sdlc-spec`/`sdl
 1. Deny it globally in the user config's `permissions` array, after the `skill *` allow rule — the **last** matching rule wins.
 2. In the owning agent's frontmatter, restate the **full** skill ruleset in `permissions:` — agent rules are appended after global rules, so a later agent `allow` overrides the global `deny` — e.g. allow `*` then allow `sdlc-*` last. See `modules/opencode-2/agents/spec.md`.
 
-A new skill under `modules/agents/skills` needs its `~/.agents/skills` symlink before OpenCode sees it — running `dt s agents` relinks every skill directory.
+A new skill under `modules/agents/skills` needs a copy in `~/.agents/skills`
+before OpenCode sees it — running `dt s agents` re-copies every skill
+directory. Skills are **copied, not symlinked** (OpenChamber mis-resolves
+symlinked skills), so re-run `dt s agents` after every skill change.
 
 ## Agent tool reference
 

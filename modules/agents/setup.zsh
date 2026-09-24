@@ -83,6 +83,9 @@ skills_source="$DOTFILES/modules/agents/skills"
 skills_target="$HOME/.agents/skills"
 mkdir -p "$skills_target"
 
+# Skills are copied, not symlinked: OpenChamber mis-resolves symlinked skill
+# directories. After every change to a skill here, re-run this setup
+# (`dt s agents`) to refresh the copies in ~/.agents/skills.
 find "$skills_source" -mindepth 1 -maxdepth 1 -type d -print | sort | while IFS= read -r src
 do
   skill=$(basename "$src")
@@ -93,11 +96,17 @@ do
     rm -rf "$dst"
   fi
 
-  ln -s "$src" "$dst" \
-    && success "linked agent skill $skill" \
-    || fail "failed to link agent skill $skill"
+  cp -R "$src" "$dst" \
+    && success "copied agent skill $skill" \
+    || fail "failed to copy agent skill $skill"
 done
 
 info 'installing rtk'
-rtk init -g --opencode
+# rtk 0.49.0 still generates the v1 plugin API, which would overwrite the
+# tracked V2 port at modules/opencode-2/plugins/rtk.ts. Only bootstrap it
+# when that file is absent (same guard as modules/opencode-2/setup.zsh).
+if [ ! -e "$DOTFILES/modules/opencode-2/plugins/rtk.ts" ]
+then
+  rtk init -g --opencode
+fi
 success 'rtk installed'
