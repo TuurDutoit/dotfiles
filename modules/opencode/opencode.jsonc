@@ -20,14 +20,6 @@
         "--no-usage-statistics"
       ]
     },
-    "cua-driver": {
-      "type": "local",
-      "command": [
-        "/Users/tuur/.local/bin/cua-driver",
-        "mcp"
-      ],
-      "enabled": true
-    },
     "one-password": {
       "type": "local",
       "command": [
@@ -48,9 +40,6 @@
       "enabled": false
     },
     "clickup": {
-      "enabled": false
-    },
-    "cloudflare": {
       "enabled": false
     },
     "huggingface": {
