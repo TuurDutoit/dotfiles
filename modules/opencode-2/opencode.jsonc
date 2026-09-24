@@ -49,7 +49,10 @@
       },
       "datadog": {
         "type": "remote",
-        "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?referrer_ide=opencode-plugin&plugin_version=0.7.13"
+        // Updated from the managed file's /api/unstable/mcp-server/mcp URL:
+        // the connected server reports that endpoint as deprecated and asks
+        // clients to move to /v1/mcp on the same host (actively supported).
+        "url": "https://mcp.datadoghq.com/v1/mcp"
       },
       "mcp-internal-tooling": {
         "type": "remote",
@@ -87,12 +90,7 @@
     { "action": "circleci_*", "resource": "*", "effect": "deny" },
     { "action": "sentry_*", "resource": "*", "effect": "deny" },
     { "action": "atlassian_*", "resource": "*", "effect": "deny" },
-    { "action": "datacamp-internal-cloudflare-mcp_*", "resource": "*", "effect": "allow" },
-    // Local plugin tools from plugins/background-commands.ts (v1 routed these
-    // through the bash permission flow; v2 has no in-tool ask, so allow them
-    // explicitly instead of prompting on every call).
-    { "action": "background_run", "resource": "*", "effect": "allow" },
-    { "action": "background_stop", "resource": "*", "effect": "allow" }
+    { "action": "datacamp-internal-cloudflare-mcp_*", "resource": "*", "effect": "allow" }
   ],
   "providers": {
     "openrouter": {
