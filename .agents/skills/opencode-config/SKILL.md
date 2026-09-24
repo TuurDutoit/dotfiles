@@ -101,7 +101,14 @@ Verify the real tool names before writing globs — guess the prefix from the se
 
 Local plugins live in `modules/opencode-2/plugins/` and use the OpenCode 2
 plugin API (`{ id, setup(ctx) }`, hooks/transforms on the plugin context). See
-https://opencode.ai/v2/docs/build/plugins. The two company npm plugins
-(`@datacamp/opencode-auto-approve`, `@datacamp/opencode-openrouter-usage`)
-are V1-only implementations and are NOT loaded in V2 until DataCamp ships
-V2-compatible releases.
+https://opencode.ai/v2/docs/build/plugins. Current state:
+
+- `auto-approve/` — vendored from `datacamp-engineering/opencode-plugins`
+  PR DP-2003 (Jev via the OpenRouter Decisions endpoint), adapted to the v2
+  `permission.hook("evaluate")` API. Elevates safe pending asks to `allow`;
+  configured allow/deny rules always stand. Zero-config via OpenCode's stored
+  OpenRouter key. Re-diff against upstream when DP-2003 or a v2 port lands there.
+- `rtk.ts` — hand-ported V2 plugin; `rtk init` (0.49.0) still generates the v1
+  API, so setup.zsh only bootstraps it when the file is missing.
+- `@datacamp/opencode-openrouter-usage` — dropped: V1-only implementation,
+  not loaded in V2 (upstream release needed if it's ever wanted back).
