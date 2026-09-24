@@ -113,5 +113,9 @@ https://opencode.ai/v2/docs/build/plugins. Current state:
   OpenRouter key. Re-diff against upstream when DP-2003 or a v2 port lands there.
 - `rtk.ts` — hand-ported V2 plugin; `rtk init` (0.49.0) still generates the v1
   API, so setup.zsh only bootstraps it when the file is missing.
+  Symptom if it ever gets clobbered again (e.g. an unguarded `rtk init`):
+  OpenCode fails the plugin with "Plugin must export a default definition with
+  an id and an effect or setup function" — the v1 template has only a named
+  export, no default. Fix: `git checkout -- modules/opencode-2/plugins/rtk.ts`.
 - `@datacamp/opencode-openrouter-usage` — dropped: V1-only implementation,
   not loaded in V2 (upstream release needed if it's ever wanted back).
