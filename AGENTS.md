@@ -18,7 +18,7 @@ Every change under `/Users/tuur/.dotfiles` must end with a commit and push in th
 This applies to any file under `/Users/tuur/.dotfiles`, including:
 
 - `modules/codex/**` for Codex settings, skills, hooks, and related scripts.
-- `modules/opencode/**` for OpenCode settings and related scripts.
+- `modules/opencode-2/**` for OpenCode settings and related scripts.
 - `modules/agents/**` for shared agent skills.
 - Shell config, zsh modules, Oh My Zsh overrides, hooks, `Brewfile`, `Brewfile.lock.json`, and `bin/**`.
 

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // Company-managed defaults below are imported from the managed settings file
+  // (/Library/Application Support/opencode/opencode.json + instructions.md)
+  // because OpenCode 2 no longer reads that location. Refresh manually when IT
+  // updates the managed file. MCP servers disabled in the v1 config are not
+  // imported; re-add them from the managed file if that ever changes.
+  "model": "openrouter/auto-balanced",
+  "share": "disabled",
+  "experimental": {
+    "subagent_depth": 3,
+    // v1 enabled_providers: deny by default, then allow the listed providers.
+    "policies": [
+      { "action": "provider.use", "resource": "*", "effect": "deny" },
+      { "action": "provider.use", "resource": "openrouter", "effect": "allow" },
+      { "action": "provider.use", "resource": "anthropic", "effect": "allow" },
+      { "action": "provider.use", "resource": "openai", "effect": "allow" }
+    ]
+  },
+  "mcp": {
+    "servers": {
+      "datacamp-internal-cloudflare-mcp": {
+        "type": "remote",
+        "url": "https://mcp-gateway-internal.datacamp.com/mcp"
+      },
+      "circleci": {
+        "type": "remote",
+        "url": "https://mcp.circleci.com/v1/mcp"
+      },
+      "chrome-devtools": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "chrome-devtools-mcp@latest",
+          "--no-usage-statistics"
+        ]
+      },
+      "one-password": {
+        "type": "local",
+        "command": [
+          "1password-mcp"
+        ]
+      },
+      // Imported from managed settings (remote servers use OAuth by default in v2).
+      "cloudflare": {
+        "type": "remote",
+        "url": "https://mcp.cloudflare.com/mcp"
+      },
+      "datadog": {
+        "type": "remote",
+        "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?referrer_ide=opencode-plugin&plugin_version=0.7.13"
+      },
+      "mcp-internal-tooling": {
+        "type": "remote",
+        "url": "https://mcp-internal-tooling.datacamp.com/mcp"
+      },
+      "postman": {
+        "type": "remote",
+        "url": "https://mcp.postman.com/mcp"
+      },
+      "sentry": {
+        "type": "remote",
+        "url": "https://mcp.sentry.dev/mcp"
+      }
+    }
+  },
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "read", "resource": "*.env", "effect": "deny" },
+    { "action": "read", "resource": "*.env.*", "effect": "deny" },
+    { "action": "read", "resource": "*.example", "effect": "allow" },
+    { "action": "read", "resource": "*.sample", "effect": "allow" },
+    { "action": "skill", "resource": "*", "effect": "allow" },
+    { "action": "skill", "resource": "sdlc-*", "effect": "deny" },
+    { "action": "subagent", "resource": "*", "effect": "allow" },
+    { "action": "subagent", "resource": "review-dimension", "effect": "deny" },
+    { "action": "question", "resource": "*", "effect": "allow" },
+    { "action": "external_directory", "resource": "/Users/tuur/Documents/Obsidian/DataCamp/Agents/**", "effect": "allow" },
+    { "action": "external_directory", "resource": "/tmp/**", "effect": "allow" },
+    { "action": "external_directory", "resource": "/Users/tuur/Projects/**", "effect": "allow" },
+    // v1 `tools` block: MCP tool scoping (last matching rule wins).
+    { "action": "incident-io_*", "resource": "*", "effect": "deny" },
+    { "action": "postman_*", "resource": "*", "effect": "deny" },
+    { "action": "mcp-internal-tooling_*", "resource": "*", "effect": "deny" },
+    { "action": "chrome-devtools_*", "resource": "*", "effect": "deny" },
+    { "action": "circleci_*", "resource": "*", "effect": "deny" },
+    { "action": "sentry_*", "resource": "*", "effect": "deny" },
+    { "action": "atlassian_*", "resource": "*", "effect": "deny" },
+    { "action": "datacamp-internal-cloudflare-mcp_*", "resource": "*", "effect": "allow" },
+    // Local plugin tools from plugins/background-commands.ts (v1 routed these
+    // through the bash permission flow; v2 has no in-tool ask, so allow them
+    // explicitly instead of prompting on every call).
+    { "action": "background_run", "resource": "*", "effect": "allow" },
+    { "action": "background_stop", "resource": "*", "effect": "allow" }
+  ],
+  "providers": {
+    "openrouter": {
+      // Imported from managed settings: OpenRouter auto-routing aliases.
+      "models": {
+        "auto": {},
+        "auto-balanced": {
+          "modelID": "openrouter/auto",
+          "name": "OpenRouter Auto Balanced",
+          "settings": { "plugins": [{ "id": "auto-router", "cost_quality_tradeoff": 5 }] }
+        },
+        "auto-cost": {
+          "modelID": "openrouter/auto",
+          "name": "OpenRouter Auto Cost",
+          "settings": { "plugins": [{ "id": "auto-router", "cost_quality_tradeoff": 9 }] }
+        },
+        "auto-quality": {
+          "modelID": "openrouter/auto",
+          "name": "OpenRouter Auto Quality",
+          "settings": { "plugins": [{ "id": "auto-router", "cost_quality_tradeoff": 3 }] }
+        }
+      }
+    }
+  },
+  // v1 small_model: model selection for the built-in title agent.
+  "agents": {
+    "title": { "model": "openrouter/auto-cost" }
+  }
+  // v1 `plugin` entries @datacamp/opencode-auto-approve and
+  // @datacamp/opencode-openrouter-usage are V1-only implementations (no
+  // Plugin.define export) and do not run in OpenCode 2; they need
+  // V2-compatible releases from DataCamp. Local plugins under plugins/ are
+  // auto-discovered and are ported to the v2 plugin API.
+}

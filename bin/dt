@@ -100,7 +100,7 @@ setup java
 setup node
 setup agents
 setup ios
-setup opencode
+setup opencode-2
 setup codex
 setup launchagents
 

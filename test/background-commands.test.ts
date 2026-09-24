@@ -3,26 +3,62 @@ import assert from "node:assert/strict"
 import fs from "node:fs"
 import path from "node:path"
 import os from "node:os"
-import {
-  BackgroundCommandsPlugin,
-  type NotificationEvent,
-} from "../modules/opencode/plugins/background-commands.ts"
-
-const {
+import plugin, {
+  enqueueEvent,
+  formatBatchedEvents,
+  formatSingleEvent,
   getCommandRegistry,
+  getOrCreateSessionQueue,
   getSessionQueues,
-  cleanupAllCommands,
+  handleEvent,
+  isInteractiveSession,
+  pruneOldLogs,
   readLogSlice,
   readTailPreview,
-  formatSingleEvent,
-  formatBatchedEvents,
-  pruneOldLogs,
-  terminateProcessGroup,
-  isInteractiveSession,
-  getOrCreateSessionQueue,
-  enqueueEvent,
-  flushSessionQueue,
-} = BackgroundCommandsPlugin
+  cleanupAllCommands,
+  type NotificationEvent,
+} from "../modules/opencode-2/plugins/background-commands.ts"
+
+// Instantiate the plugin the way OpenCode 2 does: run setup() against a mock
+// plugin context and capture the tools it registers via ctx.tool.transform.
+async function loadPlugin(opts: { sessionGet?: any; prompt?: any } = {}): Promise<{
+  ctx: any
+  registered: Map<string, any>
+  dispatchedPrompts: string[]
+}> {
+  const dispatchedPrompts: string[] = []
+  const registered = new Map<string, any>()
+  const ctx: any = {
+    tool: {
+      transform: async (cb: any) =>
+        cb({
+          add: (t: any) => registered.set(t.name, t),
+          list: () => Array.from(registered.values()),
+          get: (id: string) => registered.get(id),
+        }),
+    },
+    event: {
+      // Tests drive events directly through handleEvent; subscribe yields nothing.
+      subscribe: async function* () {},
+    },
+    session: {
+      get:
+        opts.sessionGet ??
+        (async ({ sessionID }: any) => ({
+          id: sessionID,
+          location: { directory: process.cwd() },
+        })),
+      prompt:
+        opts.prompt ??
+        (async (input: any) => {
+          dispatchedPrompts.push(input.text)
+        }),
+    },
+    location: { directory: process.cwd(), project: { id: "test" } },
+  }
+  await (plugin as any).setup(ctx)
+  return { ctx, registered, dispatchedPrompts }
+}
 
 // Helper to wait for a condition
 async function waitFor(
@@ -68,23 +104,8 @@ test.afterEach(() => {
 })
 
 test("Schema and Argument Validation", async (t) => {
-  const mockClient = {
-    session: {
-      promptAsync: async () => {},
-    },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
-
-  const { background_run } = plugin.tool!
+  const { registered } = await loadPlugin()
+  const background_run = registered.get("background_run")
 
   await t.test("Rejects non-interactive session (OPENCODE_RUN=1)", async () => {
     process.env.OPENCODE_RUN = "1"
@@ -94,7 +115,7 @@ test("Schema and Argument Validation", async (t) => {
       async () => {
         await background_run.execute(
           { command: "echo test", mode: "on_completion", interval: 20, lines: 20 },
-          { sessionID: "s1", directory: process.cwd(), ask: async () => {} } as any,
+          { sessionID: "s1" } as any,
         )
       },
       {
@@ -109,7 +130,7 @@ test("Schema and Argument Validation", async (t) => {
       async () => {
         await background_run.execute(
           { command: "echo test", mode: "on_completion", interval: 20, lines: 20, workdir: invalidDir },
-          { sessionID: "s1", directory: process.cwd(), ask: async () => {} } as any,
+          { sessionID: "s1" } as any,
         )
       },
       (err: any) => {
@@ -123,7 +144,7 @@ test("Schema and Argument Validation", async (t) => {
       async () => {
         await background_run.execute(
           { command: "echo test", mode: "monitor", interval: 20, lines: 20, pattern: "[unclosed-bracket" },
-          { sessionID: "s1", directory: process.cwd(), ask: async () => {} } as any,
+          { sessionID: "s1" } as any,
         )
       },
       (err: any) => {
@@ -133,7 +154,8 @@ test("Schema and Argument Validation", async (t) => {
   })
 
   await t.test("Validates JSON schema bounds on args", () => {
-    const { args } = background_run
+    const { input } = background_run
+    const { properties: args } = input
     assert.equal(args.command.type, "string")
     assert.equal(args.mode.type, "string")
     assert.deepEqual(args.mode.enum, ["on_completion", "monitor"])
@@ -145,94 +167,17 @@ test("Schema and Argument Validation", async (t) => {
   })
 })
 
-test("Permission Check Hook Integration", async () => {
-  let askCalled = false
-  let askedPermission = ""
-  let askedCommand = ""
-
-  const mockClient = {
-    session: {
-      promptAsync: async () => {},
-    },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
-
-  const { background_run } = plugin.tool!
-
-  const mockContext = {
-    sessionID: "session-perm-1",
-    directory: process.cwd(),
-    ask: async (req: any) => {
-      askCalled = true
-      askedPermission = req.permission
-      askedCommand = req.metadata.command
-    },
-  }
-
-  const res = parseResult(
-    await background_run.execute(
-      { command: "echo perm-test", mode: "on_completion", interval: 20, lines: 20 },
-      mockContext as any,
-    ),
-  )
-
-  assert.equal(askCalled, true)
-  assert.equal(askedPermission, "bash")
-  assert.equal(askedCommand, "echo perm-test")
-  assert.ok(res.command_id.startsWith("bg-"))
-  assert.equal(res.status, "running")
-
-  // Test permission rejection
-  const denyingContext = {
-    sessionID: "session-perm-2",
-    directory: process.cwd(),
-    ask: async () => {
-      throw new Error("Permission denied by user")
-    },
-  }
-
-  await assert.rejects(
-    async () => {
-      await background_run.execute(
-        { command: "echo should-not-run", mode: "on_completion", interval: 20, lines: 20 },
-        denyingContext as any,
-      )
-    },
-    { message: "Permission denied by user" },
-  )
-})
+// V1 -> V2: the v1 tool context exposed an ask() hook that routed background
+// commands through the bash permission flow. The v2 tool context has no such
+// hook; approval for these tools is configured via permission rules instead
+// (see modules/opencode-2/opencode.jsonc), so the permission hook test no
+// longer applies.
 
 test("Process Lifecycle & Log Isolation", async () => {
-  const dispatchedPrompts: string[] = []
-  const mockClient = {
-    session: {
-      promptAsync: async (req: any) => {
-        dispatchedPrompts.push(req.body.parts[0].text)
-      },
-    },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
+  const { ctx, registered, dispatchedPrompts } = await loadPlugin()
 
   // background_status destructuring removed while the tool is disabled
-  const { background_run } = plugin.tool!
+  const background_run = registered.get("background_run")
 
   // 1. Success lifecycle (exit 0)
   const sessionID = "session-lifecycle"
@@ -242,7 +187,7 @@ test("Process Lifecycle & Log Isolation", async () => {
   const runRes = parseResult(
     await background_run.execute(
       { command: 'echo "hello background" && echo "second line"', mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID } as any,
     ),
   )
 
@@ -275,7 +220,7 @@ test("Process Lifecycle & Log Isolation", async () => {
   const failRes = parseResult(
     await background_run.execute(
       { command: 'echo "failing now" >&2 && exit 42', mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID } as any,
     ),
   )
 
@@ -294,26 +239,9 @@ test("Process Lifecycle & Log Isolation", async () => {
 })
 
 test("Timeout Handling", async () => {
-  const dispatchedPrompts: string[] = []
-  const mockClient = {
-    session: {
-      promptAsync: async (req: any) => {
-        dispatchedPrompts.push(req.body.parts[0].text)
-      },
-    },
-  }
+  const { registered, dispatchedPrompts } = await loadPlugin()
 
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
-
-  const { background_run } = plugin.tool!
+  const background_run = registered.get("background_run")
   const sessionID = "session-timeout"
   const queue = getOrCreateSessionQueue(sessionID)
   queue.isIdle = true
@@ -321,7 +249,7 @@ test("Timeout Handling", async () => {
   const runRes = parseResult(
     await background_run.execute(
       { command: "sleep 10", mode: "on_completion", interval: 20, lines: 20, timeout: 200 },
-      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID } as any,
     ),
   )
 
@@ -389,28 +317,14 @@ test("Tail Preview & Truncation", () => {
 // these tests are commented out until it is re-enabled.
 /*
 test("Status Inspection & Session Isolation", async () => {
-  const mockClient = {
-    session: {
-      promptAsync: async () => {},
-    },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
-
-  const { background_run, background_status } = plugin.tool!
+  const { registered } = await loadPlugin()
+  const background_run = registered.get("background_run")
+  const background_status = registered.get("background_status")
 
   const res = parseResult(
     await background_run.execute(
       { command: 'echo "status test line 1" && echo "status test line 2"', mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID: "session-alpha", directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID: "session-alpha" } as any,
     ),
   )
 
@@ -466,33 +380,19 @@ test("Status Inspection & Session Isolation", async () => {
 */
 
 test("Subagent Session Rejection", async () => {
-  const dispatchedPrompts: string[] = []
-  const plugin = await BackgroundCommandsPlugin({
-    client: {
-      session: {
-        promptAsync: async (req: any) => {
-          dispatchedPrompts.push(req.body.parts[0].text)
-        },
-        get: async ({ path }: any) => {
-          if (path.id === "session-subagent") {
-            return { data: { id: "session-subagent", parentID: "session-parent" } }
-          }
-          if (path.id === "session-main") {
-            return { data: { id: "session-main" } }
-          }
-          throw new Error("Session lookup failed")
-        },
-      },
-    } as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
+  const { registered, dispatchedPrompts } = await loadPlugin({
+    sessionGet: async ({ sessionID }: any) => {
+      if (sessionID === "session-subagent") {
+        return { id: sessionID, parentID: "session-parent", location: { directory: process.cwd() } }
+      }
+      if (sessionID === "session-main") {
+        return { id: sessionID, location: { directory: process.cwd() } }
+      }
+      throw new Error("Session lookup failed")
+    },
   })
 
-  const { background_run } = plugin.tool!
+  const background_run = registered.get("background_run")
 
   // Mark the main session idle so completion notifications flush immediately
   getOrCreateSessionQueue("session-main").isIdle = true
@@ -502,7 +402,7 @@ test("Subagent Session Rejection", async () => {
     async () => {
       await background_run.execute(
         { command: "echo test", mode: "on_completion", interval: 20, lines: 20 },
-        { sessionID: "session-subagent", directory: process.cwd(), ask: async () => {} } as any,
+        { sessionID: "session-subagent" } as any,
       )
     },
     (err: any) => err.message.includes("not supported in subagent sessions"),
@@ -513,7 +413,7 @@ test("Subagent Session Rejection", async () => {
   const runRes = parseResult(
     await background_run.execute(
       { command: "echo subagent-guard-ok", mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID: "session-main", directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID: "session-main" } as any,
     ),
   )
   assert.ok(runRes.command_id.startsWith("bg-"))
@@ -524,7 +424,7 @@ test("Subagent Session Rejection", async () => {
   const failOpenRes = parseResult(
     await background_run.execute(
       { command: "echo fail-open", mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID: "session-broken-api", directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID: "session-broken-api" } as any,
     ),
   )
   assert.ok(failOpenRes.command_id.startsWith("bg-"))
@@ -534,26 +434,9 @@ test("Subagent Session Rejection", async () => {
 // this test is commented out until it is re-enabled.
 /*
 test("background_status discards queued notifications for the queried job", async () => {
-  const dispatchedPrompts: string[] = []
-  const mockClient = {
-    session: {
-      promptAsync: async (req: any) => {
-        dispatchedPrompts.push(req.body.parts[0].text)
-      },
-    },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
-
-  const { background_run, background_status } = plugin.tool!
+  const { ctx, registered, dispatchedPrompts } = await loadPlugin()
+  const background_run = registered.get("background_run")
+  const background_status = registered.get("background_status")
 
   const sessionID = "session-status-purge"
   const queue = getOrCreateSessionQueue(sessionID)
@@ -573,13 +456,13 @@ test("background_status discards queued notifications for the queried job", asyn
       preview: "Unrelated job output",
       truncated: false,
     },
-    mockClient,
+    ctx,
   )
 
   const runRes = parseResult(
     await background_run.execute(
       { command: 'echo "status purge test"', mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID } as any,
     ),
   )
 
@@ -606,8 +489,9 @@ test("background_status discards queued notifications for the queried job", asyn
   assert.equal(queue.items.some((item) => item.command_id === "bg-unrelated-1"), true)
 
   // Going idle still flushes other jobs, but delivers nothing about the queried one
-  await plugin.event!({
-    event: { type: "session.status", properties: { sessionID, status: { type: "idle" } } } as any,
+  await handleEvent(ctx, {
+    type: "session.status",
+    data: { sessionID, status: { type: "idle" } },
   })
   assert.equal(dispatchedPrompts.length, 1)
   assert.ok(dispatchedPrompts[0].includes("Unrelated job output"))
@@ -616,27 +500,11 @@ test("background_status discards queued notifications for the queried job", asyn
 */
 
 test("Manual Stop & Idempotency", async () => {
-  const dispatchedPrompts: string[] = []
-  const mockClient = {
-    session: {
-      promptAsync: async (req: any) => {
-        dispatchedPrompts.push(req.body.parts[0].text)
-      },
-    },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
+  const { registered, dispatchedPrompts } = await loadPlugin()
 
   // background_status destructuring removed while the tool is disabled
-  const { background_run, background_stop } = plugin.tool!
+  const background_run = registered.get("background_run")
+  const background_stop = registered.get("background_stop")
 
   const sessionID = "session-stop"
   const queue = getOrCreateSessionQueue(sessionID)
@@ -645,7 +513,7 @@ test("Manual Stop & Idempotency", async () => {
   const runRes = parseResult(
     await background_run.execute(
       { command: "sleep 60", mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID } as any,
     ),
   )
 
@@ -736,24 +604,7 @@ test("Session Queue & Batched Notification Formatting", async () => {
 })
 
 test("Session Lifecycle Events Handling", async () => {
-  const dispatchedPrompts: string[] = []
-  const mockClient = {
-    session: {
-      promptAsync: async (req: any) => {
-        dispatchedPrompts.push(req.body.parts[0].text)
-      },
-    },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: mockClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
-  })
+  const { ctx, registered, dispatchedPrompts } = await loadPlugin()
 
   const sessionID = "session-events"
   const queue = getOrCreateSessionQueue(sessionID)
@@ -773,64 +624,55 @@ test("Session Lifecycle Events Handling", async () => {
       preview: "Test running...",
       truncated: false,
     },
-    mockClient,
+    ctx,
   )
 
   // Nothing dispatched yet while busy
   assert.equal(dispatchedPrompts.length, 0)
 
   // Emit session.status (busy) -> still nothing
-  await plugin.event!({
-    event: { type: "session.status", properties: { sessionID, status: { type: "busy" } } } as any,
+  await handleEvent(ctx, {
+    type: "session.status",
+    data: { sessionID, status: { type: "busy" } },
   })
   assert.equal(dispatchedPrompts.length, 0)
 
   // Emit session.status (idle) -> triggers queue flush
-  await plugin.event!({
-    event: { type: "session.status", properties: { sessionID, status: { type: "idle" } } } as any,
+  await handleEvent(ctx, {
+    type: "session.status",
+    data: { sessionID, status: { type: "idle" } },
   })
   assert.equal(dispatchedPrompts.length, 1)
   assert.ok(dispatchedPrompts[0].includes("Test running..."))
 
   // Test session.deleted cleanup
-  const { background_run } = plugin.tool!
+  const background_run = registered.get("background_run")
   const runRes = parseResult(
     await background_run.execute(
       { command: "sleep 30", mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID } as any,
     ),
   )
 
   assert.equal(getCommandRegistry().has(runRes.command_id), true)
 
-  await plugin.event!({
-    event: { type: "session.deleted", properties: { info: { id: sessionID } } } as any,
+  await handleEvent(ctx, {
+    type: "session.deleted",
+    data: { sessionID },
   })
 
   assert.equal(getCommandRegistry().has(runRes.command_id), false)
   assert.equal(getSessionQueues().has(sessionID), false)
 })
 
-test("Resilience to promptAsync transient dispatch errors", async () => {
-  const failingClient = {
-    session: {
-      promptAsync: async () => {
-        throw new Error("Transient network error")
-      },
+test("Resilience to transient session prompt dispatch errors", async () => {
+  const { ctx, registered } = await loadPlugin({
+    prompt: async () => {
+      throw new Error("Transient network error")
     },
-  }
-
-  const plugin = await BackgroundCommandsPlugin({
-    client: failingClient as any,
-    directory: process.cwd(),
-    project: {} as any,
-    worktree: process.cwd(),
-    experimental_workspace: { register: () => {} },
-    serverUrl: new URL("http://localhost"),
-    $: {} as any,
   })
 
-  const { background_run } = plugin.tool!
+  const background_run = registered.get("background_run")
   const sessionID = "session-transient-err"
   const queue = getOrCreateSessionQueue(sessionID)
   queue.isIdle = true
@@ -838,7 +680,7 @@ test("Resilience to promptAsync transient dispatch errors", async () => {
   const runRes = parseResult(
     await background_run.execute(
       { command: "sleep 5", mode: "on_completion", interval: 20, lines: 20 },
-      { sessionID, directory: process.cwd(), ask: async () => {} } as any,
+      { sessionID } as any,
     ),
   )
 
@@ -856,7 +698,7 @@ test("Resilience to promptAsync transient dispatch errors", async () => {
       preview: "progress",
       truncated: false,
     },
-    failingClient,
+    ctx,
   )
 
   await new Promise((r) => setTimeout(r, 50))
