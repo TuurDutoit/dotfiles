@@ -7,7 +7,7 @@ description: >-
   single/multi strategy.
 mode: all
 # model-category: review
-model: openrouter/google/gemini-3.7-flash
+model: openrouter/google/gemini-3.8-flash#high
 permission:
   skill:
     "*": "allow"

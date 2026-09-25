@@ -8,7 +8,7 @@ description: >-
   the payments team?", "how many P1s did we have this month?") and it
   returns the answer with references.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

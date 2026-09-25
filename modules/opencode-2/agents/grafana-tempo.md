@@ -8,7 +8,7 @@ description: >-
   "find slow checkout-api traces from yesterday") and it returns the
   traces and findings.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "chrome-devtools_*", resource: "*", effect: deny }
@@ -16,7 +16,11 @@ permissions:
   - { action: "sentry_*", resource: "*", effect: deny }
   - { action: "datadog_*", resource: "*", effect: deny }
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }
-  - { action: "mcp-internal-tooling_grafana_tempo_*", resource: "*", effect: allow }
+  - {
+      action: "mcp-internal-tooling_grafana_tempo_*",
+      resource: "*",
+      effect: allow,
+    }
 ---
 
 You are a distributed tracing specialist. You write TraceQL queries against Grafana Tempo and interpret traces and spans.

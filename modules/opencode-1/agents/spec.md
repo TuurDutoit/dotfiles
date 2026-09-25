@@ -6,7 +6,7 @@ description: >-
   and hands off to `engineer`.
 mode: primary
 # model-category: spec
-model: openrouter/~anthropic/claude-opus-latest
+model: openrouter/~anthropic/claude-opus-latest#xhigh
 permission:
   skill:
     "*": "allow"

@@ -8,7 +8,7 @@ description: >-
   "find slow checkout-api traces from yesterday") and it returns the
   traces and findings.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 tools:
   "postman_*": false
   "chrome-devtools_*": false

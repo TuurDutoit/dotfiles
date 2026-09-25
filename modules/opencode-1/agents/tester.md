@@ -6,7 +6,7 @@ description: >-
   against datacamp-staging.com or datacamp.com and reports per-test
   results with evidence. It does not investigate, triage, or fix failures.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

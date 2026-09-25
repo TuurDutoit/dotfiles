@@ -6,7 +6,7 @@ description: >-
   against datacamp-staging.com or datacamp.com and reports per-test
   results with evidence. It does not investigate, triage, or fix failures.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }
@@ -15,7 +15,11 @@ permissions:
   - { action: "sentry_*", resource: "*", effect: deny }
   - { action: "datadog_*", resource: "*", effect: deny }
   - { action: "atlassian_*", resource: "*", effect: deny }
-  - { action: "datacamp-internal-cloudflare-mcp_*", resource: "*", effect: deny }
+  - {
+      action: "datacamp-internal-cloudflare-mcp_*",
+      resource: "*",
+      effect: deny,
+    }
   - { action: "cua-driver_*", resource: "*", effect: deny }
   - { action: "one-password_*", resource: "*", effect: deny }
   - { action: "openchamber*", resource: "*", effect: allow }

@@ -21,7 +21,7 @@ description: >-
   Confluence tools. In that case, it will point at a file path where it has made
   the changes - let me know so I can manually upload the updated content.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }

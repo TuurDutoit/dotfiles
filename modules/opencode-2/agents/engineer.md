@@ -5,7 +5,7 @@ description: >-
   process.
 mode: all
 # model-category: coding
-model: openrouter/google/gemini-3.8-flash
+model: openrouter/google/gemini-3.8-flash#high
 permissions:
   - { action: skill, resource: "*", effect: allow }
   - { action: skill, resource: sdlc, effect: allow }

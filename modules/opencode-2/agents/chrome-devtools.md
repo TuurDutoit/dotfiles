@@ -8,7 +8,7 @@ description: >-
   audits. When calling this agent, describe what to check or do in the
   browser and it reports exactly what it observed.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }

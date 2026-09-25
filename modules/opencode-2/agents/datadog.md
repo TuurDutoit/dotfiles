@@ -8,14 +8,18 @@ description: >-
   we serve yesterday?", "who owns the monitors for the payments team?") and
   it returns the answer with evidence and links.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }
   - { action: "chrome-devtools_*", resource: "*", effect: deny }
   - { action: "circleci_*", resource: "*", effect: deny }
   - { action: "sentry_*", resource: "*", effect: deny }
-  - { action: "datacamp-internal-cloudflare-mcp_portal_*", resource: "*", effect: deny }
+  - {
+      action: "datacamp-internal-cloudflare-mcp_portal_*",
+      resource: "*",
+      effect: deny,
+    }
   - { action: "datadog_*", resource: "*", effect: allow }
 ---
 

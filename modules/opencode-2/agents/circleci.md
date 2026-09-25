@@ -8,7 +8,7 @@ description: >-
   "what is deployed to production?", "is my orb pin stale?") and it
   returns the evidence and root cause.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }

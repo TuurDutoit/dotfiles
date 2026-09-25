@@ -7,7 +7,7 @@ description: >-
   look answers Y?") and it returns the data or the dashboard/look
   definitions.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "chrome-devtools_*", resource: "*", effect: deny }

@@ -7,7 +7,7 @@ description: >-
   single/multi strategy.
 mode: all
 # model-category: review
-model: openrouter/google/gemini-3.7-flash
+model: openrouter/google/gemini-3.8-flash#high
 permissions:
   - { action: skill, resource: "*", effect: allow }
   - { action: skill, resource: "sdlc-*", effect: deny }

@@ -8,7 +8,7 @@ description: >-
   (e.g. "what are the top errors in project X?", "run Seer on ISSUE-123")
   and it returns the answer.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

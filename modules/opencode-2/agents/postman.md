@@ -8,7 +8,7 @@ description: >-
   it needs (e.g. "find our notification-service API", "how do I call X?")
   and it returns the answer with Postman links.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }
   - { action: "chrome-devtools_*", resource: "*", effect: deny }

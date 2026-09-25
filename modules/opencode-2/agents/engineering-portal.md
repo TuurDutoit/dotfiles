@@ -8,7 +8,7 @@ description: >-
   owns service X?", "is service Y meeting its scorecard?") and it returns
   the answer.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash
+model: openrouter/z-ai/glm-5.3-flash#max
 permissions:
   - { action: "postman_*", resource: "*", effect: deny }
   - { action: "chrome-devtools_*", resource: "*", effect: deny }
@@ -16,7 +16,11 @@ permissions:
   - { action: "sentry_*", resource: "*", effect: deny }
   - { action: "datadog_*", resource: "*", effect: deny }
   - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }
-  - { action: "mcp-internal-tooling_engineering_portal_*", resource: "*", effect: allow }
+  - {
+      action: "mcp-internal-tooling_engineering_portal_*",
+      resource: "*",
+      effect: allow,
+    }
 ---
 
 You are a DataCamp engineering portal specialist. You look up services, ownership, pipelines, scorecards, security findings and docs data.
