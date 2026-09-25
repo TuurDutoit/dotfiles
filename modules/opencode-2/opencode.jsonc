@@ -6,9 +6,10 @@
   // updates the managed file. MCP servers disabled in the v1 config are not
   // imported; re-add them from the managed file if that ever changes.
   "model": "openrouter/auto-balanced",
+  "small_model": "openrouter/auto-cost",
   "share": "disabled",
+  "subagent_depth": 3,
   "experimental": {
-    "subagent_depth": 3,
     // v1 enabled_providers: deny by default, then allow the listed providers.
     "policies": [
       { "action": "provider.use", "resource": "*", "effect": "deny" },
@@ -82,15 +83,6 @@
     { "action": "external_directory", "resource": "/Users/tuur/Documents/Obsidian/DataCamp/Agents/**", "effect": "allow" },
     { "action": "external_directory", "resource": "/tmp/**", "effect": "allow" },
     { "action": "external_directory", "resource": "/Users/tuur/Projects/**", "effect": "allow" },
-    // v1 `tools` block: MCP tool scoping (last matching rule wins).
-    { "action": "incident-io_*", "resource": "*", "effect": "deny" },
-    { "action": "postman_*", "resource": "*", "effect": "deny" },
-    { "action": "mcp-internal-tooling_*", "resource": "*", "effect": "deny" },
-    { "action": "chrome-devtools_*", "resource": "*", "effect": "deny" },
-    { "action": "circleci_*", "resource": "*", "effect": "deny" },
-    { "action": "sentry_*", "resource": "*", "effect": "deny" },
-    { "action": "atlassian_*", "resource": "*", "effect": "deny" },
-    { "action": "datacamp-internal-cloudflare-mcp_*", "resource": "*", "effect": "allow" }
   ],
   "providers": {
     "openrouter": {
@@ -115,13 +107,4 @@
       }
     }
   },
-  // v1 small_model: model selection for the built-in title agent.
-  "agents": {
-    "title": { "model": "openrouter/auto-cost" }
-  }
-  // v1 `plugin` entries @datacamp/opencode-auto-approve and
-  // @datacamp/opencode-openrouter-usage are V1-only implementations (no
-  // Plugin.define export) and do not run in OpenCode 2; they need
-  // V2-compatible releases from DataCamp. Local plugins under plugins/ are
-  // auto-discovered and are ported to the v2 plugin API.
 }
