@@ -97,40 +97,6 @@ Rerun the full QA plan from step 7, verbatim, with the `tester` subagent against
 - **Every test executed and passed** → proceed to step 10.
 - **Anything failed or untestable** — a real failure, a blocked flow, a case needing a specific user or credential, a broken or stuck deployment — report exactly what failed or could not be tested and why, with evidence, then **stop** and let the user resolve it. Do not rerun QA hoping for a different result, and the staging failure-triage escape does not apply here: there is no "not likely related" pass on prod. Only when every QA case has been tested and passed does the next step open.
 
-## 10. Security review draft and deploy report
+## 10. Close the ticket
 
-Moving the ticket to **Done** requires two of its fields to be filled: **"Could this change affect security?"** and **"Security Impact and Mitigation Details"**. Before touching the ticket, draft a proposal for both from what the PR actually changed — the risk surface it touches (auth, user data, payments, endpoints, permissions, config) and what mitigates it (validation, tests, feature flags, monitoring, rollback path).
-
-Guidelines:
-- "Could this change affect security?":
-  - Select “Yes” when the change might pose a threat to DataCamp’s proprietary code or customer data. Examples include changes involving publicly exposed APIs, input fields accepting user data, use of external repositories, or NPM packages - especially when proper security mechanisms are not yet in place or require additional safeguards.
-  - Select “No” when the change clearly presents no security threat. Examples include documentation updates, unit tests, UI-only changes, or internal logic with no external dependencies or inputs.
-- "Security Impact and Mitigation Details" - provides supporting context for the answer in the previous field:
-  - If “Yes” was selected: explain how you evaluated the potential security risks and what was done to mitigate or prevent them.
-  - If “No” was selected: provide a brief justification for why the change poses no security risk (e.g., “This is a frontend-only UI update with no external input or data exposure.”)
-
-Then present the deploy report below — filled with your recorded tags, manifest versions, timestamps, and QA outcomes — together with the security draft, and wait for the user's explicit approval. Do not fill the fields or move the ticket without it.
-
-```
-## Deploy & QA report — <TICKET-KEY> (<PR title>)
-
-**Deploy**
-- Merged to master at <UTC timestamp> — merge commit `<sha>`
-- CircleCI `<workflow>` green at <timestamp>
-- Tag `<1.0.324>` cut on the merge commit
-- Staging: manifest `<365>`, tag `<1.0.324>` deployed at <timestamp>
-- Prod: manifest `<366>`, tag `<1.0.324>` deployed at <timestamp>
-
-**QA** (plan: <shared plan / ticket / PR description>)
-| test | staging | prod |
-|------|---------|------|
-| <name> | PASS | PASS |
-
-**Security review draft**
-- Could this change affect security? <draft: yes/no>
-- Security Impact and Mitigation Details: <draft: *why* you selected yes or no - surface touched, exposure, mitigations>
-```
-
-## 11. Move the ticket to Done
-
-Only after prod QA is fully green and the user has explicitly approved the report and the security draft: write the approved values into the two security fields, transition the ticket to **Done**, and verify both the field values and the final status on the ticket.
+QA is green and the deploy is fully out — hand the close to **`/close-ticket`**, passing everything you recorded: the ticket key, the merge commit and tag, the staging and prod manifest versions and timestamps, and the QA outcomes. The skill re-checks the QA gate, drafts the two security-review fields, presents the deploy & QA report, and — only after the user's explicit approval — fills the fields and moves the ticket to **Done**. The skill owns the security fields and the final transition.
