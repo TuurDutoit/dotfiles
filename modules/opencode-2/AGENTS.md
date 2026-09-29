@@ -51,12 +51,18 @@ When commenting in Github, always add the following snippet at the end of your m
 ## Jira
 
 - Default to project `LX` (Learner Experience) when creating Jira tickets, unless told otherwise.
-- Use the tools in the "internal Cloudflare MCP portal" to access Jira
+- Use the tools in the "internal Cloudflare MCP portal" to access Jira.
+- Format: use `contentFormat: "markdown"` (the tool default) for issue descriptions and comments. Jira bodies are prose, and Markdown covers headings, lists, code blocks, and tables that prose needs.
+- Use `contentFormat: "adf"` only when Markdown cannot express what you need: mentions, status lozenges, panels, or inline dates. Never invent a mention's account ID (`data-user-id`); look it up with `lookupJiraAccountId`, and fall back to plain text like `[@Name]` when it can't be resolved.
+- Never use Jira wiki markup (`*bold*`, `{code:java}`, `||col1||col2||`): the current Jira API and tools only accept Markdown or ADF, and wiki markup ends up stored as literal text.
 
 ## Confluence
 
-- Always use the HTML or ADF format to fetch and save Confluence content. The Markdown format doesn't support some content types, which results in parts of the page getting lost when updating it.
-- Use the tools in the "internal Cloudflare MCP portal" to access Confluence
+- Use the tools in the "internal Cloudflare MCP portal" to access Confluence.
+- Format: use `contentFormat: "html"` (the tool default) to fetch, create, and update page and comment bodies. It is round-trip safe: it preserves panels, expands, task lists, macros, mentions, inline comments, and table column widths that Markdown silently drops. When you plan to edit a page, fetch it as HTML so you edit exactly what is there.
+- Use `contentFormat: "markdown"` only for reading a page as plain text (searching, summarizing). Never write a page body as Markdown: it doesn't support some content types, so parts of the page get lost when updating it.
+- Avoid authoring raw ADF JSON: it is verbose and error-prone for agents (strict nesting rules, invented opaque IDs). The HTML format maps 1:1 to ADF nodes and rejects invalid input with a descriptive error you can retry against.
+- Before authoring or editing a page body in HTML, call `getContentFormatGuide` with the tool's name and follow its HTML-format reference. Never use Confluence storage XML (`<ac:structured-macro>`, `<ri:page>`, CDATA): it renders as raw text.
 
 ## BigQuery
 
