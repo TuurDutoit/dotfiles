@@ -10,7 +10,6 @@ mode: all
 model: openrouter/google/gemini-3.8-flash#high
 permissions:
   - { action: skill, resource: "*", effect: allow }
-  - { action: skill, resource: "sdlc-*", effect: deny }
   - { action: skill, resource: review, effect: allow }
   - { action: subagent, resource: "*", effect: ask }
   - { action: subagent, resource: review-dimension, effect: allow }

@@ -57,7 +57,7 @@ Create a **new** `build` session with the `openchamber` tool
 the repo the PR belongs to — this session's directory when invoked from
 the engineer session. Leave the model unset. Title the session
 `<project_slug> - deploy - <short task name>`, resolving `<project_slug>`
-from the git remote as the `sdlc` skill does. Use exactly this prompt:
+from the git remote as the `spec` skill does. Use exactly this prompt:
 
 > Merge PR `<PR URL>` (branch `<head branch>`) — it is approved and
 > mergeable. If it is already merged, skip the merge. After the merge,

@@ -11,7 +11,6 @@ model: openrouter/google/gemini-3.8-flash#high
 permission:
   skill:
     "*": "allow"
-    "sdlc-*": "deny"
     "review": "allow"
   task:
     "*": "ask"

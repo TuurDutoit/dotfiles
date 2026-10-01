@@ -80,8 +80,7 @@
       "*.sample": "allow"
     },
     "skill": {
-      "*": "allow",
-      "sdlc-*": "deny"
+      "*": "allow"
     },
     "task": {
       "*": "allow",

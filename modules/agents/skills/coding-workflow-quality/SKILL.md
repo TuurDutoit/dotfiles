@@ -1,13 +1,10 @@
 ---
 name: "coding-workflow-quality"
-description: "Use when implementing code — as the implementation step of the `sdlc` workflow, or for smaller coding tasks that don't follow the full `sdlc` workflow. Covers subagent delegation, workflow steps, QA against the running app, review, and code-quality practices."
+description: "Use when implementing code. Covers subagent delegation, workflow steps, QA against the running app, review, and code-quality practices."
 ---
 
-This skill covers the implementation step of the `sdlc` workflow (run by the
-`engineer` agent), and smaller coding tasks that don't follow the full
-workflow. The `sdlc` skill owns the full intent → spec → architecture → plan →
-implement → verify process — one session per stage, with committed handoff
-files between stages.
+This skill is the standard workflow for implementation work — the
+`engineer` agent loads it for coding tasks.
 
 ## Subagents
 

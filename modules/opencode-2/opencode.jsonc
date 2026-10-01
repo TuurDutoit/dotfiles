@@ -76,7 +76,6 @@
     { "action": "read", "resource": "*.example", "effect": "allow" },
     { "action": "read", "resource": "*.sample", "effect": "allow" },
     { "action": "skill", "resource": "*", "effect": "allow" },
-    { "action": "skill", "resource": "sdlc-*", "effect": "deny" },
     { "action": "subagent", "resource": "*", "effect": "allow" },
     { "action": "subagent", "resource": "review-dimension", "effect": "deny" },
     { "action": "question", "resource": "*", "effect": "allow" },

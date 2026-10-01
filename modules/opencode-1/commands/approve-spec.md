@@ -42,7 +42,7 @@ default to the `build` agent — in the checkout directory of the repo the
 spec belongs to; this session's directory when invoked from the spec
 session. Leave the model unset. Title the session
 `<project_slug> - implementation - <short task name>`, resolving
-`<project_slug>` from the git remote as the `sdlc` skill does. Use exactly
+`<project_slug>` from the git remote as the `spec` skill does. Use exactly
 this prompt:
 
 > Implement this accepted spec: `<absolute path to spec.md>`. There is no

@@ -80,10 +80,10 @@ Cloudflare portal servers expose tools under a `datacamp-internal-cloudflare-mcp
 
 ## Scoping skills to agents
 
-To make a skill available to one agent only (e.g. `sdlc-intent`/`sdlc-spec`/`sdlc-architecture`/`sdlc-plan` → the `spec` agent, `sdlc-implement` → the `engineer` agent):
+To make a skill available to one agent only:
 
 1. Deny it globally in the user config's `permissions` array, after the `skill *` allow rule — the **last** matching rule wins.
-2. In the owning agent's frontmatter, restate the **full** skill ruleset in `permissions:` — agent rules are appended after global rules, so a later agent `allow` overrides the global `deny` — e.g. allow `*` then allow `sdlc-*` last. See `modules/opencode-2/agents/spec.md`.
+2. In the owning agent's frontmatter, restate the **full** skill ruleset in `permissions:` — agent rules are appended after global rules, so a later agent `allow` overrides the global `deny` — e.g. allow `*` then allow `<skill-name>` last.
 
 A new skill under `modules/agents/skills` needs a copy in `~/.agents/skills`
 before OpenCode sees it — running `dt s agents` re-copies every skill
