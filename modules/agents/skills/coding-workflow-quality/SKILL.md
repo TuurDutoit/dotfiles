@@ -23,7 +23,11 @@ Follow these steps for non-trivial tasks:
 3. **Implement** — Make the code changes. Commit each logical step separately.
 4. **Test** — Run the test suite. If coverage was thin, write and commit tests first before implementing.
 5. **QA** — Verify your changes against the real, locally running app: figure out how to run it, then exercise the golden path and edge cases. A task is not finished until it has been QA'd this way. If anything blocks running the app, flag it to the user instead of declaring the task done.
-6. **Review** — Always run the `review` skill on the final diff.
+6. **Review** — Dispatch the `reviewer` subagent via the `task` tool to review
+   the final diff. Never review your own work — a self-review is too biased.
+   The reviewer decides how thorough to be (single-pass or parallel
+   per-dimension subagents) per the `review` skill. Fix the verified
+   findings it reports before finishing.
 
 ## Code Quality
 
