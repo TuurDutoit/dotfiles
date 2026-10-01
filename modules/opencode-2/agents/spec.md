@@ -5,7 +5,7 @@ description: >-
   implementation.
 mode: primary
 # model-category: spec
-model: openrouter/~anthropic/claude-opus-latest#xhigh
+model: openrouter/openai/gpt-6.1-sol#high
 permissions:
   - { action: skill, resource: "*", effect: allow }
 ---
