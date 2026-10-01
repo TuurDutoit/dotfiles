@@ -86,7 +86,15 @@ The tester reports findings; you judge them. For each failure, make a simple cau
 Most apps auto-promote: the `deploy <app> in prod` build starts ~1–2 minutes after staging succeeds. Some critical apps require a manual promote — if no prod build appears for your tag after staging QA passed, the app is in that category.
 
 - **Auto-promote**: watch the prod build succeed with your tag (same log check as step 6), then go to step 9.
-- **Manual promote**: tell the user QA on staging passed — summarize the QA plan results — and that they can promote to prod. Wait for them to confirm the promotion, then continue to step 9.
+- **Manual promote**: run the pending-work check below. If it is clear, tell the user QA on staging passed — summarize the QA plan results — and that they can promote to prod. Wait for them to confirm the promotion, then continue to step 9.
+
+### Pending-work check (manual promote only)
+
+A promotion deploys the current staging state, not just your tag: every commit merged to master since prod's last deploy rides along, including other people's work. Before the user may promote, verify nothing unpromoted belongs to someone else:
+
+1. Read the most recent prod and staging rows from `deployments_list_deployments {startDate, endDate, app}` (step 5 — widen `startDate` until both show) and take their `app_version` git tags.
+2. List what a promotion would carry: `gh api repos/<org>/<repo>/compare/<prod-tag>...<staging-tag>`. Every commit in that range that is not part of this PR (its merge commit from step 2 and its branch commits) is someone else's work going to prod unannounced. Also check `gh api repos/<org>/<repo>/tags` for tags newer than yours already deployed to staging — promoting now carries those too.
+3. **Other work pending → stop and alert the user.** List the riding-along commits (short sha, message, author) and wait — do not suggest promoting and do not proceed — until the user explicitly decides to promote anyway, e.g. after coordinating with the other team. Only when the range holds nothing but this PR's commits may you tell the user they can promote.
 
 Once the prod build has succeeded with your tag — and only then — transition the ticket to **post-deployment validation** and verify the new status. A ticket may only be moved there when it is fully deployed to prod: never while the deploy is still in staging or mid-flight.
 
