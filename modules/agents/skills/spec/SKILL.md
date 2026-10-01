@@ -25,6 +25,17 @@ The single artifact combines:
 
 Start from `references/templates/spec.md` in this skill.
 
+## Writing Style
+
+`spec.md` is an information-dense, easily scannable document — not an essay:
+
+- Short, to-the-point sentences. Front-load the important information; cut filler.
+- Prefer structure over paragraphs: bullet points, numbered lists, tables, headings.
+- Code blocks for commands, schemas, signatures, and file paths.
+- Tables for options, trade-offs, and comparisons.
+- Diagrams for flows, UI states, and architecture boundaries — via the `show-me` skill.
+- If a section reads like long-form prose, restructure it into the forms above.
+
 ## Artifact Location
 
 Resolve the destination directory for `spec.md` in this order:
@@ -48,10 +59,9 @@ Artifacts inside the repository are committed once accepted.
 
 Follow these steps in order:
 
-Communicate with Tuur through the `show-me` skill — both when talking to
-him in the conversation (interview options, trade-offs, review summaries)
-and when writing `spec.md` (flows, UI states, and architecture boundaries
-become concise diagrams or sketches, not prose alone).
+Communicate with Tuur through the `show-me` skill — interview options,
+trade-offs, review summaries. When writing `spec.md`, follow
+[Writing Style](#writing-style).
 
 ### 1. Ingest, Explore & Initialize
 
@@ -87,8 +97,9 @@ Work through each section of `spec.md` sequentially. For each part:
 
 Once all sections are drafted:
 - Dispatch the `reviewer` subagent via the `task` tool to review the
-  complete `spec.md` for consistency, completeness, and clarity across
-  logic, specs, and architecture. Never review your own draft — a
+  complete `spec.md` for consistency, completeness, clarity across
+  logic, specs, and architecture, and adherence to the Writing Style
+  rules. Never review your own draft — a
   self-review is too biased. Pass the spec's absolute path so the reviewer
   runs in spec/plan mode; it decides how thorough to be (single-pass or
   parallel per-dimension subagents) per the `review` skill.
