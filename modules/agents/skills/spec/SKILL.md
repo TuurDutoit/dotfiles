@@ -86,7 +86,12 @@ Work through each section of `spec.md` sequentially. For each part:
 ### 3. Review the Document
 
 Once all sections are drafted:
-- Review the complete `spec.md` document for consistency, completeness, and clarity across logic, specs, and architecture (or dispatch the `reviewer` subagent via the `task` tool if a deeper review is helpful).
+- Dispatch the `reviewer` subagent via the `task` tool to review the
+  complete `spec.md` for consistency, completeness, and clarity across
+  logic, specs, and architecture. Never review your own draft — a
+  self-review is too biased. Pass the spec's absolute path so the reviewer
+  runs in spec/plan mode; it decides how thorough to be (single-pass or
+  parallel per-dimension subagents) per the `review` skill.
 - Fix any inconsistencies, gaps, or unresolved ambiguities identified during review in `spec.md`.
 
 ### 4. Sign-Off & Approval
