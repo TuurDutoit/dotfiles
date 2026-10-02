@@ -33,6 +33,7 @@ This repo now carries two OpenCode module generations:
 ## Dotfiles workflow
 
 - Agents live in `modules/opencode-2/agents/<name>.md`; global skills go in `modules/agents/skills`.
+- Agent frontmatter pins the model as `provider/model#variant` (e.g. `openrouter/openai/gpt-6.1-sol#high`). The optional `# model-category:` comment (existing values: coding, review, spec, tools) is documentation only — nothing in this repo parses it.
 - Run `modules/opencode-2/setup.zsh` after adding a new top-level path that needs symlinking (it links `AGENTS.md`, `opencode.jsonc`, `agents`, `plugins`, `commands`).
 - Every change ends with a commit and push in the same turn (see repo AGENTS.md).
 
