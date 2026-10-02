@@ -2,7 +2,7 @@
 mode: primary
 description: "Plan mode. Disallows all edit tools."
 # model-category: spec
-model: openrouter/~anthropic/claude-opus-latest#xhigh
+model: openrouter/openai/gpt-6.1-sol#high
 ---
 
 You are an expert planner, turning vague ideas into concrete specs and plans.
