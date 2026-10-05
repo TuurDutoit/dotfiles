@@ -9,6 +9,8 @@ Follow the chain: Jira ticket → merge commit → CircleCI workflow → version
 
 The Jira ticket moves in lockstep with the deploy and gates the end: **ready to deploy** when monitoring starts, **post-deployment validation** only once fully deployed to prod, **Done** only after prod QA fully passed and the user explicitly approved the final report. Drive transitions with the Jira tools in the internal Cloudflare MCP portal; the ticket key lives in the PR title (e.g. `[LX-1234]`) — if there is none, ask the user which ticket this deploy belongs to before proceeding.
 
+The **post-deployment validation** and **Done** transitions carry one extra gate: this PR must be the whole ticket, or its last remaining part. When the ticket has work outside this PR — other planned PRs, open subtasks, or a linked change not yet merged — skip both transitions and tell the user; if the ticket itself does not make it clear, ask the user whether this PR completes it before transitioning.
+
 **Watching = polling.** There are no push notifications. Re-run the read command for the current state, `sleep 30` in the shell between polls, and keep a bounded budget (~30 attempts); on timeout, report the last observed state to the user instead of looping forever.
 
 ## 1. Move the ticket to "ready to deploy"
@@ -96,7 +98,7 @@ A promotion deploys the current staging state, not just your tag: every commit m
 2. List what a promotion would carry: `gh api repos/<org>/<repo>/compare/<prod-tag>...<staging-tag>`. Every commit in that range that is not part of this PR (its merge commit from step 2 and its branch commits) is someone else's work going to prod unannounced. Also check `gh api repos/<org>/<repo>/tags` for tags newer than yours already deployed to staging — promoting now carries those too.
 3. **Other work pending → stop and alert the user.** List the riding-along commits (short sha, message, author) and wait — do not suggest promoting and do not proceed — until the user explicitly decides to promote anyway, e.g. after coordinating with the other team. Only when the range holds nothing but this PR's commits may you tell the user they can promote.
 
-Once the prod build has succeeded with your tag — and only then — transition the ticket to **post-deployment validation** and verify the new status. A ticket may only be moved there when it is fully deployed to prod: never while the deploy is still in staging or mid-flight.
+Once the prod build has succeeded with your tag — and only then — transition the ticket to **post-deployment validation** and verify the new status. A ticket may only be moved there when it is fully deployed to prod: never while the deploy is still in staging or mid-flight. The whole-ticket gate applies here too: only move the ticket when this PR is the whole ticket or its last part — otherwise leave the status alone and tell the user why.
 
 ## 9. QA on production
 
@@ -107,4 +109,4 @@ Rerun the full QA plan from step 7, verbatim, with the `tester` subagent against
 
 ## 10. Close the ticket
 
-QA is green and the deploy is fully out — hand the close to **`/close-ticket`**, passing everything you recorded: the ticket key, the merge commit and tag, the staging and prod manifest versions and timestamps, and the QA outcomes. The skill re-checks the QA gate, drafts the two security-review fields, presents the deploy & QA report, and — only after the user's explicit approval — fills the fields and moves the ticket to **Done**. The skill owns the security fields and the final transition.
+QA is green and the deploy is fully out — hand the close to **`/close-ticket`**, passing everything you recorded: the ticket key, the merge commit and tag, the staging and prod manifest versions and timestamps, and the QA outcomes. Hand off only when the whole-ticket gate passes: this PR must be the whole ticket or its last part. If it is not, stop here and tell the user the ticket stays open until its remaining parts ship. The skill re-checks the QA gate, drafts the two security-review fields, presents the deploy & QA report, and — only after the user's explicit approval — fills the fields and moves the ticket to **Done**. The skill owns the security fields and the final transition.

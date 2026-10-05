@@ -5,15 +5,17 @@ description: "Close out a Jira ticket after a deploy: gate on QA having fully pa
 
 # Close the ticket
 
-The final step of the deploy lifecycle — normally handed over by **`/monitor-deploy`** once the change is fully deployed and QA is done — but also usable on its own when a deployed change's ticket still sits open. The order is fixed: QA green → security draft → user approval → ticket **Done**.
+The final step of the deploy lifecycle — normally handed over by **`/monitor-deploy`** once the change is fully deployed and QA is done — but also usable on its own when a deployed change's ticket still sits open. The order is fixed: QA green → security draft → user approval → ticket **Done**. Closing is only for a ticket the change completes: the PR behind the deploy must be the whole ticket, or its last remaining part.
 
 **Inputs.** Coming from `/monitor-deploy` you hold everything in context: the ticket key, the merge commit and tag, the staging and prod manifest versions and timestamps, and the QA outcomes. Standalone, reconstruct what you can — the ticket key from the PR title (e.g. `[LX-1234]`, resolved as `monitor-deploy` does it), deploy facts from the PR, git tags, and deployment records — and ask the user for the rest.
 
-## 1. Gate on QA
+## 1. Gate on QA and ticket scope
 
 Every QA case must have been executed and passed — on staging and on production — before anything else here happens. Check the outcomes you hold: any failure, blocked flow, or case that was never run stops the close. If the outcomes are not in your hands, get them from the user or from a QA report on the PR or ticket; QA that has not run is not a gate you can pass by assumption.
 
-**Done when**: every QA case in the plan is accounted for as PASS on both environments.
+Second gate — **ticket scope**: the ticket may only be moved to **Done** when the change behind the deploy is the whole ticket, or its last remaining part. Check the ticket for work outside this PR: other planned PRs, open subtasks, or a linked change not yet merged. If any remain, stop — the ticket stays open until the last part ships. If the ticket does not make it clear, ask the user whether this change completes it before going on.
+
+**Done when**: every QA case in the plan is accounted for as PASS on both environments, and the ticket-scope gate passed.
 
 ## 2. Draft the security review
 
