@@ -57,6 +57,18 @@ When adding a server, we don't want to expose it to the default build agent. Ins
 - other agents: deny the new server (`{ action: "newserver_*", resource: "*", effect: deny }`).
 - global: deny the new server in the `permissions` array in `opencode.jsonc`.
 
+### Secrets via `{env:...}` in remote headers
+
+Header auth works (verified on v2.0.23): put the scheme in the config as literal text and the secret as a variable — `"Authorization": "Bearer {env:MY_TOKEN}"` — with the raw token (no `Bearer ` prefix) in the env var. `{env:NAME}` interpolation applies to remote `headers`, local `environment`, and OAuth fields.
+
+**Gotcha:** MCP connections are made by the shared background service (`opencode serve --service`), which interpolates `{env:...}` from **its own** environment at startup and never re-reads it. After adding or changing a secret, restart the service from a shell that has it sourced, or the server keeps failing with the old (empty) value even though new `opencode` runs and agent shells see the variable:
+
+```sh
+source ~/.localrc && opencode service restart   # then: opencode mcp list
+```
+
+Debugging split to remember: if the agent's shell can `echo $VAR` but the MCP still 401s, the variable reached the TUI but not the service — check the service process start time (`lsof -i :49374`, `ps -p <pid> -o lstart=`) against when the secret was added.
+
 ## Disabling an MCP server
 
 In the user config, either remove the server entry or disable it:
