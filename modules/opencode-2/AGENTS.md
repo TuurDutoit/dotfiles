@@ -9,11 +9,9 @@
 - Use the `show-me` skill when writing docs, specs, or plans, or when explaining things to me (diagrams, code sketches, focused artifacts)
 
 - Use the `bt` CLI to interact with Braintrust (reference: `braintrust-cli` skill)
-- My dotfiles live at `/Users/tuur/.dotfiles`. If I ask you to change something in my dotfiles, or configure something globally, this is where you should look.
-  - When creating or updating global skills, always do so in my dotfiles (`modules/agents/skills`)
-  - Always quote frontmatter string fields (`name: "my-name"`, `description: "..."`) with double quotes to prevent YAML parsing issues with colons (`:`).
 - Handoff documents (e.g. from the `handoff` skill) are stored under ~/Documents/Obsidian/DataCamp/Agents/Handoffs - not in the current workspace, and not in a temporary OS directory
 - Multi-review diffs are stored under ~/Documents/Obsidian/DataCamp/Agents/Diffs - not in the current workspace, and not in a temporary OS directory
+- My user ID in production is 4375776, and on staging 7217376
 
 ## General - very important!
 
@@ -21,7 +19,7 @@
 - Back up all your statements with hard proof - DO NOT assume things. Find references in official docs, issue trackers or public forums. Find the actual error message when something crashes. Get a screenshot to validate a UI looks good. Be your own critic.
 - When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
 - Access data (Jira tickets, Google Docs, Confluence pages, ...) only through the provided tools, usually via code mode. If a tool doesn't work, alert me - never fall back to the browser.
-- If you have a problem installing packages through npm or Yarn, stop and let me know.
+- If npm / Yarn installs fail due to authentication, stop and let me know - do NOT go hunting for a token.
 - Keep changes simple, elegant, and well integrated with the existing code. Prefer the smallest coherent solution over new abstractions or complexity.
 - Before implementing a feature, consider whether a focused refactor of the affected code would make the change clearer or simpler. When it would, do that refactor first; avoid speculative refactors unrelated to the feature.
 
@@ -31,14 +29,6 @@
 - Look for durable learnings: unexpected friction, hard-to-find information, confusing behavior, repeated user steering, important architectural decisions, or repetitive project-wide changes.
 - When a learning would help future work, update the most appropriate durable documentation (for example, the README, `AGENTS.md`, a skill, or another relevant doc) as part of the task. Keep guidance specific, concise, and scoped to where it applies.
 - Mention relevant documentation updates or observations in the handoff. Do not add speculative, one-off, or project-specific rules to global instructions.
-
-## Conversations
-
-When commenting in Github, always add the following snippet at the end of your message:
-
-```
-> 🤖 posted on behalf of Tuur
-```
 
 ## Running Commands
 
@@ -73,6 +63,15 @@ When commenting in Github, always add the following snippet at the end of your m
 Whenever referencing a project in this list (e.g. in session names, spec documents, or conversations with Tuur), you may abbreviate the full project name to its alias:
 
 - `content-authorization-service` → `CAS`
+- `learn-hub` -> LH
+
+## GitHub
+
+When commenting in Github, always add the following snippet at the end of your message:
+
+```
+> 🤖 posted on behalf of Tuur
+```
 
 ## Git Commits
 
