@@ -102,6 +102,9 @@ A new skill under `modules/agents/skills` needs a copy in `~/.agents/skills`
 before OpenCode sees it — running `dt s agents` re-copies every skill
 directory. Skills are **copied, not symlinked** (OpenChamber mis-resolves
 symlinked skills), so re-run `dt s agents` after every skill change.
+The copy loop never prunes: when you delete a skill here, also remove its
+stale directory from `~/.agents/skills` by hand, or OpenCode keeps loading
+it.
 
 ## Agent tool reference
 
