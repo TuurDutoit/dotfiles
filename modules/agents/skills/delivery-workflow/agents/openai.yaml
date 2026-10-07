@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delivery Workflow"
+  short_description: "Coordinate verification and delivery of changes"
+  default_prompt: "Use $delivery-workflow to coordinate this work."

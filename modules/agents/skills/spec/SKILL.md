@@ -96,7 +96,7 @@ Work through each section of `spec.md` sequentially. For each part:
 ### 3. Review the Document
 
 Once all sections are drafted:
-- Dispatch the `reviewer` subagent via the `task` tool to review the
+- Dispatch the `reviewer` subagent via the `subagent` tool to review the
   complete `spec.md` for consistency, completeness, clarity across
   logic, specs, and architecture, and adherence to the Writing Style
   rules. Never review your own draft — a
@@ -119,7 +119,8 @@ Approval and handoff are one step, encoded in the `/approve-spec` command:
   argument), the command text arrives as the prompt — follow it.
 - When Tuur approves in words, apply the command's same steps: mark the
   spec accepted, commit it when it lives inside the repository, and create
-  a fresh `engineer` session carrying the implementation brief.
+  a fresh `build` session carrying the implementation brief.
 
-Implementation happens only in the new `engineer` session — never in this
-session, never via a subagent or Task dispatch.
+Implementation happens only in the new `build` session (which dispatches
+its own `engineer`) — never in this session, and never by dispatching
+implementation from here.

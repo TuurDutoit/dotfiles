@@ -11,7 +11,8 @@ Resolve the PR in this order:
 
 1. The PR URL or number Tuur passed as `$ARGUMENTS`.
 2. `gh pr view` in this checkout — the PR open for the current branch
-   (this session's PR when invoked from the engineer session).
+   (this session's PR when invoked from the build session that delivered
+   it).
 
 If no PR resolves, ask Tuur.
 

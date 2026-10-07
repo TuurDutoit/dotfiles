@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Quality"
+  short_description: "Follow the shared code standards"
+  default_prompt: "Use $code-quality standards for this change."

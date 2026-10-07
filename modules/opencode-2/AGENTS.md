@@ -2,7 +2,9 @@
 
 ## Pointers
 
-- Use the `coding-workflow-quality` skill when planning, implementing, testing, reviewing, or otherwise modifying code.
+- Use the `code-quality` skill for code standards when writing, changing, or reviewing code.
+- Use the `implementation-workflow` skill when implementing changes — the `engineer` agent's workflow.
+- Use the `delivery-workflow` skill when coordinating, verifying, or delivering changes — the `build` agent's workflow.
 - Use the `git-github-workflow` skill for all Git, GitHub, and pull request work.
 - Use the `pr` skill when opening a PR
 - Use the `circleci-investigate-job-failures` skill to investigate CircleCI failures

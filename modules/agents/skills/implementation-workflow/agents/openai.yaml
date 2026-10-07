@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementation Workflow"
+  short_description: "Follow the engineer's implementation workflow"
+  default_prompt: "Use $implementation-workflow to implement this change."
