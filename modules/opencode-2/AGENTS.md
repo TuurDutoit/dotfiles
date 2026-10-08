@@ -36,8 +36,16 @@
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
 
+## Advice and judgment calls
+
+- Any decision or judgment call — approach, design, trade-offs, "which option" — goes to the `advisor` agent as a dispatched subagent, not to you alone. This applies to every agent that can dispatch subagents (including `build` and `engineer`); agents that cannot (`advisor`, `tester`, `review-dimension`) report the decision point back to their parent instead of making the call themselves.
+- When you consult the advisor, clearly explain the problem and list the alternatives you have evaluated, with trade-offs. The advisor makes the final call: treat its decision as the decision and act on it.
+
 ## Sessions and Subagents
 
+- Prefer subagents over new sessions: dispatch work with the `subagent` tool and continue earlier subagents by their session ID. Only create, fork, or send to a session when Tuur explicitly asks for it (for example an OpenChamber dispatch, or a command like `/approve-spec` that hands off to a fresh session).
+- Reuse subagents when relevant: continue the earlier subagent (pass its session ID) instead of starting a fresh one for the same or related work.
+- Run independent work concurrently: dispatch independent subagents in parallel — in the background when you will keep working while they run — and run long-running commands in the background instead of blocking the session.
 - When starting new sessions or subagents, always use the default model (omit or leave the model argument empty) unless explicitly told which model to use.
 
 ## Jira

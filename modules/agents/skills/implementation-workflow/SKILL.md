@@ -11,7 +11,7 @@ The workflow for one coding task, from request to evidence-based handoff. Follow
 
 1. **Explore** — Map the affected area before touching anything: entry points, dependencies, existing tests and patterns. Dispatch `explore` subagents when the survey is bigger than a quick look; read for yourself when it is not. Done when you can name every file the change touches and the tests that cover them today.
 
-2. **Plan** — Decide the files to touch, the order of work, and the tests that prove it. When the approach has real alternatives, align with the requester before writing code; when it does not, proceed directly. Done when the plan covers every change and its proof.
+2. **Plan** — Decide the files to touch, the order of work, and the tests that prove it. When the approach has real alternatives, that is a judgment call: dispatch an `advisor` subagent — clearly explain the problem and the alternatives you evaluated; it makes the final call — then align with the requester before writing code. When it does not, proceed directly. Done when the plan covers every change and its proof.
 
 3. **Implement** — Make the change following the plan, committing each logical step separately. Fold deviations back into the plan instead of drifting silently.
 
