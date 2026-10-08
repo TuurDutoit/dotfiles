@@ -25,7 +25,7 @@ Work moves through three states — never conflate them:
 1. **Implementation complete** — the engineer reports the change is made and local checks pass.
 2. **Verified** — both gates passed:
    - Dispatch a single `reviewer` on the final diff; it runs the `review` skill and returns verified findings. The agent that made the change never reviews it.
-   - Dispatch a single `tester` with a written QA plan; it executes the plan and reports PASS/FAIL/BLOCKED per test. Take the plan from the spec doc when one exists; write one only when asked to.
+   - Dispatch a single `tester` with a written QA plan; it executes the plan and reports PASS/FAIL/BLOCKED per test. Take the plan from the spec doc when one exists; write one only when asked to. When a test needs an authenticated session, put the account requirement in `setup` by name (e.g. "log in as the B2C free staging user" or "sign up a fresh user"). The `tester` fetches pre-created credentials from 1Password Environments itself or creates a `test+<random>@datacamp.com` account; never put credentials in the plan.
 3. **PR/CI complete** — only after verification, and only when requested: open the PR with the `pr` skill, monitor the deploy with `monitor-deploy`, and investigate CI failures with `circleci-investigate-job-failures`.
 
 Never infer permission to merge or deploy from any state. Merging and deployment happen when Tuur approves them — for example through the `/merge-and-deploy` command.
