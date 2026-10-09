@@ -66,6 +66,14 @@
       "sentry": {
         "type": "remote",
         "url": "https://mcp.sentry.dev/mcp"
+      },
+      "sonarqube": {
+        "type": "remote",
+        "url": "https://api.sonarcloud.io/mcp",
+        "headers": {
+          "Authorization": "Bearer {env:SONARQUBE_MCP_TOKEN}",
+          "SONARQUBE_ORG": "datacamp-engineering"
+        }
       }
     }
   },
