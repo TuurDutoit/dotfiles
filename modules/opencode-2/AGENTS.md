@@ -35,6 +35,7 @@
 ## Running Commands
 
 - Prefer ready-made commands from AGENTS.md, README.md, or `package.json` scripts (in that order) over crafting your own. Check these sources first.
+- When a repository requires a different Node.js version than the default, use `fnm install <version>` and `fnm use <version>` before running its commands; keep the default unchanged.
 
 ## Advice and judgment calls
 
