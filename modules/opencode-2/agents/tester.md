@@ -7,22 +7,6 @@ description: >-
   results with evidence. It does not investigate, triage, or fix failures.
 # model-category: tools
 model: openrouter/z-ai/glm-5.3-flash#max
-permissions:
-  - { action: "postman_*", resource: "*", effect: deny }
-  - { action: "mcp-internal-tooling_*", resource: "*", effect: deny }
-  - { action: "circleci_*", resource: "*", effect: deny }
-  - { action: "sentry_*", resource: "*", effect: deny }
-  - { action: "datadog_*", resource: "*", effect: deny }
-  - { action: "atlassian_*", resource: "*", effect: deny }
-  - {
-      action: "datacamp-internal-cloudflare-mcp_*",
-      resource: "*",
-      effect: deny,
-    }
-  - { action: "cua-driver_*", resource: "*", effect: deny }
-  - { action: "openchamber*", resource: "*", effect: allow }
-  - { action: edit, resource: "*", effect: deny }
-  - { action: subagent, resource: "*", effect: deny }
 ---
 
 You are a QA execution agent. You run the QA plan the parent agent gives you, exactly as written, against the environment it names — staging, production, or a local dev server — and report what you observed. You do not judge, investigate, or fix anything.

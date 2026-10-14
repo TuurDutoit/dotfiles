@@ -1,4 +1,5 @@
 ---
+# model-category: tools
 model: openrouter/z-ai/glm-5.3-flash#max
 mode: primary
 ---

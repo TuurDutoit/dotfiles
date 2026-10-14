@@ -10,6 +10,7 @@
   "share": "disabled",
   "subagent_depth": 3,
   "experimental": {
+    "subagent_depth": 3,
     // v1 enabled_providers: deny by default, then allow the listed providers.
     "policies": [
       { "action": "provider.use", "resource": "*", "effect": "deny" },
@@ -107,4 +108,11 @@
       }
     }
   },
+  "agents": {
+    // Disable built-in agents, so their permissions "reset".
+    // They are recreated later on in the loading sequence by the Markdown definitions.
+    "explore": {"disabled": true},
+    "build": {"disabled": true},
+    "general": {"disabled": true},
+  }
 }
