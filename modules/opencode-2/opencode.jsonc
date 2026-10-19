@@ -1,30 +1,15 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  // Company-managed defaults below are imported from the managed settings file
-  // (/Library/Application Support/opencode/opencode.json + instructions.md)
-  // because OpenCode 2 no longer reads that location. Refresh manually when IT
-  // updates the managed file. MCP servers disabled in the v1 config are not
-  // imported; re-add them from the managed file if that ever changes.
-  "model": "openrouter/auto-balanced",
-  "small_model": "openrouter/auto-cost",
-  "share": "disabled",
-  "subagent_depth": 3,
+  // Machine-wide defaults (model, providers, provider policies, share,
+  // instructions, and the company MCP servers) come from the managed config:
+  // the MDM profile at /Library/Managed Preferences/tuur/ai.opencode.managed.plist
+  // and /Library/Application Support/opencode/opencode.json. OpenCode loads
+  // them with the highest precedence, so only personal settings belong here.
   "experimental": {
-    "subagent_depth": 3,
-    // v1 enabled_providers: deny by default, then allow the listed providers.
-    "policies": [
-      { "action": "provider.use", "resource": "*", "effect": "deny" },
-      { "action": "provider.use", "resource": "openrouter", "effect": "allow" },
-      { "action": "provider.use", "resource": "anthropic", "effect": "allow" },
-      { "action": "provider.use", "resource": "openai", "effect": "allow" }
-    ]
+    "subagent_depth": 3
   },
   "mcp": {
     "servers": {
-      "datacamp-internal-cloudflare-mcp": {
-        "type": "remote",
-        "url": "https://mcp-gateway-internal.datacamp.com/mcp"
-      },
       "circleci": {
         "type": "remote",
         "url": "https://mcp.circleci.com/v1/mcp"
@@ -44,23 +29,6 @@
           "1password-mcp"
         ]
       },
-      // Imported from managed settings (remote servers use OAuth by default in v2).
-      "cloudflare": {
-        "type": "remote",
-        "url": "https://mcp.cloudflare.com/mcp"
-      },
-      "mcp-internal-tooling": {
-        "type": "remote",
-        "url": "https://mcp-internal-tooling.datacamp.com/mcp"
-      },
-      "postman": {
-        "type": "remote",
-        "url": "https://mcp.postman.com/mcp"
-      },
-      "sentry": {
-        "type": "remote",
-        "url": "https://mcp.sentry.dev/mcp"
-      },
       "sonarqube": {
         "type": "remote",
         "url": "https://api.sonarcloud.io/mcp",
@@ -71,6 +39,26 @@
       }
     }
   },
+  // Managed integrations that are not used here. They cannot be turned off
+  // with "disabled": the managed config has higher precedence and replaces the
+  // whole server object. A policy deny removes the integration however it was
+  // configured.
+  "policies": [
+    { "action": "integration.use", "resource": "plugin:@datacamp/opencode-openrouter-usage", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:airtable", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:atlassian", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:better-artifacts", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:clickup", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:datadog", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:huggingface", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:incident-io", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:intercom", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:linear", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:mcp-internal-tooling", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:miro", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:notion", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:webflow", "effect": "deny" }
+  ],
   "permissions": [
     { "action": "read", "resource": "*", "effect": "allow" },
     { "action": "read", "resource": "*.env", "effect": "deny" },
@@ -85,29 +73,6 @@
     { "action": "external_directory", "resource": "/tmp/**", "effect": "allow" },
     { "action": "external_directory", "resource": "/Users/tuur/Projects/**", "effect": "allow" },
   ],
-  "providers": {
-    "openrouter": {
-      // Imported from managed settings: OpenRouter auto-routing aliases.
-      "models": {
-        "auto": {},
-        "auto-balanced": {
-          "modelID": "openrouter/auto",
-          "name": "OpenRouter Auto Balanced",
-          "settings": { "plugins": [{ "id": "auto-router", "cost_quality_tradeoff": 5 }] }
-        },
-        "auto-cost": {
-          "modelID": "openrouter/auto",
-          "name": "OpenRouter Auto Cost",
-          "settings": { "plugins": [{ "id": "auto-router", "cost_quality_tradeoff": 9 }] }
-        },
-        "auto-quality": {
-          "modelID": "openrouter/auto",
-          "name": "OpenRouter Auto Quality",
-          "settings": { "plugins": [{ "id": "auto-router", "cost_quality_tradeoff": 3 }] }
-        }
-      }
-    }
-  },
   "agents": {
     // Disable built-in agents, so their permissions "reset".
     // They are recreated later on in the loading sequence by the Markdown definitions.

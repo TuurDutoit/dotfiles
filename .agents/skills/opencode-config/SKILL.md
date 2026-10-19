@@ -1,6 +1,6 @@
 ---
 name: "opencode-config"
-description: "Manage OpenCode 2 configuration in this dotfiles repo: the user config (~/.config/opencode/opencode.jsonc, symlinked to modules/opencode-2), agents, plugins, MCP servers, permission scoping, and the imported company-managed defaults. Use when adding/disabling an MCP server, changing agent tools or permissions, updating OpenCode config, or debugging config load or permission errors."
+description: "Manage OpenCode 2 configuration in this dotfiles repo: the user config (~/.config/opencode/opencode.jsonc, symlinked to modules/opencode-2), agents, plugins, MCP servers, permission scoping, and how the managed company defaults layer in. Use when adding/disabling an MCP server, changing agent tools or permissions, updating OpenCode config, or debugging config load or permission errors."
 ---
 
 # OpenCode config in this repo
@@ -12,23 +12,29 @@ This repo now carries two OpenCode module generations:
 
 ## Config layers (highest precedence wins)
 
-| Layer          | Path                                                                                     | Editable?     |
-| -------------- | ---------------------------------------------------------------------------------------- | ------------- |
-| Project config | `<repo>/opencode.json(c)`, `.opencode/`                                                  | Yes, per repo |
-| User config    | `~/.config/opencode/opencode.jsonc` → symlinked to `modules/opencode-2/opencode.jsonc`   | Yes           |
+| Layer                     | Path                                                                                     | Editable?                                  |
+| ------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Managed preferences (MDM) | `/Library/Managed Preferences/<user>/ai.opencode.managed.plist`                          | No — highest precedence                    |
+| System (managed)          | `/Library/Application Support/opencode/opencode.json` + `instructions.md`                | No — machine-wide                          |
+| Project config            | `<repo>/opencode.json(c)`, `.opencode/`                                                  | Yes, per repo                              |
+| User config               | `~/.config/opencode/opencode.jsonc` → symlinked to `modules/opencode-2/opencode.jsonc`   | Yes                                        |
 
 - User config is a symlink: edit `modules/opencode-2/opencode.jsonc`, never `~/.config/opencode/opencode.jsonc` itself.
-- OpenCode 2 no longer reads the company-managed file at
-  `/Library/Application Support/opencode/opencode.json` (an OpenCode 1
-  location). Its contents were **imported into `modules/opencode-2/opencode.jsonc`**
-  (model, providers, provider policies, MCP servers, `share`) and its
-  `instructions.md` was merged into `modules/opencode-2/AGENTS.md`. When IT
-  updates the managed file, refresh those imports by hand.
+- OpenCode 2 (verified on v2.0.32) **does** load the managed config at
+  `/Library/Application Support/opencode/opencode.json` and its `instructions.md`.
+  On this Mac the user MDM profile
+  `/Library/Managed Preferences/tuur/ai.opencode.managed.plist` also supplies the
+  same model/provider aliases/instructions plus the MCP servers, and outranks the
+  system file. The managed file supplies `model`, `small_model`, `share`,
+  `enabled_providers` (normalized to provider policies), the OpenRouter
+  auto-routing model aliases, and the company MCP servers. Do **not** duplicate
+  any of that in the user config; the user config holds only personal settings
+  and personal MCP servers.
 - Config is deep-merged across layers and loaded once at startup. After any config/agent/skill change, tell the user to restart OpenCode.
 - V2 config uses native shapes: `mcp.servers` (with `disabled`, not `enabled`),
   one ordered `permissions` array (`action`/`resource`/`effect`; `bash`→`shell`,
-  `task`→`subagent`), `providers` (model `options`→`settings`), and
-  `experimental.policies` for provider allowlists. See https://opencode.ai/v2/docs/config.
+  `task`→`subagent`), `providers` (model `options`→`settings`), and top-level
+  `policies` for provider/integration allowlists. See https://opencode.ai/v2/docs/config.
 
 ## Dotfiles workflow
 
@@ -51,6 +57,8 @@ Declare it in the user config `mcp.servers` block (V2 shape):
 
 Remote servers use OAuth by default — run OpenCode once and authenticate via `/mcps`.
 
+Servers already defined in the managed config are enabled automatically; do not re-declare them here.
+
 When adding a server, we don't want to expose it to the default build agent. Instead, create a new agent under `modules/opencode-2/agents/<name>.md` and scope it with `permissions:` entries (V2 replaces the v1 `tools:` frontmatter):
 
 - new agent: deny all servers, then allow the one you just added (e.g. `{ action: "newserver_*", resource: "*", effect: deny }` … `{ action: "newserver_*", …, effect: allow }` last).
@@ -71,11 +79,26 @@ Debugging split to remember: if the agent's shell can `echo $VAR` but the MCP st
 
 ## Disabling an MCP server
 
-In the user config, either remove the server entry or disable it:
+For a server declared in the user config, either remove its entry or disable it:
 
 ```jsonc
 "mcp": { "servers": { "server-name": { "disabled": true } } }
 ```
+
+A server declared in the managed config cannot be turned off that way: the
+managed config has the highest precedence and replaces the whole server object
+with the same name. Add a policy deny instead — a policy removes the server
+however it was configured:
+
+```jsonc
+"policies": [
+  { "action": "integration.use", "resource": "mcp:server-name", "effect": "deny" },
+]
+```
+
+The user config already denies the managed servers that are not wanted:
+airtable, atlassian, better-artifacts, clickup, datadog, huggingface,
+incident-io, intercom, linear, mcp-internal-tooling, miro, notion, webflow.
 
 Also remove the server's allow/deny glob from any agent's `permissions:` in `modules/opencode-2/agents/<name>.md`.
 
@@ -133,5 +156,7 @@ https://opencode.ai/v2/docs/build/plugins. Current state:
   OpenCode fails the plugin with "Plugin must export a default definition with
   an id and an effect or setup function" — the v1 template has only a named
   export, no default. Fix: `git checkout -- modules/opencode-2/plugins/rtk.ts`.
-- `@datacamp/opencode-openrouter-usage` — dropped: V1-only implementation,
-  not loaded in V2 (upstream release needed if it's ever wanted back).
+- `@datacamp/opencode-openrouter-usage` — dropped: V1-only implementation and
+  the MDM profile still declares it, so `policies` denies
+  `plugin:@datacamp/opencode-openrouter-usage`; remove that deny if a V2
+  version ever ships.

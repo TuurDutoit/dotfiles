@@ -84,31 +84,6 @@ When commenting in Github, always add the following snippet at the end of your m
 > 🤖 posted on behalf of Tuur
 ```
 
-## Git Commits
+## Git Commits and Pull Requests
 
-Imported from the company-managed instructions file; OpenCode 2 no longer loads the managed `instructions` entry, so these rules live here now.
-
-When you create a git commit, append one contiguous trailer block to the commit message:
-
-OpenCode-Model: <model-id>
-Co-authored-by: opencode-agent[bot] <219766164+opencode-agent[bot]@users.noreply.github.com>
-
-Replace `<model-id>` with the model that performed the development work. If multiple models contributed materially, add one `OpenCode-Model` trailer per model.
-
-Separate the commit body from the trailer block with exactly one blank line. Do not put blank lines between trailers. Keep `Co-authored-by` as the final trailer so GitHub recognizes the bot co-author.
-
-Never replace the `Co-authored-by` trailer with `OpenCode-Model`. These are separate trailers and both must be present on commits you create.
-
-When amending, rewording, or otherwise editing a commit message, preserve any existing `Co-authored-by` and `OpenCode-Model` trailers unless the user explicitly asks you to remove them.
-
-Only add these trailers to commits you create yourself. Do not add them when the user is creating the commit, when only preparing changes, or when suggesting a commit message.
-
-## Pull Requests
-
-Imported from the company-managed instructions file.
-
-When creating or updating GitHub pull requests, prefer the most specific available PR creation skill for the current repo or organization.
-
-Use generic PR creation skills only when repo- or organization-specific PR requirements, labels, templates, issue-tracker transitions, and notification flows are not needed.
-
-For normal DataCamp PR creation, always prefer the company-wide PR workflow skill when available. Do not use generic PR workflows or PR skills from other toolchains unless the user explicitly asks for that specific workflow.
+The Git commit trailer rules and the pull request requirements come from the company-managed instructions at `/Library/Application Support/opencode/instructions.md`, which OpenCode loads automatically. Do not copy them into this file.
