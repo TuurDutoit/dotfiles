@@ -8,7 +8,7 @@ description: >-
   owns service X?", "is service Y meeting its scorecard?") and it returns
   the answer.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 tools:
   "postman_*": false
   "chrome-devtools_*": false

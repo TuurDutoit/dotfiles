@@ -8,7 +8,7 @@ description: >-
   it needs (e.g. "find our notification-service API", "how do I call X?")
   and it returns the answer with Postman links.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 tools:
   "mcp-internal-tooling_*": false
   "chrome-devtools_*": false

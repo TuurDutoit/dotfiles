@@ -8,7 +8,7 @@ description: >-
   "what is deployed to production?", "is my orb pin stale?") and it
   returns the evidence and root cause.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

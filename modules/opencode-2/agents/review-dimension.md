@@ -1,19 +1,27 @@
 ---
-description: >-
-  Shared review dimension reviewer subagent. Dispatched only by the
-  reviewer agent; the dispatch prompt names the single dimension
-  to review (logic, performance, security, architecture, specs,
-  quality, or docs) and carries the payload.
+description: Shared review dimension reviewer subagent. Dispatched only by the
+  reviewer agent; the dispatch prompt names the single dimension to review
+  (logic, performance, security, architecture, specs, quality, or docs) and
+  carries the payload.
+model: openrouter/google/gemini-4-argon#high
 mode: subagent
 hidden: true
-# model-category: review
-model: openrouter/google/gemini-3.8-flash#high
 permissions:
-  - { action: skill, resource: "*", effect: deny }
-  - { action: skill, resource: review, effect: allow }
-  - { action: edit, resource: "*", effect: deny }
-  - { action: shell, resource: "*", effect: ask }
-  - { action: shell, resource: "git *", effect: allow }
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: review
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: git *
+    effect: allow
 ---
 
 You are the dimension reviewer for a review. The dispatch prompt names exactly ONE dimension to review and carries the payload.

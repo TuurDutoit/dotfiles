@@ -7,7 +7,7 @@ description: >-
   look answers Y?") and it returns the data or the dashboard/look
   definitions.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 tools:
   "postman_*": false
   "chrome-devtools_*": false

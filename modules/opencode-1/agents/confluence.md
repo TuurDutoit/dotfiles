@@ -21,7 +21,7 @@ description: >-
   Confluence tools. In that case, it will point at a file path where it has made
   the changes - let me know so I can manually upload the updated content.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

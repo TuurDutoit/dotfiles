@@ -8,7 +8,7 @@ description: >-
   we serve yesterday?", "who owns the monitors for the payments team?") and
   it returns the answer with evidence and links.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 tools:
   "postman_*": false
   "mcp-internal-tooling_*": false

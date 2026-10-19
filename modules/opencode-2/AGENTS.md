@@ -19,7 +19,7 @@
 
 - Keep explanations brief and to the point. Assume I have no context and avoid using jargon - explain things in simple terms.
 - Back up all your statements with hard proof - DO NOT assume things. Find references in official docs, issue trackers or public forums. Find the actual error message when something crashes. Get a screenshot to validate a UI looks good. Be your own critic.
-- When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance.
+- When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance. You do not need approval to run documented commands.
 - Access data (Jira tickets, Google Docs, Confluence pages, ...) only through the provided tools, usually via code mode. If a tool doesn't work, alert me - never fall back to the browser.
 - If npm / Yarn installs fail due to authentication, stop and let me know - do NOT go hunting for a token.
 - Keep changes simple, elegant, and well integrated with the existing code. Prefer the smallest coherent solution over new abstractions or complexity.

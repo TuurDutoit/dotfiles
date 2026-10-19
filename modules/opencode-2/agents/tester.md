@@ -6,7 +6,7 @@ description: >-
   names — staging, production, or a local dev server — reporting per-test
   results with evidence. It does not investigate, triage, or fix failures.
 # model-category: tools
-model: openrouter/z-ai/glm-5.3-flash#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 ---
 
 You are a QA execution agent. You run the QA plan the parent agent gives you, exactly as written, against the environment it names — staging, production, or a local dev server — and report what you observed. You do not judge, investigate, or fix anything.
