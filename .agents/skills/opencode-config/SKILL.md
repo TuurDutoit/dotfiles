@@ -31,6 +31,13 @@ This repo now carries two OpenCode module generations:
   any of that in the user config; the user config holds only personal settings
   and personal MCP servers.
 - Config is deep-merged across layers and loaded once at startup. After any config/agent/skill change, tell the user to restart OpenCode.
+- To verify a config change against the running app, use the OpenChamber server:
+  read its port from `~/.config/openchamber/managed-opencode/<pid>.json`, then
+  reload with `OPENCODE_SERVER_PASSWORD=<password> opencode reload --server
+  http://127.0.0.1:<port>` and read `/api/config` and `/api/mcp` (Basic auth
+  `opencode:<password>`, password from that server's `OPENCODE_SERVER_PASSWORD`).
+  `opencode mcp list` and `opencode debug config` can talk to the older shared
+  service instead and show stale results.
 - V2 config uses native shapes: `mcp.servers` (with `disabled`, not `enabled`),
   one ordered `permissions` array (`action`/`resource`/`effect`; `bash`→`shell`,
   `task`→`subagent`), `providers` (model `options`→`settings`), and top-level
