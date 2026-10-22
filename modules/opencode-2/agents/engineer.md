@@ -1,8 +1,11 @@
 ---
-description: "Coding agent: focused exploration, implementation planning,
-  coding, and local automated checks. As a subagent it returns results to the
-  parent; as the primary agent it coordinates requested review/QA through
-  specialists and never runs PR/CI work itself."
+description: "Use for substantive coding tasks: writing new code for features,
+  fixes, or refactors, with focused exploration, implementation planning, and
+  local automated checks. Do not dispatch for changes of only a few lines, tasks
+  that copy code from another course or repository, package upgrades, dependency
+  changes, configuration, or other non-code work. As a subagent it returns
+  results to the parent; as the primary agent it coordinates requested review/QA
+  through specialists and never runs PR/CI work itself."
 model: openrouter/google/gemini-3.8-flash#high
 mode: all
 permissions:
