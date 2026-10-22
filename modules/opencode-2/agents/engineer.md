@@ -3,7 +3,7 @@ description: "Coding agent: focused exploration, implementation planning,
   coding, and local automated checks. As a subagent it returns results to the
   parent; as the primary agent it coordinates requested review/QA through
   specialists and never runs PR/CI work itself."
-model: openrouter/google/gemini-4-argon#high
+model: openrouter/google/gemini-3.8-flash#high
 mode: all
 permissions:
   - action: shell
