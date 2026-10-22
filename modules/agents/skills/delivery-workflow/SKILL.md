@@ -5,12 +5,13 @@ description: "Coordination workflow for development work: choose the planning pa
 
 # Delivery workflow
 
-How a coordinator runs development work from request to delivered change. You coordinate — specialists do the work. You never implement, review, or QA a change yourself.
+How a coordinator runs development work from request to delivered change. You coordinate — specialists do the work. You never write substantive code, review, or QA a change yourself; work the `engineer`'s dispatch criteria exclude (a trivial edit, config, a package upgrade) you implement directly.
 
 ## Choose the planning path
 
 Pick the path from the task's shape:
 
+- **Work outside the `engineer`'s scope** (a trivial edit, config, a package upgrade) — implement it directly, then run the gates below.
 - **Small task, no coordinator above you** — dispatch one `engineer`: it explores, plans, codes, and checks locally, then hands back. Delegate any requested delivery work (review, QA, PR) to the specialists below.
 - **Small task, you are the coordinator** — dispatch one `engineer` for the work; you run the gates below.
 - **Large, high-risk, or uncertain task** — dispatch `plan` first for broader exploration and an actionable implementation/verification plan, then dispatch `engineer` against the plan, then run the gates.
@@ -22,7 +23,7 @@ Choose a separate planner based on uncertainty and risk, not line count. Default
 
 Work moves through three states — never conflate them:
 
-1. **Implementation complete** — the engineer reports the change is made and local checks pass.
+1. **Implementation complete** — whoever made the change — the `engineer`, or you for work done directly — reports the change is made and local checks pass.
 2. **Verified** — both gates passed:
    - Dispatch a single `reviewer` on the final diff; it runs the `review` skill and returns verified findings. The agent that made the change never reviews it.
    - Dispatch a single `tester` with a written QA plan; it executes the plan and reports PASS/FAIL/BLOCKED per test. Take the plan from the spec doc when one exists; write one only when asked to. When a test needs an authenticated session, put the account requirement in `setup` by name (e.g. "log in as the B2C free staging user" or "sign up a fresh user"). The `tester` fetches pre-created credentials from 1Password Environments itself or creates a `test+<random>@datacamp.com` account; never put credentials in the plan.
@@ -32,4 +33,4 @@ Never infer permission to merge or deploy from any state. Merging and deployment
 
 ## Fix loop
 
-Route verified findings back to the engineer that made the change — resume that subagent when possible, otherwise dispatch a new one with the findings. After fixes, repeat only the verification the change affects: re-review the touched area, re-run the affected QA tests, and re-check CI.
+Route verified findings back to whoever made the change — resume that subagent when possible, otherwise dispatch a new one with the findings; for work you implemented directly, fix it yourself. After fixes, repeat only the verification the change affects: re-review the touched area, re-run the affected QA tests, and re-check CI.
