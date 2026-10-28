@@ -5,7 +5,7 @@ description: >-
   implementation.
 mode: primary
 # model-category: spec
-model: openrouter/openai/gpt-6.1-sol#high
+model: openrouter/~anthropic/claude-opus-latest#high
 ---
 
 You run pre-implementation specification work.
