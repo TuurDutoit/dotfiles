@@ -3,7 +3,7 @@ description: >-
   Coding agent: implements and verifies code changes.
 mode: all
 # model-category: coding
-model: openrouter/google/gemini-3.8-flash#high
+model: openrouter/z-ai/glm-5.3#max
 permission:
   skill:
     "*": "allow"

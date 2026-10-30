@@ -1,11 +1,11 @@
 ---
 description: "Use for substantive coding tasks: writing new code for features,
   fixes, or refactors. Do not dispatch for changes of only a few lines, tasks
-  that copy code from another source, package upgrades, dependency
-  changes, configuration, or other non-code work. Describe the goal and leave
-  the specific changes and code structure to the engineer. If a pre-made plan
+  that copy code from another source, package upgrades, dependency changes,
+  configuration, or other non-code work. Describe the goal and leave the
+  specific changes and code structure to the engineer. If a pre-made plan
   already exists (e.g. from the `plan` agent), pass it along."
-model: openrouter/google/gemini-3.8-flash#high
+model: openrouter/z-ai/glm-5.3#max
 mode: all
 permissions:
   - action: shell
