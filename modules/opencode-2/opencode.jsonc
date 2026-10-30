@@ -58,6 +58,7 @@
     { "action": "integration.use", "resource": "mcp:atlassian", "effect": "deny" },
     { "action": "integration.use", "resource": "mcp:better-artifacts", "effect": "deny" },
     { "action": "integration.use", "resource": "mcp:clickup", "effect": "deny" },
+    { "action": "integration.use", "resource": "mcp:cloudflare", "effect": "deny" },
     { "action": "integration.use", "resource": "mcp:datadog", "effect": "deny" },
     { "action": "integration.use", "resource": "mcp:huggingface", "effect": "deny" },
     { "action": "integration.use", "resource": "mcp:incident-io", "effect": "deny" },
