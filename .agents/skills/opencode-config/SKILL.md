@@ -104,7 +104,7 @@ however it was configured:
 ```
 
 The user config already denies the managed servers that are not wanted:
-airtable, atlassian, better-artifacts, clickup, datadog, huggingface,
+airtable, atlassian, better-artifacts, clickup, cloudflare, datadog, huggingface,
 incident-io, intercom, linear, mcp-internal-tooling, miro, notion, webflow.
 
 Also remove the server's allow/deny glob from any agent's `permissions:` in `modules/opencode-2/agents/<name>.md`.
