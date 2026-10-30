@@ -3,7 +3,7 @@ description: Shared review dimension reviewer subagent. Dispatched only by the
   reviewer agent; the dispatch prompt names the single dimension to review
   (logic, performance, security, architecture, specs, quality, or docs) and
   carries the payload.
-model: openrouter/z-ai/glm-5.3#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 mode: subagent
 hidden: true
 permissions:

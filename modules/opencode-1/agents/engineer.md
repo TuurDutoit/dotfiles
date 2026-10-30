@@ -3,7 +3,7 @@ description: >-
   Coding agent: implements and verifies code changes.
 mode: all
 # model-category: coding
-model: openrouter/z-ai/glm-5.3#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 permission:
   skill:
     "*": "allow"

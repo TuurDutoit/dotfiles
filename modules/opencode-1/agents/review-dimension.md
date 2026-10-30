@@ -7,7 +7,7 @@ description: >-
 mode: subagent
 hidden: true
 # model-category: review
-model: openrouter/z-ai/glm-5.3#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 permission:
   skill:
     "*": "deny"

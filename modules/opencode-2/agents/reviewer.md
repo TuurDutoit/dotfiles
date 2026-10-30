@@ -4,7 +4,7 @@ description: Code and spec reviewer agent. Performs a comprehensive,
   single-agent pass for small changes and parallel subagents for larger changes.
   Say "review <PR/branch/ref>" or "/review <args>" to it, optionally specifying
   dimensions or single/multi strategy.
-model: openrouter/z-ai/glm-5.3#max
+model: openrouter/deepseek/deepseek-v4.1-flash-1017#max
 mode: all
 permissions:
   - action: skill
