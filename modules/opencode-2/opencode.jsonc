@@ -12,7 +12,8 @@
     "servers": {
       "datacamp-internal-cloudflare-mcp": {
         "type": "remote",
-        "url": "https://mcp-gateway-internal.datacamp.com/mcp"
+        "url": "https://mcp-gateway-internal.datacamp.com/mcp",
+        "disabled": false
       },
       "chrome-devtools": {
         "type": "local",
