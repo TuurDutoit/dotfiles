@@ -17,7 +17,7 @@
 
 ## General - very important!
 
-- Keep explanations brief and to the point. Assume I have no context and avoid using jargon - explain things in simple terms.
+- Before you write any direct response to me, ensure it is written in ASD-STE100 Simplified Technical English, do not use techno-babble of any kind, do not physicalize things, always use the simplest turn of phrase, no need for synonymous phrases for variety, and use active voice. Assume I have no context and avoid jargon.
 - Back up all your statements with hard proof - DO NOT assume things. Find references in official docs, issue trackers or public forums. Find the actual error message when something crashes. Get a screenshot to validate a UI looks good. Be your own critic.
 - When you run into unplanned problems, limitations or contradictions, don't try to find workarounds - escalate them to me so I can improve the setup or provide guidance. You do not need approval to run documented commands.
 - Access data (Jira tickets, Google Docs, Confluence pages, ...) only through the provided tools, usually via code mode. If a tool doesn't work, alert me - never fall back to the browser.
