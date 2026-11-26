@@ -28,11 +28,9 @@ handoff artifacts outside a repo get no commit.
 
 ## 3. Resolve this session's ID
 
-opencode commands have no template variable for the session ID. Run
-`opencode session list --format json -n 5`: this session is the entry in
-this directory with the newest `updated` timestamp, because the command
-prompt was just added to it. If the two newest entries tie, or the newest
-entry is in another directory, ask Tuur instead of guessing.
+The ID of this session is in the `$OPENCODE_SESSION_ID` shell variable: run
+`echo $OPENCODE_SESSION_ID` and keep the value. If it is empty, stop and
+tell Tuur.
 
 ## 4. Create the build session
 
@@ -40,9 +38,10 @@ Create a **new** `build` session with the `openchamber` tool
 (`session.create`), passing `agent: "build"`, in the checkout directory of
 the repo the spec belongs to; this session's directory when invoked from the
 spec session. Leave the model unset. Title the session
-`<project_slug> - implementation - <short task name>`, resolving
-`<project_slug>` from the git remote as the `spec` skill does. Use exactly
-this prompt:
+`<project_slug> - implement - <short task name>`, resolving
+`<project_slug>` from the git remote as the `spec` skill does. Replace
+`<original session ID>` with the value from step 3. Use exactly this
+prompt:
 
 > Implement this accepted spec: `<absolute path to spec.md>`. There is no
 > separate plan.md — the spec's "Technical Architecture & Plan" section is

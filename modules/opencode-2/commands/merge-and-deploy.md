@@ -45,11 +45,9 @@ spec path, and the build session will ask Tuur for a QA plan — the
 
 ## 4. Resolve this session's ID
 
-opencode commands have no template variable for the session ID. Run
-`opencode session list --format json -n 5`: this session is the entry in
-this directory with the newest `updated` timestamp, because the command
-prompt was just added to it. If the two newest entries tie, or the newest
-entry is in another directory, ask Tuur instead of guessing.
+The ID of this session is in the `$OPENCODE_SESSION_ID` shell variable: run
+`echo $OPENCODE_SESSION_ID` and keep the value. If it is empty, stop and
+tell Tuur.
 
 ## 5. Create the build session
 
@@ -58,7 +56,8 @@ Create a **new** `build` session with the `openchamber` tool
 the repo the PR belongs to — this session's directory when invoked from
 the engineer session. Leave the model unset. Title the session
 `<project_slug> - deploy - <short task name>`, resolving `<project_slug>`
-from the git remote as the `spec` skill does. Use exactly this prompt:
+from the git remote as the `spec` skill does. Replace `<original session
+ID>` with the value from step 4. Use exactly this prompt:
 
 > Merge PR `<PR URL>` (branch `<head branch>`) — it is approved and
 > mergeable. If it is already merged, skip the merge. After the merge,
